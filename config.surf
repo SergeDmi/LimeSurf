@@ -1,0 +1,9 @@
+% test
+dt=0.01
+shape=sphere
+number=2000
+useless=2
+R0=0.1;
+minR=0.02;
+Rmax=0.3;
+
