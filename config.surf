@@ -1,9 +1,12 @@
 % test
 dt=0.01
+
 shape=sphere
-number=2000
-useless=2
-R0=0.1;
-minR=0.02;
-Rmax=0.3;
+box=200
+radius=50
+number=32000
+minR=0.3;
+Rmax=3;
+visco=10;
+
 
