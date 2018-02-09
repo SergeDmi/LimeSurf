@@ -14,9 +14,15 @@ int main(int argc, char* argv[])
     Meshless_props simul_prop(glos);
 
     Part_set set1(&set_prop);
-    
     set1.GetStarted();
-    set1.NextStep(&simul_prop);
+    double t=0;
+    while (t<simul_prop.Tend) {
+        //std::cout << t << std::endl;
+        t+=simul_prop.dt;
+        set1.NextStep(&simul_prop);
+        
+    }
+    set1.GetNeighbours();
     set1.Export(0);
     return N;
 }

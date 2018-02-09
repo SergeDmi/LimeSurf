@@ -8,5 +8,5 @@ public:
     Meshless_props(const Glossary);
 
     double dt;
-    
+    double Tend;
 };

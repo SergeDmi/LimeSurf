@@ -4,7 +4,9 @@
 
 
 Meshless_props::Meshless_props(const Glossary opt) {
-    dt=0.1;
+    dt=0.01;
+    Tend=1.0;
     opt.set(dt,"dt");
+    opt.set(Tend,"Tend");
 
 }
