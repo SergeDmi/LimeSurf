@@ -12,11 +12,13 @@ class Part_set {
     
     typedef Vector<int,100> NEIGHBOURS;
     ABORIA_VARIABLE(orientation,vdouble3,"orientation")
+    ABORIA_VARIABLE(torque,vdouble3,"orientation")
+    ABORIA_VARIABLE(force ,vdouble3,"orientation")
     ABORIA_VARIABLE(neighbours,NEIGHBOURS,"neighbours")
     ABORIA_VARIABLE(nn,double,"neighbour number")
     ABORIA_VARIABLE(state,double,"state")
     
-    typedef Particles<std::tuple<orientation,neighbours,nn,state>,3> particle_type;
+    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,state>,3> particle_type;
     //typedef Particles<std::tuple<orientation>,<test>,2> container_type;
     
     typedef typename particle_type::position position;
@@ -26,7 +28,8 @@ public:
     Part_set_props* prop;
     int num();
     int PutOnSphere(int,double);
-    void NextStep(Meshless_props*);
+    void NextStep(const Meshless_props*);
+    void ViscousStep(const Meshless_props*);
     void Export(int);
     void GetStarted();
 private:
