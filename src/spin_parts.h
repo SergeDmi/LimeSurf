@@ -27,13 +27,16 @@ public:
     Part_set(Part_set_props*);
     Part_set_props* prop;
     int num();
-    int PutOnSphere(int,double);
+    //int PutOnSphere(int,double);
     void NextStep(const Meshless_props*);
     void ViscousStep(const Meshless_props*);
     void IntegrateForces(const Meshless_props*);
     void ComputeForcesViscous();
+    void GetNeighbours();
     void Export(int);
     void GetStarted();
+    void ClearForces();
+    int PutOnSphere();
 private:
     particle_type particles;
     int number;

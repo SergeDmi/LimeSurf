@@ -15,6 +15,8 @@ public:
     double pressure;
     double k_rep;
     double k_att;
+    double p_rep;
+    double p_att;
     double k_bend;
     double k_align;
     double visco;
@@ -23,6 +25,7 @@ public:
     // @todo ; with keylist
     int init_shape;
     int init_number;
+    double init_radius;
     
     
 };
