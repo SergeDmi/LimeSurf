@@ -149,7 +149,7 @@ void Part_set::ComputeForcesViscous(){
                
                 
                 
-                // Bendind torque
+                // Bending torque
                 meij=prop->k_bend*cross(orsi,orsj)/(pow(nsqrij,3.0));;
                 get<torque>(particles[i])-=meij;
                 get<torque>(j)+=meij;
