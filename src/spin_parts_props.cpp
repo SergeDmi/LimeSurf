@@ -17,6 +17,8 @@ Part_set_props::Part_set_props(const Glossary opt) {
     k_att=1.0;
         k_rep=1.0;
     k_bend=1.0;
+    visco=1.0;
+    Rvisc=1.0;
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "pombe", 1, "sheet", 2));
     opt.set(init_number, "number");
     opt.set(R0, "R0");

@@ -99,55 +99,38 @@ void Part_set::GetStarted(){
 
 
 void Part_set::ViscousStep(const Meshless_props* simul_prop){
+    ComputeForcesViscous();
+    IntegrateForces(simul_prop);
+    
+}
+
+void Part_set::IntegrateForces(const Meshless_props* simul_prop){
     float dt=simul_prop->dt;
-    /*
-     * create symbols and labels in order to use the expression API
-     Symbol<position> p;
-     Symbol<orientation> v;
-     Symbol<id> id_;
-     Label<0, particle_type> a(particles);
-     Label<1, particle_type> b(particles);
-     */
+    for (int i = 0; i < number; ++i) {
+            get<position>(particles[i])+=get<force>(particles[i])*(dt/prop->visco);
+            get<orientation>(particles[i])+=cross(get<orientation>(particles[i]),get<torque>(particles[i]))*(dt/prop->Rvisc);
+    }
     
-    /*
-     * dx is a symbol representing the difference in positions of
-     * particle a and b.
-     auto dx = create_dx(a, b);
-     */
-    
-    
-    /*
-     * sum is a symbolic function that sums a sequence of 2d vectors
-     AccumulateWithinDistance<std::plus<vdouble3>> sum;
-     
-     v[a] += dt * (
-     //              // spring force between particles
-     sum(b, if_else(id_[a] != id_[b],
-     -prop->k_elast * (1.0 / norm(dx) - 1), 0.0) *
-     dx));
-     p[a] += dt * v[a];
-     */
-    
-    //vdouble3 force;
-    //vdouble3 torque;
+}
+
+
+void Part_set::ComputeForcesViscous(){
     vdouble3 posj;
     vdouble3 orsj;
     vdouble3 posi;
     vdouble3 orsi;
     vdouble3 dxij;
-    //vdouble3 ndx;
+    
     vdouble3 meij;
     double nsqrij;
     int idi;
     int idj;
     double L=prop->L;
     NEIGHBOURS neis;
-    //double dd_flat;
-    //double dd_bend;
     double cc_flat;
 
-    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rmax);
-    particles.init_id_search();
+    //particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rmax);
+    //particles.init_id_search();
     for (int i = 0; i < number; ++i) {
         idi=get<id>(particles[i]);
         posi=get<position>(particles[i]);
@@ -155,45 +138,29 @@ void Part_set::ViscousStep(const Meshless_props* simul_prop){
         
         
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
-            const typename particle_type::value_type& j = std::get<0>(tpl);
+            typename particle_type::value_type j = std::get<0>(tpl);
             idj=get<id>(j);
             
             if (idi<idj) {
-                // j is const so we get it not const...
-                typename particle_type::value_type jj=j;
                 posj=get<position>(j);
                 orsj=get<orientation>(j);
                 dxij=posj-posi;
-                //ndx=dxij/dxij.norm();
-                //meij=orsi+orsj;
-
                 nsqrij=dxij.squaredNorm();
                
-                // Alignement force
-                cc_flat=(dxij.dot(orsi+orsj))/(dxij.norm()*pow(nsqrij,3.0));
-                get<force>(particles[i])+=cc_flat*orsi;
-                get<force>(jj)-=cc_flat*orsj;
                 
                 
                 // Bendind torque
                 meij=prop->k_bend*cross(orsi,orsj)/(pow(nsqrij,3.0));;
                 get<torque>(particles[i])-=meij;
-                get<torque>(jj)+=meij;
+                get<torque>(j)+=meij;
 
+                // Alignement force
+                cc_flat=(dxij.dot(orsi+orsj))/(pow(nsqrij,3.5));
                 // Lennard-Jones force
-                //meij=dxij*((prop->k_rep)/pow(nsqrij,3)-(prop->k_att))/(pow(nsqrij,3.5));
                 meij=dxij*((prop->k_rep)/pow(nsqrij,3.0)-(prop->k_att))/(pow(nsqrij,3.5));
-                get<force>(particles[i])+=meij;
-                get<force>(jj)-=meij;
-                /*float iPerpend=-r_0*r_0*k_bend;
-                 f_attract=fAtt[POS];
-                 nd1.repForce.x+=fx;nd1.repForce.y+=fy;nd1.repForce.z+=fz;
-                 nd2.repForce.x-=fx;nd2.repForce.y-=fy;nd2.repForce.z-=fz;
-                 NF=(f_attract+f_rep);
-                 fx=NF*dir.x;fy=NF*dir.y;fz=NF*dir.z;
-                 */
-                
-                
+                // Adding the forces
+                get<force>(particles[i])+=meij+cc_flat*orsi;
+                get<force>(j)-=meij+cc_flat*orsj;
                 
                 
                 }

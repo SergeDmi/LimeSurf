@@ -30,9 +30,12 @@ public:
     int PutOnSphere(int,double);
     void NextStep(const Meshless_props*);
     void ViscousStep(const Meshless_props*);
+    void IntegrateForces(const Meshless_props*);
+    void ComputeForcesViscous();
     void Export(int);
     void GetStarted();
 private:
     particle_type particles;
     int number;
+
 };
