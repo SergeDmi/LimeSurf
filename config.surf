@@ -3,10 +3,10 @@ dt=0.01
 
 shape=sphere
 box=200
-radius=50
-number=32000
+radius=10
+number=1200
 minR=0.3;
 Rmax=3;
-visco=10;
+visco=1;
 
 
