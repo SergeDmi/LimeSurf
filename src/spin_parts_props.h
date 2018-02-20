@@ -24,6 +24,7 @@ public:
     double Rvisc;
     double L;
     double Fmax;
+    double Rsearch;
     // @todo ; with keylist
     int init_shape;
     int init_number;

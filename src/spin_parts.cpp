@@ -11,7 +11,7 @@ Part_set::Part_set(Part_set_props * p) {
     prop=p;
     double L=prop->L;
     //particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false));
-    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->minR);
+    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rsearch);
     if (prop->init_shape==0){
         number=PutOnSphere();
     }
@@ -126,10 +126,10 @@ int Part_set::PutOnSheet(){
 
 void Part_set::GetStarted(){
     double L=prop->L;
-    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rmax);
+    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rsearch);
     std::cout << "# initiated neighbour serch xith Rmax" << prop->Rmax << std::endl;
     particles.init_id_search();
-    GetNeighbours();
+    //GetNeighbours();
 }
 
 void Part_set::GetNeighbours() {
@@ -166,6 +166,7 @@ void Part_set::ViscousStep(const Meshless_props* simul_prop){
     //GetNeighbours();
     //IntegrateForces(simul_prop);
     IntegrateForcesFast(simul_prop);
+    particles.update_positions();
     ClearForces();
 }
 
@@ -289,8 +290,30 @@ void Part_set::ComputeForcesViscousFast(){
                   //                  dx) /
                   //              mass);
     
-    
 }
+
+
+
+void Part_set::NextStep(const Meshless_props* simul_prop){
+    ViscousStep(simul_prop);
+}
+
+
+void Part_set::Export(int t){
+#ifdef HAVE_VTK
+    vtkWriteGrid("particles",t,particles.get_grid(true));
+#endif
+    for (int i = 0; i < number; ++i) {
+        //std::cout <<" found "<< i <<std::endl;
+        //std::cout <<" Particle  "<< i <<std::endl;
+        //std::cout <<" "<< get<position>(particles[i]) <<" " << get<force>(particles[i]) <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<<std::endl;
+        
+        std::cout <<" "<< get<position>(particles[i])[0] <<" "<< get<position>(particles[i])[1] << " "<< get<position>(particles[i])[2] << " " << get<force>(particles[i])[0] << " " << get<force>(particles[i])[1] << " " << get<force>(particles[i])[2] <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<<std::endl;
+        
+    }
+}
+
+
     //particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rmax);
     //particles.init_id _search();
     //Symbol<position> p;
@@ -385,22 +408,3 @@ void Part_set::ComputeForcesViscousFast(){
 
 
 
-
-void Part_set::NextStep(const Meshless_props* simul_prop){
-    ViscousStep(simul_prop);
-}
-
-
-void Part_set::Export(int t){
-#ifdef HAVE_VTK
-    vtkWriteGrid("particles",t,particles.get_grid(true));
-#endif
-    for (int i = 0; i < number; ++i) {
-        //std::cout <<" found "<< i <<std::endl;
-        //std::cout <<" Particle  "<< i <<std::endl;
-        //std::cout <<" "<< get<position>(particles[i]) <<" " << get<force>(particles[i]) <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<<std::endl;
-        
-        std::cout <<" "<< get<position>(particles[i])[0] <<" "<< get<position>(particles[i])[1] << " "<< get<position>(particles[i])[2] << " " << get<force>(particles[i])[0] << " " << get<force>(particles[i])[1] << " " << get<force>(particles[i])[2] <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<<std::endl;
-
-    }
-}

@@ -24,6 +24,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
+    
     opt.set(visco, "visco");
     opt.set(Rvisc, "Rvisco");
     opt.set(Rmax, "Rmax");
@@ -36,5 +37,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     Fmax=k_rep*pow(minR,p_rep);
     opt.set(minR, "Rmin");
     opt.set(L, "box");
+    Rsearch=Rmax;
+    opt.set(Rsearch, "Rsearch");
     
 }
