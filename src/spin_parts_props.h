@@ -9,26 +9,24 @@ class Part_set_props {
 public:
     Part_set_props(const Glossary);
 
-    double R0;
-    double minR;
-    double minR2;
-    double Rmax;
-    double pressure;
-    double k_rep;
-    double k_att;
-    double p_rep;
-    double p_att;
-    double k_bend;
-    double k_align;
-    double visco;
-    double Rvisc;
-    double L;
-    double Fmax;
-    double Rsearch;
+    double R0;              // Equilibrium distance between parts
+    double minR,minR2;      // Minimum interaction distance (avoid dvg)
+    double Rmax;            // Max interaction distance
+    double Rsearch;         // Search radius
+    double pressure;        // A pressure
+    double k_rep,p_rep;     // repulsive potiential and power law
+    double k_att,p_att;     // attractive potiential and power law
+    double k_bend,p_bend;   // bending potiential and power law
+    double k_align,p_align; // alignment potiential and power law
+    double visco,Rvisc;     // viscosity (translational & rotational)
+    double L;               // box size
+    double Fmax,Fmax2;      // Maximum force
+
     // @todo ; with keylist
     int init_shape;
     int init_number;
     double init_radius;
+
     
     
 };

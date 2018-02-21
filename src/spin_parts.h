@@ -31,17 +31,13 @@ public:
     void NextStep(const Meshless_props*);
     void ViscousStep(const Meshless_props*);
     void IntegrateForces(const Meshless_props*);
-    void IntegrateForcesFast(const Meshless_props*);
     void ComputeForcesViscous();
-    void ComputeForcesViscousFast();
     void GetNeighbours();
     void Export(int);
     void GetStarted();
     void ClearForces();
     int PutOnSphere();
     int PutOnSheet();
-    double Reff2(double );
-    double Reff(double );
 private:
     particle_type particles;
     int number;
