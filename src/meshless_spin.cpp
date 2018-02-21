@@ -17,16 +17,14 @@ int main(int argc, char* argv[])
     set1.GetStarted();
     double t=0;
     while (t<simul_prop.Tend) {
-        std::cout << t << std::endl;
+        std::cout << "#"  << std::flush;
         t+=simul_prop.dt;
         set1.NextStep(&simul_prop);
         
     }
-    //std::cout << "########### time is " << t << std::endl;
-    //std::cout << "########### time is " << t << std::endl;
-    //std::cout << "########### time is " << t << std::endl;
-    set1.ComputeForcesViscousFast();
-    //set1.GetNeighbours();
+    std::cout << std::endl;
+    set1.ComputeForcesViscous();
+    set1.GetNeighbours();
     set1.Export(0);
     return N;
 }
