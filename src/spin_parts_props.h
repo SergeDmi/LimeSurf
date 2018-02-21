@@ -11,6 +11,7 @@ public:
 
     double R0;
     double minR;
+    double minR2;
     double Rmax;
     double pressure;
     double k_rep;
@@ -22,6 +23,8 @@ public:
     double visco;
     double Rvisc;
     double L;
+    double Fmax;
+    double Rsearch;
     // @todo ; with keylist
     int init_shape;
     int init_number;

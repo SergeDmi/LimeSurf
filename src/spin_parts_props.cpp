@@ -21,13 +21,23 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_att=6.0;
     visco=1.0;
     Rvisc=1.0;
-    opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "pombe", 1, "sheet", 2));
+    opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
+    
     opt.set(visco, "visco");
-        opt.set(Rvisc, "Rvisco");
+    opt.set(Rvisc, "Rvisco");
     opt.set(Rmax, "Rmax");
+    opt.set(k_align, "align");
+    opt.set(k_bend, "rigidity");
+    
+    R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));
+    minR=0.75*R0;
+    minR2=pow(minR,2.0);
+    Fmax=k_rep*pow(minR,p_rep);
     opt.set(minR, "Rmin");
     opt.set(L, "box");
-    R0=0.1;
+    Rsearch=Rmax;
+    opt.set(Rsearch, "Rsearch");
+    
 }

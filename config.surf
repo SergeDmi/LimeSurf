@@ -1,12 +1,15 @@
-% test
-dt=0.01
+dt=0.001
+Tend=0.01
 
-shape=sphere
-box=200
-radius=10
-number=1200
-minR=0.3;
-Rmax=3;
-visco=1;
 
+shape=sheet
+box=322
+radius=150
+number=800
+Rmin=0.86;
+Rmax=1.6;
+visco=0.5;
+align=0.0,6;
+bending=0.0,6;
+Rsearch=1.6;
 
