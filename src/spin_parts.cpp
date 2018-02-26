@@ -100,7 +100,7 @@ int Part_set::load_from_text(std::string fname){
         vdouble3 pos(verts[i].x,verts[i].y,verts[i].z);
         vdouble3 dir(norms[i].x,norms[i].y,norms[i].z);
         
-        std::cout << dir << " " << std::endl;
+        //std::cout << dir << " " << std::endl;
         
         get<position>(p) = pos;
         get<orientation>(p) = dir;
