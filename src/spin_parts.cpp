@@ -207,56 +207,77 @@ int Part_set::PutOnSheet(){
     }
     
    
-    number=count;
+    //number=count;
     return count;
 }
 
 // Makes sure everything is in place
 void Part_set::GetStarted(){
     double L=prop->L;
-    particles.update_positions();
-    particles.init_neighbour_search(vdouble3(0,0,0),vdouble3(L,L,L),vbool3(false,false,false),prop->Rsearch);
+    particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
     std::cout << "# initiated neighbour serch xith Rsearch" << prop->Rsearch << std::endl;
+    //particles.update_positions();
+    if (prop->elastic) {
+        particles.init_id_search();
+        GetNeighbours();
+    }
+    
     //particles.init_id_search();
 }
 
 // Needed when elastic will be implemented
 void Part_set::GetNeighbours() {
+    int count=0;
     int ide;
-    NEIGHBOURS neis;
     int n;
     for (int i = 0; i < number; ++i) {
         n=0;
+        std::vector<int> neis;
         int idi=get<id>(particles[i]);
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
             const typename particle_type::value_type& j = std::get<0>(tpl);
-            int ide=get<id>(j);
-            if (n<MAXNEIGHBOURS) {
-                neis[n]=ide;
-                n++;
+            ide=get<id>(j);
+            if (ide!=idi) {
+                    neis.push_back(ide);
+                    n++;
             }
         }
 
         get<nn>(particles[i])=n;
         get<neighbours>(particles[i])=neis;
+        if (n>count) {
+            count=n;
+        }
+            
     }
+    //std::cout << "# last vec" << std::endl;
+    //for(int k : neis) {
+    //    std::cout << "#              " << k << std::endl;
+    //}
+    
+    max_neighbours=count;
+    std::cout << "#Maximum neighbours number : " << max_neighbours << std::endl;
  
 }
 
 // One simulation step
 void Part_set::NextStep(const Meshless_props* simul_prop){
-    ViscousStep(simul_prop);
+    ComputeForces();
+    IntegrateForces(simul_prop);
+    if (!(prop->elastic)) {
+        particles.update_positions();
+    }
+    ClearForces();
 }
 
-
-// Just forces according to nearest neighbours for now
-void Part_set::ViscousStep(const Meshless_props* simul_prop){
-   
-     ComputeForcesViscous();
-    IntegrateForces(simul_prop);
-     particles.update_positions();
-     ClearForces();
-   
+void Part_set::ComputeForces(){
+    if (prop->elastic) {
+        ComputeForcesElastic();
+    }
+    else
+    {
+        ComputeForcesViscous();
+    }
 }
 
 // Erazing forces
@@ -279,7 +300,7 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
         forcei=get<force>(particles[i]);
         if (forcei.squaredNorm()>prop->Fmax2) {
             forcei=forcei*((prop->Fmax)/forcei.norm());
-            std::cout << "# warning : over the top ; now : " << forcei << std::endl;
+            //std::cout << "# warning : over the top ; now : " << forcei << std::endl;
         }
         get<position>(particles[i])+=((forcei)*(dt/prop->visco));
         //std::cout << "# checking forcei : " << forcei << std::endl;
@@ -288,35 +309,110 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
     
 }
 
+
+void Part_set::ComputeForcesElastic(){
+    vdouble3 posi;
+    vdouble3 orsi;
+    int idi,idj;
+    double k_elast=prop->k_elast;
+    double norm;
+    vdouble3 dir;
+    vdouble3 tri;
+    double proj;
+    int count;
+    for (int i = 0; i < number; ++i) {
+        posi=get<position>(particles[i]);
+        orsi=get<orientation>(particles[i]);
+        idi=get<id>(particles[i]);
+        int neibs=get<nn>(particles[i]);
+        std::vector<int> neis=get<neighbours>(particles[i]);
+        std::random_shuffle ( neis.begin(), neis.end() );
+        count=0;
+        int R2mean=0;
+        vdouble3 oldvec(0,0,0);
+        //std::cout << "# neibs=" << neibs << std::endl;
+        //for (int j=0; j<neibs; ++j) {
+        //for (std::vector<int>::iterator it=neis.begin(); it!=neis.end(); ++it) {
+        //    idj=*it;
+        for(int idj : neis) {
+        //for (int bj=0; bj<neibs; ++bj) {
+        //    idj=neis[bj];
+            auto j = particles.get_query().find(idj);
+            //auto id_2_ref = *particles.get_query().find(2);
+            //auto id_2_position_reference = *get<position>(id_2);
+            vdouble3 posj=*get<position>(j);
+            //vdouble3 orsj=*get<orientation>(idj);
+            //vdouble3 sumo=orsi+orsj;
+            vdouble3 dxij=posj-posi;
+            norm=dxij.norm();
+            dir=dxij*prop->R0/norm;
+            get<force>(particles[i])+=dxij-dir;
+            //get<force>(particles[i])+=dxij-dir;
+            
+            R2mean+=norm*norm;
+            // This is highly suspicious !
+            // We compute the normals from triangles
+            // To update the normal of the point
+            // Is it any good ?
+            if (count>0) {
+                tri=cross(dir,oldvec);
+                proj=orsi.dot(tri);
+                tri*=proj/tri.norm();
+                 // Problematic :
+                get<torque>(particles[i])-=tri;
+            }
+            oldvec=dir;
+            count++;
+        }
+        // Problematic :
+        //get<force>(particles[i])+=orsi*(prop->pressure*R2mean)/count;
+        
+    }
+    //std::cout << "# computed " << count << " neighbours" <<std::endl;
+}
+
+
+
 // Computing forces with viscous setting (i.e. changeable nearest neighbours)
 void Part_set::ComputeForcesViscous(){
     vdouble3 posi;
     vdouble3 orsi;
-    int idi;
+    int idi,idj;
     double L=prop->L;
-    NEIGHBOURS neis;
+    //NEIGHBOURS neis;
     double cc_flat;
     double p_att=(1.0+prop->p_att)/2.0;
     double p_align=(1.0+prop->p_align)/2.0;
     double p_rep=(prop->p_rep+prop->p_att)/2.0;
+    int neibs;
     for (int i = 0; i < number; ++i) {
+        neibs=0;
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
+        idi=get<id>(particles[i]);
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
              typename particle_type::value_type j = std::get<0>(tpl);
-            vdouble3 posj=get<position>(j);
-            vdouble3 orsj=get<orientation>(j);
-            vdouble3 sumo=orsi+orsj;
-            vdouble3 dxij=posj-posi;
-            double nsqrij=std::max(dxij.squaredNorm(),prop->minR);
-            // Bending torque
-            get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(nsqrij,3.0));;
-            // Forces : Lennard Jones & alignement
-            get<force>(particles[i])+=(-dxij*((prop->k_rep)/pow(nsqrij,p_rep)-(prop->k_att))/(pow(nsqrij,p_att))
+            
+            idj=get<id>(j);
+            if (idi!=idj) {
+                neibs++;
+                vdouble3 posj=get<position>(j);
+                vdouble3 orsj=get<orientation>(j);
+                vdouble3 sumo=orsi+orsj;
+                vdouble3 dxij=posj-posi;
+                double nsqrij=std::max(dxij.squaredNorm(),prop->minR);
+                // Bending torque
+                get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(nsqrij,3.0));;
+                // Forces : Lennard Jones & alignement
+                get<force>(particles[i])+=(-dxij*((prop->k_rep)/pow(nsqrij,p_rep)-(prop->k_att))/(pow(nsqrij,p_att))
                                        +sumo*(0.5*prop->k_align*(dxij.dot(sumo)/pow(nsqrij,p_align))));
             //assert_true(dxij.dot(sumo)>0.0);
             //get<force>(particles[i])+=sumo*(0.5*prop->k_align*(dxij.dot(sumo)/pow(nsqrij,p_align)));
+            }
         }
+        
+        get<nn>(particles[i])=neibs;
+        //std::cout << "# neibs=" << neibs << std::endl;
     }
 }
 
@@ -337,79 +433,3 @@ void Part_set::Export(int t){
     exportfile.close();
 }
 
-
-/*
-void Part_set::ClearForces() {
-    vdouble3 zero(0,0,0);
-    Label<0, particle_type> a(particles);
-    Symbol<force> f;
-    Symbol<torqe> t;
-    f[a]=zero;
-    t[a]=zero;
-}
-*/
-
-/*
- void Part_set::IntegrateForcesFast(const Meshless_props* simul_prop){
- float dt=simul_prop->dt;
- Label<0, particle_type> a(particles);
- double Fmax=prop->Fmax;
- Symbol<position> p;
- Symbol<force> f;
- 
- // This doesn't work
- //if (norm(f[a])>Fmax) {
- //    f[a]*=Fmax/norm(f[a]);
- //}
- 
- 
- // This clearly doesn't work
- p[a]+=(dt/prop->visco)*(std::min(norm(f[a]),Fmax)*f[a]/norm(f[a]));
- 
- }
- */
- 
-/*
-    In this level, several sum are needed which makes it too costly
- 
-void Part_set::ComputeForcesViscousFast(){
-    vdouble3 posi;
-    vdouble3 orsi;
-    int idi;
-    double L=prop->L;
-    NEIGHBOURS neis;
-    double cc_flat;
-    double p_att=(1.0+prop->p_att);
-    double p_rep=(1.0+prop->p_rep);
-    Symbol<position> p;
-    Symbol<orientation> o;
-    Symbol<force> f;
-    Symbol<torque> t;
-    Symbol<id> id_;
-    Label<0, particle_type> a(particles);
-    Label<1, particle_type> b(particles);
-    auto dx = create_dx(a, b);
-    AccumulateWithinDistance<std::plus<vdouble3>> sum(prop->Rmax);
-    
-    f[a] += (
-                  // spring force between particles
-                                sum(b, if_else(id_[a] != id_[b],
-                                               (-dx*((prop->k_rep)/pow(norm(dx),p_rep)
-                                                     -(prop->k_att)/pow(norm(dx),p_att))),0.0)
-                                               )
-             );
-    
-    // Dummy torque
-    t[a] += (
-             // bending force between particles
-             sum(b, if_else(id_[a] != id_[b],
-                            //Cannot use cross product in sum
-                           // -((prop->k_bend)*cross(o[a],o[b])/pow(norm(dx),p_bend))
-                          //  Damn !
-                            0.0
-                                    ,0.0)
-                 )
-             );
-}
-
-*/

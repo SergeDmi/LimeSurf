@@ -5,16 +5,16 @@ using namespace Aboria;
 #include "meshless_spin_props.h"
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
-#define MAXNEIGHBOURS 100
+#define MAXNEIGHBOURS 30
 
 
 class Part_set {
     
-    typedef Vector<int,100> NEIGHBOURS;
+    std::vector<int> NEIGHBOURS;
     ABORIA_VARIABLE(orientation,vdouble3,"orientation")
     ABORIA_VARIABLE(torque,vdouble3,"orientation")
     ABORIA_VARIABLE(force ,vdouble3,"orientation")
-    ABORIA_VARIABLE(neighbours,NEIGHBOURS,"neighbours")
+    ABORIA_VARIABLE(neighbours,std::vector<int>,"neighbours")
     ABORIA_VARIABLE(nn,double,"neighbour number")
     ABORIA_VARIABLE(state,double,"state")
     
@@ -30,9 +30,10 @@ public:
     int num();
     //int PutOnSphere(int,double);
     void NextStep(const Meshless_props*);
-    void ViscousStep(const Meshless_props*);
     void IntegrateForces(const Meshless_props*);
     void ComputeForcesViscous();
+    void ComputeForcesElastic();
+    void ComputeForces();
     void GetNeighbours();
     void Export(int);
     void GetStarted();
@@ -40,6 +41,7 @@ public:
     int PutOnSphere();
     int PutOnSheet();
     int load_from_text(std::string);
+    int max_neighbours;
 private:
     particle_type particles;
     int number;

@@ -22,7 +22,9 @@ Part_set_props::Part_set_props(const Glossary opt) {
     visco=1.0;
     R0=1.0;
     Rvisc=1.0;
+    elastic=0;
     Fmax=DBL_MAX;
+    pressure=0;
     double box[6];
     
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
@@ -32,7 +34,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(visco, "visco",0);
     opt.set(Rvisc, "visco",1);
     opt.set(Rvisc, "Rvisco");
-    opt.set(Rmax, "Rmax");
+
     
     opt.set(k_att, "attraction",0);
     opt.set(k_rep, "repulsion",0);
@@ -47,12 +49,16 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);
     
+    opt.set(elastic, "elastic");
+    
     for (int i=0; i<6; ++i) {
         opt.set(box[i], "box",i);
     }
     
+
     corner_0=vdouble3(box[0],box[1],box[2]);
     corner_1=vdouble3(box[3],box[4],box[5]);
+    std::cout << "# bounding box from " << corner_0 << " to " << corner_1 << std::endl;
 
     // Computing R0
     if (k_att>0) {
@@ -60,9 +66,9 @@ Part_set_props::Part_set_props(const Glossary opt) {
     }
     opt.set(R0, "R0");
     minR=0.75*R0;
+    Rmax=2.0*R0;
 
-
-
+    k_elast=1.0;
     opt.set(minR, "Rmin");
     minR2=pow(minR,2.0);
     if (k_rep>0) {
@@ -70,13 +76,14 @@ Part_set_props::Part_set_props(const Glossary opt) {
     }
     Fmax2=Fmax*Fmax;
     //opt.set(L, "box");
+    opt.set(Rmax, "Rmax");
     Rsearch=Rmax;
     opt.set(Rsearch, "Rsearch");
+    opt.set(Rmax, "Rmax");
     
     
-    
-
-
+    // Adimentionalized pressure
+    pressure*=sqrt(3.0)/(2.0*R0*R0);
     
     //std::cout << "# Fmax2=" << Fmax2 << std::endl;
 }

@@ -30,7 +30,9 @@ public:
     int init_shape;
     int init_number;
     double init_radius;
-
+    
+    bool elastic;
+    double k_elast;
     
     
 };
