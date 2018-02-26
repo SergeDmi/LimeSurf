@@ -1,18 +1,25 @@
-dt=0.001
-Tend=0.001
+dt=0.01
+Tend=1.0
 
 
-shape=sheet
+%shape=sheet
+%radius=20
+
 box=250,450,50,359,650,200
-radius=20
-%number=47000
-Rmin=0.5;
-Rmax=2.0;
-visco=1,1;
-attraction=9,5
-repulsion=5,9
 
-align=0.4,5;
+%Rmin=0.5;
+Rmax=5.0;
+visco=0.1,1;
+
+%attraction=9,5
+attraction=0.3333,5
+repulsion=15,9
+
+align=0.8,5;
 bending=0.0,5;
-Rsearch=2.0;
+%Rsearch=5.0;
 
+elastic=1
+R0=3
+k_elast=5
+pressure=10;
