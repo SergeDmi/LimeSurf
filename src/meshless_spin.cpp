@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
         
     }
     std::cout << std::endl;
-    set1.ComputeForcesViscous();
+    set1.ComputeForces();
     //set1.GetNeighbours();
     set1.Export(0);
     return N;
