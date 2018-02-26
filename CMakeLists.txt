@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+#add_library(tinyply tiny/tinyply.cpp)
+
 # Boost
 find_package(Boost 1.50.0 REQUIRED)
 list(APPEND LIBRARIES ${Boost_LIBRARIES})
@@ -13,6 +15,9 @@ endif(VTK_FOUND)
 list(APPEND LIBRARIES ${VTK_LIBRARIES})
 list(APPEND INCLUDES ${VTK_INCLUDE_DIRS})
 
+
+
+
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 
 # Aboria
@@ -20,6 +25,8 @@ set(Aboria_LOG_LEVEL 1 CACHE STRING "Logging level (1 = least, 3 = most)")
 add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
 list(APPEND INCLUDES Aboria/src)
 list(APPEND INCLUDES Aboria/third-party)
+
+list(APPEND INCLUDES tiny)
 
 # Cytosim
 list(APPEND INCLUDES Cytosim)
@@ -32,6 +39,7 @@ include_directories(src ${INCLUDES})
 file(GLOB all_SRC
     "src/*.cpp"
     "Cytosim/*.cc"
+	"tiny/*.cpp"
 )
 
 #MESSAGE( STATUS ${all_SRC})
