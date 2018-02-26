@@ -23,8 +23,9 @@ class Part_set {
     
     typedef typename particle_type::position position;
 public:
-
     Part_set(Part_set_props*);
+    void create();
+    void create(std::string);
     Part_set_props* prop;
     int num();
     //int PutOnSphere(int,double);
@@ -38,6 +39,7 @@ public:
     void ClearForces();
     int PutOnSphere();
     int PutOnSheet();
+    int load_from_text(std::string);
 private:
     particle_type particles;
     int number;

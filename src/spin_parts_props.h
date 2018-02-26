@@ -1,6 +1,9 @@
 #include <math.h>
 #include <sstream>
 #include "glossary.h"
+#include "Aboria.h"
+using namespace Aboria;
+
 class Part_set_props {
 
     friend class Part_set;
@@ -21,6 +24,7 @@ public:
     double visco,Rvisc;     // viscosity (translational & rotational)
     double L;               // box size
     double Fmax,Fmax2;      // Maximum force
+    vdouble3 corner_0,corner_1; // Corners of box
 
     // @todo ; with keylist
     int init_shape;

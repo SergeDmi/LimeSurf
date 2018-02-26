@@ -1,7 +1,7 @@
 #include <random>
 #include "glossary.h"
-#include "Aboria.h"
-using namespace Aboria;
+//#include "Aboria.h"
+//using namespace Aboria;
 #include <sstream>
 #include "spin_parts_props.h"
 
@@ -20,8 +20,11 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_rep=12.0;
     p_att=6.0;
     visco=1.0;
+    R0=1.0;
     Rvisc=1.0;
-
+    Fmax=DBL_MAX;
+    double box[6];
+    
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
@@ -32,7 +35,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(Rmax, "Rmax");
     
     opt.set(k_att, "attraction",0);
-    opt.set(k_rep, "repulsion");
+    opt.set(k_rep, "repulsion",0);
     opt.set(p_att, "attraction",1);
     opt.set(p_rep, "repulsion",1);
     
@@ -40,21 +43,40 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_align=p_att;
     
     opt.set(k_align, "align",0);
-    opt.set(k_bend, "bending");
+    opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);
     
+    for (int i=0; i<6; ++i) {
+        opt.set(box[i], "box",i);
+    }
+    
+    corner_0=vdouble3(box[0],box[1],box[2]);
+    corner_1=vdouble3(box[3],box[4],box[5]);
 
     // Computing R0
-    R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));
+    if (k_att>0) {
+            R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));
+    }
+    opt.set(R0, "R0");
     minR=0.75*R0;
-    minR2=pow(minR,2.0);
-    Fmax=k_rep*pow(minR,p_rep);
+
+
+
     opt.set(minR, "Rmin");
-    opt.set(L, "box");
+    minR2=pow(minR,2.0);
+    if (k_rep>0) {
+        Fmax=k_rep/pow(minR,p_rep);
+    }
+    Fmax2=Fmax*Fmax;
+    //opt.set(L, "box");
     Rsearch=Rmax;
     opt.set(Rsearch, "Rsearch");
     
-    Fmax2=pow(Fmax,2.0);
     
+    
+
+
+    
+    //std::cout << "# Fmax2=" << Fmax2 << std::endl;
 }
