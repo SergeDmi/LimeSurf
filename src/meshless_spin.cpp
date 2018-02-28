@@ -12,20 +12,22 @@ int main(int argc, char* argv[])
     Meshless_props simul_prop(glos);
     Part_set_props set_prop(glos);
     Part_set set1(&set_prop);
-    
+
     //glos.read_strings(argc-1, argv+1);
     std::cout << "# Created set1" << std::endl;
     if (argc>2) {
-        std::cout << "# +++Created set1" << std::endl;
+        //std::cout << "# +++Created set1" << std::endl;
         std::string fname(argv[2]);
         set1.create(fname);
-        std::cout << "# Created set1--++++++" << std::endl;
+        //set1.GetStarted();
+        //set1.Export_bly(fname);
+        //std::cout << "# Created set1--++++++" << std::endl;
     }
     else
     {
-        std::cout << "# -- Created set1" << std::endl;
+        //std::cout << "# -- Created set1" << std::endl;
         set1.create();
-        std::cout << "# Created set1-----" << std::endl;
+        //std::cout << "# Created set1-----" << std::endl;
     }
 
 
@@ -39,7 +41,7 @@ int main(int argc, char* argv[])
     }
     std::cout << std::endl;
     set1.ComputeForces();
-    //set1.GetNeighbours();
     set1.Export(0);
+    set1.Export_bly(fname);
     return N;
 }
