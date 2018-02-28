@@ -355,7 +355,9 @@ void Part_set::ComputeForcesElastic(){
             
         }
         // Problematic :
-        get<force>(particles[i])+=orsi*(prop->pressure*R2mean)/count;
+        //std::cout << "# elastic force " << get<force>(particles[i]) <<std::endl;
+        get<force>(particles[i])+=(orsi*(prop->pressure*R2mean)/count);
+        //std::cout << "# pressure force " << orsi*(prop->pressure*R2mean)/count <<std::endl;
     }
     //std::cout << "# computed " << count << " neighbours" <<std::endl;
 }

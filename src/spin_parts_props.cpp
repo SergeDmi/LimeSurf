@@ -74,6 +74,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     if (k_rep>0) {
         Fmax=k_rep/pow(minR,p_rep);
     }
+    opt.set(Fmax, "Fmax");
     Fmax2=Fmax*Fmax;
     //opt.set(L, "box");
     opt.set(Rmax, "Rmax");
@@ -83,7 +84,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     
     opt.set(pressure, "pressure");
     // Adimentionalized pressure
-    pressure*=sqrt(3.0)/(2.0*R0*R0);
+    pressure*=sqrt(3.0)/(2.0);
     
-    //std::cout << "# Fmax2=" << Fmax2 << std::endl;
+    std::cout << "# Fmax2=" << Fmax2 << std::endl;
 }

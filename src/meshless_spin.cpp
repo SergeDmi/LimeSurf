@@ -12,12 +12,12 @@ int main(int argc, char* argv[])
     Meshless_props simul_prop(glos);
     Part_set_props set_prop(glos);
     Part_set set1(&set_prop);
-
+    std::string fname="simulate_cell.ply";
     //glos.read_strings(argc-1, argv+1);
     std::cout << "# Created set1" << std::endl;
     if (argc>2) {
         //std::cout << "# +++Created set1" << std::endl;
-        std::string fname(argv[2]);
+        fname=argv[2];
         set1.create(fname);
         //set1.GetStarted();
         //set1.Export_bly(fname);
