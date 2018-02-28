@@ -1,0 +1,26 @@
+%% Simulation set up
+elastic=1
+% box is automatically adjusted if too small
+box=250,200,50,359,650,200
+
+%% Simulation parameters
+Fmax=infinity
+dt=0.02
+Tend=50
+Rmax=7; % Maximum distance between pairs of points.
+
+
+%% Bending helps the normal being updated with time
+% should not be very important
+bending=0.5,5;
+
+
+%% Physical parameters
+R0=3.2          % resting distance between points
+k_elast=5       % elastic potential
+pressure=0.03;  % pressure
+% translation and rotation viscosity
+% not so important, we look for equilibrium shape
+visco=1,1;
+
+
