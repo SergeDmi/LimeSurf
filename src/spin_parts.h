@@ -36,7 +36,9 @@ public:
     void ComputeForces();
     void GetNeighbours();
     void Export(int);
+    void Export_bly(std::string);
     void GetStarted();
+    void CheckBoxSize();
     void ClearForces();
     int PutOnSphere();
     int PutOnSheet();

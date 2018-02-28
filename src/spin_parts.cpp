@@ -18,7 +18,7 @@ Part_set::Part_set(Part_set_props * p) {
     number=0;
     prop=p;
     double L=prop->L;
-    particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
+    //particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
 }
 
 void Part_set::create() {
@@ -45,14 +45,11 @@ void Part_set::create(std::string fname) {
 
 
 int Part_set::load_from_text(std::string fname){
-    //std::string fname;
-    //fname = source;
     std::ifstream ss(fname, std::ios::binary);
     if (ss.fail())
     {
         throw std::runtime_error("failed to open " + fname);
     }
-    
     PlyFile file;
     file.parse_header(ss);
     std::shared_ptr<PlyData> vertices, normals, colors, faces, texcoords;
@@ -73,34 +70,22 @@ int Part_set::load_from_text(std::string fname){
     {
             std::cout << "# \tRead " << vertices->count << " total vertices "<< std::endl;
     }
-    
-    vdouble3 zero(0,0,0);
-    struct float3 { float x, y, z; };
 
+    vdouble3 zero(0,0,0);
+    
+    struct float3 { float x, y, z; };
     std::vector<float3> verts(nv);
     std::vector<float3> norms(normals->count);
     const size_t numVerticesBytes = vertices->buffer.size_bytes();
     const size_t numNormals_Bytes =  normals->buffer.size_bytes();
     std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
     std::memcpy(norms.data(),  normals->buffer.get(), numNormals_Bytes);
-    
-    //std::cout << "compte : " << nv << "numVerticesBytes "  << numVerticesBytes << std::endl;
-    
-    //std::cout << "try : " << vertices->t << std::endl;
-    //if (vertices->t == tinyply::Type::FLOAT32) { std::cout << "FLOAT" << std::endl; }
-    //if (vertices->t == tinyply::Type::FLOAT64) { std::cout << "DOUBLE" << std::endl; }
-    
-    
-    //std::cout << verts[0].y << " " << std::endl;
-    //std::memcpy(norms.data(),  normals->buffer.get(), numNormals_Bytes);
-    
+    //std::cout << "vertex buffer size is " << numVerticesBytes << std::endl ;
     
     for (int i=0; i<nv; ++i) {
         typename particle_type::value_type p;
         vdouble3 pos(verts[i].x,verts[i].y,verts[i].z);
         vdouble3 dir(norms[i].x,norms[i].y,norms[i].z);
-        
-        //std::cout << dir << " " << std::endl;
         
         get<position>(p) = pos;
         get<orientation>(p) = dir;
@@ -108,10 +93,8 @@ int Part_set::load_from_text(std::string fname){
         get<torque>(p) = zero;
         
         particles.push_back(p);
-
+        //std::cout << "part " << i << " position : " << pos << std::endl;
     }
-    
-
     
     return nv;
 }
@@ -160,11 +143,9 @@ int Part_set::PutOnSphere(){
                 break;
             }
         }
-
         get<state>(p) = neighbours;
         particles.push_back(p);
     }
-    
     return i;
 }
 
@@ -205,15 +186,14 @@ int Part_set::PutOnSheet(){
             particles.push_back(p2);
         }
     }
-    
-   
-    //number=count;
     return count;
 }
+    
 
 // Makes sure everything is in place
 void Part_set::GetStarted(){
     double L=prop->L;
+    CheckBoxSize();
     particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
     std::cout << "# initiated neighbour serch xith Rsearch" << prop->Rsearch << std::endl;
     //particles.update_positions();
@@ -225,12 +205,41 @@ void Part_set::GetStarted(){
     //particles.init_id_search();
 }
 
-// Needed when elastic will be implemented
+void Part_set::CheckBoxSize() {
+    vdouble3 bottomleft(INFINITY,INFINITY,INFINITY);
+    vdouble3 topeuright(-INFINITY,-INFINITY,-INFINITY);
+    for (int i = 0; i < number; ++i) {
+        vdouble3 posi=get<position>(particles[i]);
+        for (int ix=0; ix<3; ++ix) {
+            if (posi[ix]<bottomleft[ix]) {
+                bottomleft[ix]=posi[ix];
+                //std::cout << "? : " << posi << std::endl;
+              
+            }
+            else if (posi[ix]>prop->corner_1[ix]) {
+                topeuright[ix]=posi[ix];
+              
+            }
+        }
+    }
+    
+    for (int ix=0; ix<3; ++ix) {
+        double dix=topeuright[ix]-bottomleft[ix];
+        bottomleft[ix]=bottomleft[ix]-0.15*dix;
+        topeuright[ix]=topeuright[ix]+0.15*dix;
+        if (bottomleft[ix]<prop->corner_0[ix]) { prop->corner_0[ix]=bottomleft[ix];}
+        if (topeuright[ix]>prop->corner_1[ix]) { prop->corner_1[ix]=topeuright[ix];}
+    }
+        std::cout << "# bounding box from " << prop->corner_0 << " to " << prop->corner_1 << std::endl;
+}
+
+// Get the closest neighbours
 void Part_set::GetNeighbours() {
     int count=0;
     int ide;
     int n;
     for (int i = 0; i < number; ++i) {
+        //std::cout << "# checking : " << i << std::endl;
         n=0;
         std::vector<int> neis;
         int idi=get<id>(particles[i]);
@@ -250,13 +259,9 @@ void Part_set::GetNeighbours() {
         }
             
     }
-    //std::cout << "# last vec" << std::endl;
-    //for(int k : neis) {
-    //    std::cout << "#              " << k << std::endl;
-    //}
     
     max_neighbours=count;
-    std::cout << "#Maximum neighbours number : " << max_neighbours << std::endl;
+    std::cout << "# Maximum neighbours number : " << max_neighbours << std::endl;
  
 }
 
@@ -315,10 +320,11 @@ void Part_set::ComputeForcesElastic(){
     vdouble3 orsi;
     int idi,idj;
     double k_elast=prop->k_elast;
-    double norm;
+    double norm2;
     vdouble3 dir;
     vdouble3 tri;
     double proj;
+    double p_bend=prop->p_bend/2.0;
     int count;
     for (int i = 0; i < number; ++i) {
         posi=get<position>(particles[i]);
@@ -330,43 +336,26 @@ void Part_set::ComputeForcesElastic(){
         count=0;
         int R2mean=0;
         vdouble3 oldvec(0,0,0);
-        //std::cout << "# neibs=" << neibs << std::endl;
-        //for (int j=0; j<neibs; ++j) {
         //for (std::vector<int>::iterator it=neis.begin(); it!=neis.end(); ++it) {
         //    idj=*it;
         for(int idj : neis) {
-        //for (int bj=0; bj<neibs; ++bj) {
-        //    idj=neis[bj];
             auto j = particles.get_query().find(idj);
-            //auto id_2_ref = *particles.get_query().find(2);
-            //auto id_2_position_reference = *get<position>(id_2);
             vdouble3 posj=*get<position>(j);
-            //vdouble3 orsj=*get<orientation>(idj);
+            vdouble3 orsj=*get<orientation>(j);
             //vdouble3 sumo=orsi+orsj;
             vdouble3 dxij=posj-posi;
-            norm=dxij.norm();
-            dir=dxij*prop->R0/norm;
+            norm2=dxij.squaredNorm();
+            dir=dxij*prop->R0/sqrt(norm2);
             get<force>(particles[i])+=dxij-dir;
+            get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(norm2,p_bend));;
             //get<force>(particles[i])+=dxij-dir;
-            
-            R2mean+=norm*norm;
-            // This is highly suspicious !
-            // We compute the normals from triangles
-            // To update the normal of the point
-            // Is it any good ?
-            if (count>0) {
-                tri=cross(dir,oldvec);
-                proj=orsi.dot(tri);
-                tri*=proj/tri.norm();
-                 // Problematic :
-                get<torque>(particles[i])-=tri;
-            }
-            oldvec=dir;
             count++;
+            R2mean+=norm2;
+            //get<torque>(particles[i])-=tri;
+            
         }
         // Problematic :
-        //get<force>(particles[i])+=orsi*(prop->pressure*R2mean)/count;
-        
+        get<force>(particles[i])+=orsi*(prop->pressure*R2mean)/count;
     }
     //std::cout << "# computed " << count << " neighbours" <<std::endl;
 }
@@ -431,5 +420,75 @@ void Part_set::Export(int t){
         
     }
     exportfile.close();
+}
+
+
+void Part_set::Export_bly(std::string fname){
+    //std::ifstream ss(fname, std::ios::binary);
+    std::string filename;
+    std::filebuf fb;
+    filename="simulated_"+fname;
+    fb.open(filename, std::ios::out | std::ios::binary);
+    std::ostream outputStream(&fb);
+    PlyFile exampleOutFile;
+    vdouble3 orsi;
+    vdouble3 posi;
+   
+    // First we fill in the vertices and normals
+    struct float3 { float x, y, z; };
+    std::vector<float3> verts(number);
+    std::vector<float3> norms(number);
+    for (int idi = 0; idi < number; ++idi) {
+        // We search by ID to make sure no particle reshuffling occured
+        auto i = particles.get_query().find(idi);
+        posi=*get<position>(i);
+        orsi=*get<orientation>(i);
+        //verts[idi]={(float)posi[0],(float)posi[1],(float)posi[2]};
+        verts[idi].x=(float)posi[0];verts[idi].y=(float)posi[1];verts[idi].z=(float)posi[2];
+        norms[idi].x=(float)orsi[0];norms[idi].y=(float)orsi[1];norms[idi].z=(float)orsi[2];
+        //norms[idi]={(float)orsi[0],(float)orsi[1],(float)orsi[2]};
+        //std::cout << " "  << idi << std::flush;
+    }
+    //std::cout << "size of verts "  << verts.size() << std::endl;
+    // Ok now it gets risky ! trying to reconstitute the faces...
+    std::ifstream ss(fname, std::ios::binary);
+    if (ss.fail())
+    {
+        throw std::runtime_error("failed to open " + fname);
+    }
+    PlyFile file;
+    file.parse_header(ss);
+    std::shared_ptr<PlyData> vertices, normals, colors, faces, texcoords;
+    
+    //try { vertices = file.request_properties_from_element("vertex", { "x", "y", "z" }); }
+    //catch (const std::exception & e) { std::cerr << "tinyply exception:aaaa " << e.what() << std::endl; }
+
+    try { faces = file.request_properties_from_element("face", { "vertex_index" }); }
+    catch (const std::exception & e) {std::cerr << "tinyply exception XX: " << e.what() << std::endl;}
+    
+    file.read(ss);
+    const size_t numIndicesBytes = faces->buffer.size_bytes();
+    int nf=faces->count;
+    
+    //if (faces->t == tinyply::Type::INT32) { std::cout << "Seems we are using INT32 and buffer size is " << numIndicesBytes << std::endl ; }
+
+    //struct int3 { int n,a,b,c,d,e,f,g,h,m,o; };
+    struct int3 { int32_t aa,bb,cc; };
+    std::vector<int3> fff(nf);
+    std::memcpy(fff.data(), faces->buffer.get(), numIndicesBytes);
+    //std::cout << "we should get " << nf << " faces" << std::endl;
+    //std::cout << "# Copied buffer " << std::endl;
+    //std::cout << "# Example of face " << fff[0].aa << " " << fff[0].bb << " " << fff[0].cc << " ... looks good ?"<< std::endl;
+    
+    // Let's try writing...
+    exampleOutFile.add_properties_to_element("vertex", { "x", "y", "z" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
+    exampleOutFile.add_properties_to_element("vertex", { "nx", "ny", "nz" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);
+    exampleOutFile.add_properties_to_element("face", { "vertex_index" }, Type::UINT32, 3*fff.size(), reinterpret_cast<uint8_t*>(fff.data()), Type::UINT16, 3);
+
+    exampleOutFile.get_comments().push_back("generated by tinyply");
+    exampleOutFile.write(outputStream, false);
+        
+    fb.close();
+
 }
 

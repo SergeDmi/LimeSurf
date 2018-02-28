@@ -81,7 +81,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(Rsearch, "Rsearch");
     opt.set(Rmax, "Rmax");
     
-    
+    opt.set(pressure, "pressure");
     // Adimentionalized pressure
     pressure*=sqrt(3.0)/(2.0*R0*R0);
     
