@@ -9,14 +9,18 @@ using namespace Aboria;
 
 
 class Part_set {
+    typedef std::pair <int,double> pair_n;
+    typedef std::vector<pair_n> neigh_pairs;
     
     std::vector<int> NEIGHBOURS;
-    ABORIA_VARIABLE(orientation,vdouble3,"orientation")
-    ABORIA_VARIABLE(torque,vdouble3,"orientation")
-    ABORIA_VARIABLE(force ,vdouble3,"orientation")
-    ABORIA_VARIABLE(neighbours,std::vector<int>,"neighbours")
-    ABORIA_VARIABLE(nn,double,"neighbour number")
-    ABORIA_VARIABLE(state,double,"state")
+    ABORIA_VARIABLE(orientation,vdouble3,"orientation");
+    ABORIA_VARIABLE(torque,vdouble3,"orientation");
+    ABORIA_VARIABLE(force ,vdouble3,"orientation");
+    //ABORIA_VARIABLE(neighbours,std::vector<int>,"neighbours");
+    ABORIA_VARIABLE(neighbours,neigh_pairs,"neighbours");
+    //ABORIA_VARIABLE(restings,std::vector<double>,"resting");
+    ABORIA_VARIABLE(nn,double,"neighbour number");
+    ABORIA_VARIABLE(state,double,"state");
     
     typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,state>,3> particle_type;
     //typedef Particles<std::tuple<orientation>,<test>,2> container_type;
