@@ -21,6 +21,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_att=6.0;
     visco=1.0;
     R0=1.0;
+    e=1.0;
     Rvisc=1.0;
     elastic=0;
     Fmax=DBL_MAX;
@@ -48,7 +49,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);
-    
+    opt.set(e, "prestrain");
     opt.set(elastic, "elastic");
     
     for (int i=0; i<6; ++i) {

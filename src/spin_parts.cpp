@@ -91,6 +91,7 @@ int Part_set::load_from_text(std::string fname){
         get<orientation>(p) = dir;
         get<force>(p) = zero;
         get<torque>(p) = zero;
+        //get<restings>(p) = ;
         
         particles.push_back(p);
         //std::cout << "part " << i << " position : " << pos << std::endl;
@@ -238,22 +239,35 @@ void Part_set::GetNeighbours() {
     int count=0;
     int ide;
     int n;
+    vdouble3 dir(0,0,0);
+    vdouble3 pos1(0,0,0);
+    neigh_pairs pairs;
+    //vdouble3 pos2(0,0,0);
     for (int i = 0; i < number; ++i) {
         //std::cout << "# checking : " << i << std::endl;
         n=0;
         std::vector<int> neis;
+        std::vector<double> lens;
+        pos1=get<position>(particles[i]);
         int idi=get<id>(particles[i]);
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
             const typename particle_type::value_type& j = std::get<0>(tpl);
             ide=get<id>(j);
             if (ide!=idi) {
-                    neis.push_back(ide);
+                    dir=get<position>(j)-pos1;
+                    //neis.push_back(ide);
+                    //lens.push_back(sqrt(dir.squaredNorm())/prop->e);
+                    pair_n ppp(ide,sqrt(dir.squaredNorm())/prop->e);
+                    pairs.push_back(ppp);
                     n++;
             }
         }
 
         get<nn>(particles[i])=n;
-        get<neighbours>(particles[i])=neis;
+        //pair_n ppp(neis,lens);
+        get<neighbours>(particles[i])=pairs;
+        //get<neighbours>(particles[i])=neis;
+        //get<restings>(particles[i])=lens;
         if (n>count) {
             count=n;
         }
@@ -331,21 +345,28 @@ void Part_set::ComputeForcesElastic(){
         orsi=get<orientation>(particles[i]);
         idi=get<id>(particles[i]);
         int neibs=get<nn>(particles[i]);
-        std::vector<int> neis=get<neighbours>(particles[i]);
+        //std::vector<int> neis=get<neighbours>(particles[i]);
+        //std::vector<double> lens=get<restings>(particles[i]);
+        neigh_pairs neis;
         std::random_shuffle ( neis.begin(), neis.end() );
         count=0;
         int R2mean=0;
         vdouble3 oldvec(0,0,0);
         //for (std::vector<int>::iterator it=neis.begin(); it!=neis.end(); ++it) {
         //    idj=*it;
-        for(int idj : neis) {
+        for(pair_n jjj : neis) {
+            int idj=jjj.first;
+            double l0=jjj.second;
             auto j = particles.get_query().find(idj);
             vdouble3 posj=*get<position>(j);
             vdouble3 orsj=*get<orientation>(j);
             //vdouble3 sumo=orsi+orsj;
+            
+            // TODO : get second and first element of pair...
+            
             vdouble3 dxij=posj-posi;
             norm2=dxij.squaredNorm();
-            dir=dxij*prop->R0/sqrt(norm2);
+            dir=dxij*l0/sqrt(norm2);
             get<force>(particles[i])+=dxij-dir;
             get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(norm2,p_bend));;
             //get<force>(particles[i])+=dxij-dir;
