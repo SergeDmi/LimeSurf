@@ -60,7 +60,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     corner_0=vdouble3(box[0],box[1],box[2]);
     corner_1=vdouble3(box[3],box[4],box[5]);
     std::cout << "# bounding box from " << corner_0 << " to " << corner_1 << std::endl;
-
+    std::cout << "# prestrain " << e << std::endl;
     // Computing R0
     if (k_att>0) {
             R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));

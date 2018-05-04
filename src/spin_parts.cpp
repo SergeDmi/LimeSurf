@@ -241,13 +241,14 @@ void Part_set::GetNeighbours() {
     int n;
     vdouble3 dir(0,0,0);
     vdouble3 pos1(0,0,0);
-    neigh_pairs pairs;
+    
     //vdouble3 pos2(0,0,0);
     for (int i = 0; i < number; ++i) {
         //std::cout << "# checking : " << i << std::endl;
         n=0;
-        std::vector<int> neis;
-        std::vector<double> lens;
+        neigh_pairs pairs;
+        //std::vector<int> neis;
+        //std::vector<double> lens;
         pos1=get<position>(particles[i]);
         int idi=get<id>(particles[i]);
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
@@ -258,6 +259,7 @@ void Part_set::GetNeighbours() {
                     //neis.push_back(ide);
                     //lens.push_back(sqrt(dir.squaredNorm())/prop->e);
                     pair_n ppp(ide,sqrt(dir.squaredNorm())/prop->e);
+                    //std::cout << "# interacts with  " << ppp.first << " with length " << ppp.second << " (was : " << sqrt(dir.squaredNorm()) << ")" << std::endl;
                     pairs.push_back(ppp);
                     n++;
             }
@@ -340,14 +342,17 @@ void Part_set::ComputeForcesElastic(){
     double proj;
     double p_bend=prop->p_bend/2.0;
     int count;
+    
     for (int i = 0; i < number; ++i) {
+        //std::cout << "# elastic pot " << k_elast << std::endl;
+        
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
         idi=get<id>(particles[i]);
         int neibs=get<nn>(particles[i]);
         //std::vector<int> neis=get<neighbours>(particles[i]);
         //std::vector<double> lens=get<restings>(particles[i]);
-        neigh_pairs neis;
+        neigh_pairs neis=get<neighbours>(particles[i]);
         std::random_shuffle ( neis.begin(), neis.end() );
         count=0;
         int R2mean=0;
@@ -357,6 +362,7 @@ void Part_set::ComputeForcesElastic(){
         for(pair_n jjj : neis) {
             int idj=jjj.first;
             double l0=jjj.second;
+            //std::cout << "# resting length " << l0 << std::endl;
             auto j = particles.get_query().find(idj);
             vdouble3 posj=*get<position>(j);
             vdouble3 orsj=*get<orientation>(j);
@@ -367,7 +373,7 @@ void Part_set::ComputeForcesElastic(){
             vdouble3 dxij=posj-posi;
             norm2=dxij.squaredNorm();
             dir=dxij*l0/sqrt(norm2);
-            get<force>(particles[i])+=dxij-dir;
+            get<force>(particles[i])+=k_elast*(dxij-dir);
             get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(norm2,p_bend));;
             //get<force>(particles[i])+=dxij-dir;
             count++;
