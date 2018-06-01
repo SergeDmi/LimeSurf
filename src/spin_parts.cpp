@@ -6,6 +6,7 @@ using namespace Aboria;
 #include "spin_parts.h"
 #include <iostream>
 #include "assert_macro.h"
+#include <limits>
 //using namespace tinyply;
 #include "tinyply.h"
 using namespace tinyply;
@@ -237,6 +238,7 @@ void Part_set::CheckBoxSize() {
 // Get the closest neighbours
 void Part_set::GetNeighbours() {
     int count=0;
+    int tnuoc=666;
     int ide;
     int n;
     vdouble3 dir(0,0,0);
@@ -265,21 +267,46 @@ void Part_set::GetNeighbours() {
             }
         }
 
+        while (n>prop->max_neighbours) {
+            n=pop_furthest_neighbour(&pairs,n);
+        }
         get<nn>(particles[i])=n;
         //pair_n ppp(neis,lens);
         get<neighbours>(particles[i])=pairs;
-        //get<neighbours>(particles[i])=neis;
-        //get<restings>(particles[i])=lens;
+        
         if (n>count) {
             count=n;
+        }
+        if (n<tnuoc) {
+            tnuoc=n;
         }
             
     }
     
     max_neighbours=count;
-    std::cout << "# Maximum neighbours number : " << max_neighbours << std::endl;
- 
+    std::cout << "# Maximum neighbours number : " << count << std::endl;
+    std::cout << "# Minimum neighbours number : " << tnuoc << std::endl;
 }
+
+
+int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
+    double dist=0;
+    // ppp;
+    int ex=-1;
+    for (int i=0;i<n;++i)
+    {
+        pair_n ppp=pairs->at(i);
+        if (ppp.second>dist) {
+            dist=ppp.second;
+            ex=i;
+        }
+    }
+    pairs->erase(pairs->begin()+ex);
+    
+    return n-1;
+    
+}
+
 
 // One simulation step
 void Part_set::NextStep(const Meshless_props* simul_prop){

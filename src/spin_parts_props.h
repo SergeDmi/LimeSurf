@@ -7,7 +7,7 @@ using namespace Aboria;
 class Part_set_props {
 
     friend class Part_set;
-    
+    friend class Elastic_part_set;
     
 public:
     Part_set_props(const Glossary);
@@ -26,7 +26,8 @@ public:
     double e;               // strain 
     double Fmax,Fmax2;      // Maximum force
     vdouble3 corner_0,corner_1; // Corners of box
-
+    int max_neighbours;
+    
     // @todo ; with keylist
     int init_shape;
     int init_number;

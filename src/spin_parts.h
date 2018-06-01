@@ -33,8 +33,10 @@ public:
     Part_set_props* prop;
     int num();
     //int PutOnSphere(int,double);
-    void NextStep(const Meshless_props*);
+    virtual void NextStep(const Meshless_props*);
     void IntegrateForces(const Meshless_props*);
+    int identify_furthest_neighbour(neigh_pairs,int );
+    int pop_furthest_neighbour(neigh_pairs*,int );
     void ComputeForcesViscous();
     void ComputeForcesElastic();
     void ComputeForces();
@@ -48,7 +50,7 @@ public:
     int PutOnSheet();
     int load_from_text(std::string);
     int max_neighbours;
-private:
+protected:
     particle_type particles;
     int number;
 

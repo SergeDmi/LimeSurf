@@ -26,6 +26,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     elastic=0;
     Fmax=DBL_MAX;
     pressure=0;
+    max_neighbours=9;
     double box[6];
     
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
@@ -35,8 +36,9 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(visco, "visco",0);
     opt.set(Rvisc, "visco",1);
     opt.set(Rvisc, "Rvisco");
-
+    opt.set(max_neighbours,"max_neighbours");
     
+   
     opt.set(k_att, "attraction",0);
     opt.set(k_rep, "repulsion",0);
     opt.set(p_att, "attraction",1);
