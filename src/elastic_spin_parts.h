@@ -19,13 +19,21 @@ using namespace Aboria;
 //#include <math.h>
 
 
-
 class Elastic_part_set : public Part_set
 {
+    typedef std::tuple <int,int,double> link;
+    typedef std::vector<link> spring_set;
+    //typedef std::vector<triang> faces;
+ //friend class Part_Set;
     public:
     Elastic_part_set(Part_set_props *);
     Part_set_props *prop; 
     void NextStep(const Meshless_props*);
+    void GetNeighbours();
+    void GetStarted();
+    void ComputeForces();
+    spring_set springs;
+    
 };
 
 
