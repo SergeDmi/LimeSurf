@@ -5,10 +5,12 @@ using namespace Aboria;
 #include "meshless_spin_props.h"
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
+//#include "elastic_spin_parts.h"
 #define MAXNEIGHBOURS 30
 
 
 class Part_set {
+    friend class Elastic_part_set;
     typedef std::pair <int,double> pair_n;
     typedef std::vector<pair_n> neigh_pairs;
     
@@ -19,14 +21,22 @@ class Part_set {
     //ABORIA_VARIABLE(neighbours,std::vector<int>,"neighbours");
     ABORIA_VARIABLE(neighbours,neigh_pairs,"neighbours");
     //ABORIA_VARIABLE(restings,std::vector<double>,"resting");
-    ABORIA_VARIABLE(nn,double,"neighbour number");
+    ABORIA_VARIABLE(nn,int,"neighbour number");
     ABORIA_VARIABLE(state,double,"state");
+    ABORIA_VARIABLE(nface ,int,"face number");
     
-    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,state>,3> particle_type;
+    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state>,3> particle_type;
     //typedef Particles<std::tuple<orientation>,<test>,2> container_type;
     
     typedef typename particle_type::position position;
+    
+    
+    typedef struct  {int x,y,z ;} face;
+    typedef std::vector<face> face_list;
+
 public:
+    face_list triangles;
+    int n_faces;
     Part_set(Part_set_props*);
     void create();
     void create(std::string);
@@ -37,19 +47,21 @@ public:
     void IntegrateForces(const Meshless_props*);
     int identify_furthest_neighbour(neigh_pairs,int );
     int pop_furthest_neighbour(neigh_pairs*,int );
-    void ComputeForcesViscous();
-    void ComputeForcesElastic();
-    void ComputeForces();
-    void GetNeighbours();
+    //void ComputeForcesViscous();
+    //void ComputeForcesElastic();
+    virtual void ComputeForces();
+    virtual void GetNeighbours();
     void Export(int);
     void Export_bly(std::string);
-    void GetStarted();
+    virtual void GetStarted();
     void CheckBoxSize();
+    void CheckPartSet();
     void ClearForces();
     int PutOnSphere();
     int PutOnSheet();
     int load_from_text(std::string);
     int max_neighbours;
+    void RenormNorms();
 protected:
     particle_type particles;
     int number;

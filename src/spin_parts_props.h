@@ -24,6 +24,7 @@ public:
     double visco,Rvisc;     // viscosity (translational & rotational)
     double L;               // box size
     double e;               // strain 
+    double renorm_rate;     // rate at which normals are normalized can be quite low
     double Fmax,Fmax2;      // Maximum force
     vdouble3 corner_0,corner_1; // Corners of box
     int max_neighbours;

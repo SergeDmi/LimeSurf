@@ -27,6 +27,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     Fmax=DBL_MAX;
     pressure=0;
     max_neighbours=9;
+    renorm_rate=0.001;
     double box[6];
     
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));

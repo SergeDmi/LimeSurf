@@ -61,8 +61,12 @@ int Part_set::load_from_text(std::string fname){
     try { normals = file.request_properties_from_element("vertex", { "nx", "ny", "nz" }); }
     catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
     
+    try { faces = file.request_properties_from_element("face", { "vertex_index" }); }
+    catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
+    
     file.read(ss);
     int nv=vertices->count;
+    int nf=faces->count;
     
     if (normals->count != nv) {
         std::cerr << " Error : number of vertices and normals should be the same" << std::endl;
@@ -77,11 +81,17 @@ int Part_set::load_from_text(std::string fname){
     struct float3 { float x, y, z; };
     std::vector<float3> verts(nv);
     std::vector<float3> norms(normals->count);
+    
+    const size_t numFacesBytes = faces->buffer.size_bytes();
+    face_list tris(nf);
+    std::memcpy(tris.data(), faces->buffer.get(), numFacesBytes);
+    triangles=tris;
+    
     const size_t numVerticesBytes = vertices->buffer.size_bytes();
     const size_t numNormals_Bytes =  normals->buffer.size_bytes();
     std::memcpy(verts.data(), vertices->buffer.get(), numVerticesBytes);
     std::memcpy(norms.data(),  normals->buffer.get(), numNormals_Bytes);
-    //std::cout << "vertex buffer size is " << numVerticesBytes << std::endl ;
+    
     
     for (int i=0; i<nv; ++i) {
         typename particle_type::value_type p;
@@ -92,11 +102,12 @@ int Part_set::load_from_text(std::string fname){
         get<orientation>(p) = dir;
         get<force>(p) = zero;
         get<torque>(p) = zero;
-        //get<restings>(p) = ;
         
         particles.push_back(p);
-        //std::cout << "part " << i << " position : " << pos << std::endl;
+        
     }
+    
+    n_faces=nf;
     
     return nv;
 }
@@ -284,10 +295,28 @@ void Part_set::GetNeighbours() {
     }
     
     max_neighbours=count;
+  
+}
+
+
+void Part_set::CheckPartSet() {
+    // we should check we got a decent part set after loading from text
+    int count=0;
+    int tnuoc=666;
+    for (int i = 0; i < number; ++i) {
+        neigh_pairs pairs=get<neighbours>(particles[i]);
+        int n=static_cast<int>(pairs.size());
+        
+        if (n>count) {
+            count=n;
+        }
+        if (n<tnuoc) {
+            tnuoc=n;
+        }
+    }
     std::cout << "# Maximum neighbours number : " << count << std::endl;
     std::cout << "# Minimum neighbours number : " << tnuoc << std::endl;
 }
-
 
 int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
     double dist=0;
@@ -318,15 +347,6 @@ void Part_set::NextStep(const Meshless_props* simul_prop){
     ClearForces();
 }
 
-void Part_set::ComputeForces(){
-    if (prop->elastic) {
-        ComputeForcesElastic();
-    }
-    else
-    {
-        ComputeForcesViscous();
-    }
-}
 
 // Erazing forces
 void Part_set::ClearForces() {
@@ -357,69 +377,18 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
     
 }
 
-
-void Part_set::ComputeForcesElastic(){
-    vdouble3 posi;
-    vdouble3 orsi;
-    int idi,idj;
-    double k_elast=prop->k_elast;
-    double norm2;
-    vdouble3 dir;
-    vdouble3 tri;
-    double proj;
-    double p_bend=prop->p_bend/2.0;
-    int count;
-    
+void Part_set::RenormNorms(){
+    vdouble3 normi;
     for (int i = 0; i < number; ++i) {
-        //std::cout << "# elastic pot " << k_elast << std::endl;
-        
-        posi=get<position>(particles[i]);
-        orsi=get<orientation>(particles[i]);
-        idi=get<id>(particles[i]);
-        int neibs=get<nn>(particles[i]);
-        //std::vector<int> neis=get<neighbours>(particles[i]);
-        //std::vector<double> lens=get<restings>(particles[i]);
-        neigh_pairs neis=get<neighbours>(particles[i]);
-        std::random_shuffle ( neis.begin(), neis.end() );
-        count=0;
-        int R2mean=0;
-        vdouble3 oldvec(0,0,0);
-        //for (std::vector<int>::iterator it=neis.begin(); it!=neis.end(); ++it) {
-        //    idj=*it;
-        for(pair_n jjj : neis) {
-            int idj=jjj.first;
-            double l0=jjj.second;
-            //std::cout << "# resting length " << l0 << std::endl;
-            auto j = particles.get_query().find(idj);
-            vdouble3 posj=*get<position>(j);
-            vdouble3 orsj=*get<orientation>(j);
-            //vdouble3 sumo=orsi+orsj;
-            
-            // TODO : get second and first element of pair...
-            
-            vdouble3 dxij=posj-posi;
-            norm2=dxij.squaredNorm();
-            dir=dxij*l0/sqrt(norm2);
-            get<force>(particles[i])+=k_elast*(dxij-dir);
-            get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(norm2,p_bend));;
-            //get<force>(particles[i])+=dxij-dir;
-            count++;
-            R2mean+=norm2;
-            //get<torque>(particles[i])-=tri;
-            
-        }
-        // Problematic :
-        //std::cout << "# elastic force " << get<force>(particles[i]) <<std::endl;
-        get<force>(particles[i])+=(orsi*(prop->pressure*R2mean)/count);
-        //std::cout << "# pressure force " << orsi*(prop->pressure*R2mean)/count <<std::endl;
+        normi=get<orientation>(particles[i]);
+        get<orientation>(particles[i])/=sqrt(normi.squaredNorm());
     }
-    //std::cout << "# computed " << count << " neighbours" <<std::endl;
 }
 
 
 
 // Computing forces with viscous setting (i.e. changeable nearest neighbours)
-void Part_set::ComputeForcesViscous(){
+void Part_set::ComputeForces(){
     vdouble3 posi;
     vdouble3 orsi;
     int idi,idj;
@@ -457,7 +426,7 @@ void Part_set::ComputeForcesViscous(){
         }
         
         get<nn>(particles[i])=neibs;
-        //std::cout << "# neibs=" << neibs << std::endl;
+        std::cout << "# neibs=" << neibs << std::endl;
     }
 }
 
@@ -507,6 +476,7 @@ void Part_set::Export_bly(std::string fname){
     }
     //std::cout << "size of verts "  << verts.size() << std::endl;
     // Ok now it gets risky ! trying to reconstitute the faces...
+    /*
     std::ifstream ss(fname, std::ios::binary);
     if (ss.fail())
     {
@@ -525,13 +495,13 @@ void Part_set::Export_bly(std::string fname){
     file.read(ss);
     const size_t numIndicesBytes = faces->buffer.size_bytes();
     int nf=faces->count;
-    
+    */
     //if (faces->t == tinyply::Type::INT32) { std::cout << "Seems we are using INT32 and buffer size is " << numIndicesBytes << std::endl ; }
 
     //struct int3 { int n,a,b,c,d,e,f,g,h,m,o; };
-    struct int3 { int32_t aa,bb,cc; };
-    std::vector<int3> fff(nf);
-    std::memcpy(fff.data(), faces->buffer.get(), numIndicesBytes);
+    //struct int3 { int32_t aa,bb,cc; };
+    //std::vector<int3> fff(nf);
+    //std::memcpy(fff.data(), faces->buffer.get(), numIndicesBytes);
     //std::cout << "we should get " << nf << " faces" << std::endl;
     //std::cout << "# Copied buffer " << std::endl;
     //std::cout << "# Example of face " << fff[0].aa << " " << fff[0].bb << " " << fff[0].cc << " ... looks good ?"<< std::endl;
@@ -539,7 +509,7 @@ void Part_set::Export_bly(std::string fname){
     // Let's try writing...
     exampleOutFile.add_properties_to_element("vertex", { "x", "y", "z" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
     exampleOutFile.add_properties_to_element("vertex", { "nx", "ny", "nz" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);
-    exampleOutFile.add_properties_to_element("face", { "vertex_index" }, Type::UINT32, 3*fff.size(), reinterpret_cast<uint8_t*>(fff.data()), Type::UINT16, 3);
+    exampleOutFile.add_properties_to_element("face", { "vertex_index" }, Type::UINT32, 3*triangles.size(), reinterpret_cast<uint8_t*>(triangles.data()), Type::UINT16, 3);
 
     exampleOutFile.get_comments().push_back("generated by tinyply");
     exampleOutFile.write(outputStream, false);
