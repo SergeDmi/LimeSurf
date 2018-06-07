@@ -5,14 +5,14 @@ box=250,200,50,359,650,200
 
 %% Simulation parameters
 Fmax=infinity
-dt=0.001
-Tend=0.01
+dt=0.01
+Tend=5
 Rmax=7; % Maximum distance between pairs of points.
 
 
 %% Bending helps the normal being updated with time
 % should not be very important
-bending=0.5,5;
+bending=1,5;
 
 
 %% Physical parameters
