@@ -35,8 +35,8 @@ int main(int argc, char* argv[])
 
     set2.GetStarted();
     double t=0;
-    while (t<simul_prop.Tend) {
-        std::cout << "#"  << std::flush;
+    while (t<simul_prop.Tend && !set2.diverging) {
+        //std::cout << "#"  << std::flush;
         t+=simul_prop.dt;
         set2.NextStep(&simul_prop);
         

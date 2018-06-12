@@ -62,6 +62,7 @@ public:
     int load_from_text(std::string);
     int max_neighbours;
     void RenormNorms();
+    bool diverging;
 protected:
     particle_type particles;
     int number;

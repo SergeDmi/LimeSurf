@@ -81,7 +81,10 @@ void Elastic_part_set::ComputeForces(){
        get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
        get<force>(particles[j])+=-k_elast*dir*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
-
+       if (std::isnan(norm2)) {
+           std::cerr << "Diverging system " << std::endl;
+           diverging=true;
+       }
     }
     //std::cout << "# computed " << count << " neighbours" <<std::endl;
 }
@@ -170,68 +173,3 @@ void Elastic_part_set::GetNeighbours() {
     }
   
 }
-
-
-/*
- 
-void Elastic_part_set::ComputeForces(){
-    vdouble3 posi;
-    vdouble3 orsi;
-    int idi,idj;
-    double k_elast=prop->k_elast;
-    double norm2;
-    vdouble3 dir;
-    vdouble3 tri;
-    double proj;
-    double p_bend=prop->p_bend/2.0;
-    int count;
-    double align=prop->k_align*2.0;
-    
-    for (int i = 0; i < number; ++i) {
-        //std::cout << "# elastic pot " << k_elast << std::endl;
-        
-        posi=get<position>(particles[i]);
-        orsi=get<orientation>(particles[i]);
-        idi=get<id>(particles[i]);
-        int neibs=get<nn>(particles[i]);
-        //std::vector<int> neis=get<neighbours>(particles[i]);
-        //std::vector<double> lens=get<restings>(particles[i]);
-        neigh_pairs neis=get<neighbours>(particles[i]);
-        std::random_shuffle ( neis.begin(), neis.end() );
-        count=0;
-        int R2mean=0;
-        vdouble3 oldvec(0,0,0);
-        //for (std::vector<int>::iterator it=neis.begin(); it!=neis.end(); ++it) {
-        //    idj=*it;
-        for(pair_n jjj : neis) {
-            int idj=jjj.first;
-            double l0=jjj.second;
-            //std::cout << "# resting length " << l0 << std::endl;
-            auto j = particles.get_query().find(idj);
-            vdouble3 posj=*get<position>(j);
-            vdouble3 orsj=*get<orientation>(j);
-            //vdouble3 sumo=orsi+orsj;
-            
-            vdouble3 dxij=posj-posi;
-            norm2=dxij.squaredNorm();
-            // We need to make it superlinear
-            dir=dxij/sqrt(norm2);
-            //get<force>(particles[i])+=k_elast*(dxij-l0*dir);
-            get<force>(particles[i])+=k_elast*dir*(norm2-l0*l0);
-            get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
-            //get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj)/(pow(norm2,p_bend));;
-            //get<torque>(particles[i])-=(prop->k_bend)*cross(orsi,orsj);
-            //get<force>(particles[i])+=dxij-dir;
-            count++;
-            R2mean+=norm2;
-            //get<torque>(particles[i])-=tri;
-            
-        }
-        // Problematic :
-        //std::cout << "# elastic force " << get<force>(particles[i]) <<std::endl;
-        get<force>(particles[i])+=(orsi*(prop->pressure*R2mean)/count);
-        //std::cout << "# pressure force " << orsi*(prop->pressure*R2mean)/count <<std::endl;
-    }
-    //std::cout << "# computed " << count << " neighbours" <<std::endl;
-}
- */

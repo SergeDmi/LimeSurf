@@ -19,6 +19,7 @@ Part_set::Part_set(Part_set_props * p) {
     number=0;
     prop=p;
     double L=prop->L;
+    diverging=false;
     //particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
 }
 

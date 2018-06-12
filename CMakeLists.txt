@@ -15,11 +15,10 @@ endif(VTK_FOUND)
 list(APPEND LIBRARIES ${VTK_LIBRARIES})
 list(APPEND INCLUDES ${VTK_INCLUDE_DIRS})
 
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-O3")
 
-
-
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 # Aboria
 set(Aboria_LOG_LEVEL 1 CACHE STRING "Logging level (1 = least, 3 = most)")
 add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
