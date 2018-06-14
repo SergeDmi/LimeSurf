@@ -69,22 +69,23 @@ void Elastic_part_set::ComputeForces(){
         nj=get<nn>(particles[j]);
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
-         posj=get<position>(particles[j]);
+        posj=get<position>(particles[j]);
         orsj=get<orientation>(particles[j]);
 
-        dxij=posj-posi;
+       dxij=posj-posi;
        norm2=dxij.squaredNorm();
-       // We need to make it superlinear
        dir=dxij/sqrt(norm2);
        //get<force>(particles[i])+=k_elast*(dxij-l0*dir);
-       get<force>(particles[i])+=k_elast*dir*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
+       //get<force>(particles[i])+=k_elast*dir*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
+       get<force>(particles[i])+=k_elast*dxij*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
        get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
-       get<force>(particles[j])+=-k_elast*dir*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
+       //get<force>(particles[j])+=-k_elast*dir*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
+       get<force>(particles[j])+=-k_elast*dxij*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
-       if (std::isnan(norm2)) {
-           std::cerr << "Diverging system " << std::endl;
-           diverging=true;
-       }
+    }
+    if (std::isnan(norm2)) {
+        std::cerr << "Diverging system " << std::endl;
+        diverging=true;
     }
     //std::cout << "# computed " << count << " neighbours" <<std::endl;
 }

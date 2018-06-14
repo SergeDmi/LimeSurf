@@ -48,6 +48,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_bend=p_att;
     p_align=p_att;
     
+     opt.set(k_align, "align",0);
     opt.set(k_align, "align",0);
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
@@ -73,6 +74,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     Rmax=2.0*R0;
 
     k_elast=1.0;
+     opt.set(k_elast, "k_elast");
     opt.set(minR, "Rmin");
     minR2=pow(minR,2.0);
     if (k_rep>0) {

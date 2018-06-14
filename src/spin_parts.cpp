@@ -367,10 +367,10 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
         // Upper threshold for forces
         //      Ugly but needed if no minimum distance
         forcei=get<force>(particles[i]);
-        if (forcei.squaredNorm()>prop->Fmax2) {
-            forcei=forcei*((prop->Fmax)/forcei.norm());
+        //if (forcei.squaredNorm()>prop->Fmax2) {
+        //    forcei=forcei*((prop->Fmax)/forcei.norm());
             //std::cout << "# warning : over the top ; now : " << forcei << std::endl;
-        }
+        //}
         get<position>(particles[i])+=((forcei)*(dt/prop->visco));
         //std::cout << "# checking forcei : " << forcei << std::endl;
         get<orientation>(particles[i])+=cross(get<orientation>(particles[i]),get<torque>(particles[i]))*(dt/prop->Rvisc);
@@ -440,9 +440,12 @@ void Part_set::Export(int t){
     ofstream exportfile;
     exportfile.open ("particles_out.txt");
     //myfile << "Writing this to a file.\n";
-    exportfile << "# X  Y   Z   Fx  Fy  Fz Nneigh ID \n";
+    exportfile << "# X  Y Z   Nx  Ny  Nz Fx Fy Fz Nneigh ID \n";
     for (int i = 0; i < number; ++i) {
-        exportfile <<" "<< get<position>(particles[i])[0] <<" "<< get<position>(particles[i])[1] << " "<< get<position>(particles[i])[2] << " " << get<orientation>(particles[i])[0] << " " << get<orientation>(particles[i])[1] << " " << get<orientation>(particles[i])[2] <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<< " \n";
+        exportfile <<" "<< get<position>(particles[i])[0] <<" "<< get<position>(particles[i])[1] << " "<< get<position>(particles[i])[2];
+        exportfile<< " " << get<orientation>(particles[i])[0] << " " << get<orientation>(particles[i])[1] << " " << get<orientation>(particles[i])[2];
+        exportfile<< " " << get<force>(particles[i])[0] << " " << get<force>(particles[i])[1] << " " << get<force>(particles[i])[2];
+        exportfile <<" "<< get<nn>(particles[i])<<" " << get<id>(particles[i])<< " \n";
         
     }
     exportfile.close();

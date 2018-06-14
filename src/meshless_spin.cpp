@@ -14,13 +14,14 @@ int main(int argc, char* argv[])
     Part_set_props set_prop(glos);
     Part_set set1(&set_prop);
     Elastic_part_set set2(&set_prop);
-    std::string fname="simulate_cell.ply";
+    std::string fname_in="cell.ply";
+    std::string fname_out="simulated_cell.ply";
     //glos.read_strings(argc-1, argv+1);
     std::cout << "# Created set1" << std::endl;
     if (argc>2) {
         //std::cout << "# +++Created set1" << std::endl;
-        fname=argv[2];
-        set2.create(fname);
+        fname_in=argv[2];
+        set2.create(fname_in);
         //set1.GetStarted();
         //set1.Export_bly(fname);
         //std::cout << "# Created set1--++++++" << std::endl;
@@ -44,6 +45,6 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
     set2.ComputeForces();
     set2.Export(0);
-    set2.Export_bly(fname);
-    return N;
+    set2.Export_bly(fname_out);
+    return (int)set2.diverging;
 }
