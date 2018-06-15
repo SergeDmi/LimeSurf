@@ -48,7 +48,7 @@ void Elastic_part_set::ComputeForces(){
     vdouble3 orsi,orsj;
     vdouble3 dxij;
     int ni,nj;
-    double k_elast=prop->k_elast;
+    //double k_elast=prop->k_elast;
     double norm2;
     vdouble3 dir;
     vdouble3 tri;
@@ -57,13 +57,15 @@ void Elastic_part_set::ComputeForces(){
     int count;
     double align=prop->k_align*2.0;
     int i,j;
-    double l0;
+    double l0,k0;
     //for (int i = 0; i < number; ++i) {
         //std::cout << "# elastic pot " << k_elast << std::endl;
     for(auto const& linker: springs) {
         i=get<0>(linker);
         j=get<1>(linker);
-        l0=get<2>(linker);
+        k0=get<2>(linker);
+        l0=get<3>(linker);
+        
 
         ni=get<nn>(particles[i]);
         nj=get<nn>(particles[j]);
@@ -77,10 +79,10 @@ void Elastic_part_set::ComputeForces(){
        dir=dxij/sqrt(norm2);
        //get<force>(particles[i])+=k_elast*(dxij-l0*dir);
        //get<force>(particles[i])+=k_elast*dir*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
-       get<force>(particles[i])+=k_elast*dxij*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
+       get<force>(particles[i])+=k0*dxij*(norm2-l0*l0)+(orsi*(prop->pressure*norm2)/ni);
        get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
        //get<force>(particles[j])+=-k_elast*dir*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
-       get<force>(particles[j])+=-k_elast*dxij*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
+       get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+(orsj*(prop->pressure*norm2)/nj);
        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
     }
     if (std::isnan(norm2)) {
@@ -125,6 +127,7 @@ void Elastic_part_set::GetNeighbours() {
     
     
     for (int i = 0; i < n_faces; ++i) {
+        double k_elast=prop->k_elast;
         //std::cout<< " new face with " << triangles[i].x << " " << triangles[i].y << " " << triangles[i].z << std::endl;
         for (int j=0;j<3;++j) {
             switch (j) {
@@ -164,7 +167,8 @@ void Elastic_part_set::GetNeighbours() {
                 sj=static_cast<int>(pairs_j.size());
                 get<nn>(particles[ix])=si;
                 get<nn>(particles[jx])=sj;
-                link linker{ix,jx,dist};
+                double k0=k_elast/(dist*dist);
+                link linker{ix,jx,k0,dist};
                 //get<0>(linker)=ix;get<1>(linker)=jx;get<2>(linker)=dist;
                 springs.push_back(linker);
             }

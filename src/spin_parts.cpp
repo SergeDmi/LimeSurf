@@ -452,11 +452,16 @@ void Part_set::Export(int t){
 }
 
 
-void Part_set::Export_bly(std::string fname){
+void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* simul_prop){
     //std::ifstream ss(fname, std::ios::binary);
     std::string filename;
     std::filebuf fb;
-    filename="simulated_"+fname;
+    std::string numero(std::to_string(n_frame));
+    std::string uno(std::to_string(simul_prop->n_frames));
+    while (numero.length()<uno.length()) {
+        numero="0"+numero;
+    }
+    filename=fname+"_"+numero+".ply";
     fb.open(filename, std::ios::out | std::ios::binary);
     std::ostream outputStream(&fb);
     PlyFile exampleOutFile;

@@ -9,4 +9,6 @@ public:
 
     double dt;
     double Tend;
+    double  dt_frames;
+    int n_frames;
 };

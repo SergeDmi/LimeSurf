@@ -21,7 +21,8 @@ using namespace Aboria;
 
 class Elastic_part_set : public Part_set
 {
-    typedef std::tuple <int,int,double> link;
+    // Link between two points (int,int) with a stifness and resting length (double double)
+    typedef std::tuple <int,int,double,double> link;
     typedef std::vector<link> spring_set;
     //typedef std::vector<triang> faces;
  //friend class Part_Set;

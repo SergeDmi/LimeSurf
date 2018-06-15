@@ -52,7 +52,7 @@ public:
     virtual void ComputeForces();
     virtual void GetNeighbours();
     void Export(int);
-    void Export_bly(std::string);
+    void Export_bly(std::string,int,const Meshless_props* );
     virtual void GetStarted();
     void CheckBoxSize();
     void CheckPartSet();
