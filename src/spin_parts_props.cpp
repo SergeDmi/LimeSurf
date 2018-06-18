@@ -7,29 +7,46 @@
 
 
 Part_set_props::Part_set_props(const Glossary opt) {
+    
+    // Shape to be created
     init_shape=0;
     init_number=100;
     init_radius=50;
+    
+    // kind of set
+    elastic=0;
+    
+    // Distance between particles & box size
+    // @TODO : this needs a serous cleanup
     Rmax=3;
     minR=0.5;
     L=200.0;
+    
+    // Physical parameters
+    // For any set :
     k_align=1.0;
+    k_bend=1.0;
+    visco=1.0;
+    Rvisc=1.0;
+    e=1.0;
+    pressure=0;
+    
+    // For viscous sets
     k_att=2.0;
     k_rep=1.0;
-    k_bend=1.0;
     p_rep=12.0;
     p_att=6.0;
-    visco=1.0;
     R0=1.0;
-    e=1.0;
-    Rvisc=1.0;
-    elastic=0;
     Fmax=DBL_MAX;
-    pressure=0;
+    
+    // For elastic sets :
     max_neighbours=9;
+    
+    // Misc parameters
     renorm_rate=0.001;
     double box[6];
     
+    // reading these parameters from the config file !
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
@@ -48,7 +65,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_bend=p_att;
     p_align=p_att;
     
-     opt.set(k_align, "align",0);
+    opt.set(k_align, "align",0);
     opt.set(k_align, "align",0);
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
@@ -63,8 +80,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
 
     corner_0=vdouble3(box[0],box[1],box[2]);
     corner_1=vdouble3(box[3],box[4],box[5]);
-    std::cout << "# bounding box from " << corner_0 << " to " << corner_1 << std::endl;
-    std::cout << "# prestrain " << e << std::endl;
+    
     // Computing R0
     if (k_att>0) {
             R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));
@@ -74,7 +90,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     Rmax=2.0*R0;
 
     k_elast=1.0;
-     opt.set(k_elast, "k_elast");
+    opt.set(k_elast, "k_elast");
     opt.set(minR, "Rmin");
     minR2=pow(minR,2.0);
     if (k_rep>0) {
@@ -82,15 +98,13 @@ Part_set_props::Part_set_props(const Glossary opt) {
     }
     opt.set(Fmax, "Fmax");
     Fmax2=Fmax*Fmax;
-    //opt.set(L, "box");
+    
     opt.set(Rmax, "Rmax");
     Rsearch=Rmax;
     opt.set(Rsearch, "Rsearch");
     opt.set(Rmax, "Rmax");
     
     opt.set(pressure, "pressure");
-    // Adimentionalized pressure
-    pressure*=sqrt(3.0)/(2.0);
     
     std::cout << "# Fmax2=" << Fmax2 << std::endl;
 }

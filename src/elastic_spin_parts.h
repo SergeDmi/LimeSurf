@@ -14,26 +14,37 @@
 #include "Aboria.h"
 using namespace Aboria;
 #include "spin_parts.h"
-//#include "meshless_spin_props.h"
-//#include <boost/math/constants/constants.hpp>
-//#include <math.h>
 
 
 class Elastic_part_set : public Part_set
 {
     // Link between two points (int,int) with a stifness and resting length (double double)
     typedef std::tuple <int,int,double,double> link;
+    // Set of all springs
     typedef std::vector<link> spring_set;
-    //typedef std::vector<triang> faces;
- //friend class Part_Set;
-    public:
+
+public:
+    // Dummy creator
     Elastic_part_set(Part_set_props *);
-    Part_set_props *prop; 
+    
+    // Time step for the particle set
     void NextStep(const Meshless_props*);
+    
+    // Read from the list of faces to create links and find neighbours
     void GetNeighbours();
+    
+    // Prepares the simulation
     void GetStarted();
+    
+    // Compute forces
     void ComputeForces();
+    
+protected:
+    // Springs between particles
     spring_set springs;
+    
+    // Particles set properties
+    Part_set_props *prop;
     
 };
 

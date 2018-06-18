@@ -7,22 +7,23 @@ using namespace Aboria;
 #include <iostream>
 #include "assert_macro.h"
 #include <limits>
-//using namespace tinyply;
 #include "tinyply.h"
 using namespace tinyply;
 
 
 const double PI = boost::math::constants::pi<double>();
 
+// Dummy creator
 Part_set::Part_set(Part_set_props * p) {
-    // Dummy creator
+
     number=0;
     prop=p;
     double L=prop->L;
     diverging=false;
-    //particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
+   
 }
 
+// If particles need to be created from properties
 void Part_set::create() {
     
     if (prop->init_shape==0){
@@ -37,7 +38,7 @@ void Part_set::create() {
 }
 
 
-
+// Particles created from text file
 void Part_set::create(std::string fname) {
     
     number=load_from_text(fname);
@@ -45,7 +46,9 @@ void Part_set::create(std::string fname) {
     std::cout << "# created " << number << "particles, with expected R0 " << prop->R0 << std::endl;
 }
 
-
+// Loading from ply file
+// Copied from tinyply's example
+// @TODO : make sure that memcpy is cosher
 int Part_set::load_from_text(std::string fname){
     std::ifstream ss(fname, std::ios::binary);
     if (ss.fail())
@@ -113,11 +116,6 @@ int Part_set::load_from_text(std::string fname){
     return nv;
 }
 
-
-
-int Part_set::num() {return number;}
-
-
 // Put many particles on a sphere at random
 int Part_set::PutOnSphere(){
     int N=prop->init_number;
@@ -148,10 +146,8 @@ int Part_set::PutOnSphere(){
             get<orientation>(p) = pos;
             get<force>(p) = zero;
             get<torque>(p) = zero;
-            /*
-             * loop over all neighbouring particles within a euclidean distance
-             * of size "diameter"
-             */
+            
+            // Using aboria's power
             for (auto tpl: euclidean_search(particles.get_query(),get<position>(p),mindist)) {
                 neighbours++;
                 break;
@@ -188,7 +184,6 @@ int Part_set::PutOnSheet(){
             pos2=vdouble3(i*h*2+h,j*R0+0.5*R0,2*R0*sin((2*PI*(i*h*2+h))/R));
             get<position>(p1) = pos1+cent;
             get<position>(p2) = pos2+cent;
-            //free_position = true;
             get<orientation>(p1) = up;
             get<orientation>(p2) = up;
             get<force>(p1) = zero;
@@ -210,15 +205,11 @@ void Part_set::GetStarted(){
     CheckBoxSize();
     particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
     std::cout << "# initiated neighbour serch xith Rsearch" << prop->Rsearch << std::endl;
-    //particles.update_positions();
-    if (prop->elastic) {
-        particles.init_id_search();
-        GetNeighbours();
-    }
     
-    //particles.init_id_search();
 }
 
+// Check if box size is OK
+// @TODO : repair !
 void Part_set::CheckBoxSize() {
     vdouble3 bottomleft(INFINITY,INFINITY,INFINITY);
     vdouble3 topeuright(-INFINITY,-INFINITY,-INFINITY);
@@ -227,8 +218,6 @@ void Part_set::CheckBoxSize() {
         for (int ix=0; ix<3; ++ix) {
             if (posi[ix]<bottomleft[ix]) {
                 bottomleft[ix]=posi[ix];
-                //std::cout << "? : " << posi << std::endl;
-              
             }
             else if (posi[ix]>prop->corner_1[ix]) {
                 topeuright[ix]=posi[ix];
@@ -256,13 +245,9 @@ void Part_set::GetNeighbours() {
     vdouble3 dir(0,0,0);
     vdouble3 pos1(0,0,0);
     
-    //vdouble3 pos2(0,0,0);
     for (int i = 0; i < number; ++i) {
-        //std::cout << "# checking : " << i << std::endl;
         n=0;
         neigh_pairs pairs;
-        //std::vector<int> neis;
-        //std::vector<double> lens;
         pos1=get<position>(particles[i]);
         int idi=get<id>(particles[i]);
         for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
@@ -270,10 +255,7 @@ void Part_set::GetNeighbours() {
             ide=get<id>(j);
             if (ide!=idi) {
                     dir=get<position>(j)-pos1;
-                    //neis.push_back(ide);
-                    //lens.push_back(sqrt(dir.squaredNorm())/prop->e);
                     pair_n ppp(ide,sqrt(dir.squaredNorm())/prop->e);
-                    //std::cout << "# interacts with  " << ppp.first << " with length " << ppp.second << " (was : " << sqrt(dir.squaredNorm()) << ")" << std::endl;
                     pairs.push_back(ppp);
                     n++;
             }
@@ -283,7 +265,6 @@ void Part_set::GetNeighbours() {
             n=pop_furthest_neighbour(&pairs,n);
         }
         get<nn>(particles[i])=n;
-        //pair_n ppp(neis,lens);
         get<neighbours>(particles[i])=pairs;
         
         if (n>count) {
@@ -299,9 +280,8 @@ void Part_set::GetNeighbours() {
   
 }
 
-
+// we should check we got a decent part set after loading from text
 void Part_set::CheckPartSet() {
-    // we should check we got a decent part set after loading from text
     int count=0;
     int tnuoc=666;
     for (int i = 0; i < number; ++i) {
@@ -319,9 +299,9 @@ void Part_set::CheckPartSet() {
     std::cout << "# Minimum neighbours number : " << tnuoc << std::endl;
 }
 
+// removes furthest neighbour from particle
 int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
     double dist=0;
-    // ppp;
     int ex=-1;
     for (int i=0;i<n;++i)
     {
@@ -332,9 +312,7 @@ int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
         }
     }
     pairs->erase(pairs->begin()+ex);
-    
     return n-1;
-    
 }
 
 
@@ -349,7 +327,7 @@ void Part_set::NextStep(const Meshless_props* simul_prop){
 }
 
 
-// Erazing forces
+// Setting forces & torques to 0
 void Part_set::ClearForces() {
     vdouble3 zero(0,0,0);
     for (int i = 0; i < number; ++i) {
@@ -364,20 +342,22 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
     float dt=simul_prop->dt;
     vdouble3 forcei;
     for (int i = 0; i < number; ++i) {
-        // Upper threshold for forces
-        //      Ugly but needed if no minimum distance
+        
         forcei=get<force>(particles[i]);
+        
+        // We didn't implement maximum force.
         //if (forcei.squaredNorm()>prop->Fmax2) {
         //    forcei=forcei*((prop->Fmax)/forcei.norm());
             //std::cout << "# warning : over the top ; now : " << forcei << std::endl;
         //}
+        
+        // Applying force & torque
         get<position>(particles[i])+=((forcei)*(dt/prop->visco));
-        //std::cout << "# checking forcei : " << forcei << std::endl;
         get<orientation>(particles[i])+=cross(get<orientation>(particles[i]),get<torque>(particles[i]))*(dt/prop->Rvisc);
     }
-    
 }
 
+// Renormalizing the normals
 void Part_set::RenormNorms(){
     vdouble3 normi;
     for (int i = 0; i < number; ++i) {
@@ -386,15 +366,13 @@ void Part_set::RenormNorms(){
     }
 }
 
-
-
 // Computing forces with viscous setting (i.e. changeable nearest neighbours)
+//@TODO : verify this part
 void Part_set::ComputeForces(){
     vdouble3 posi;
     vdouble3 orsi;
     int idi,idj;
     double L=prop->L;
-    //NEIGHBOURS neis;
     double cc_flat;
     double p_att=(1.0+prop->p_att)/2.0;
     double p_align=(1.0+prop->p_align)/2.0;
@@ -421,13 +399,10 @@ void Part_set::ComputeForces(){
                 // Forces : Lennard Jones & alignement
                 get<force>(particles[i])+=(-dxij*((prop->k_rep)/pow(nsqrij,p_rep)-(prop->k_att))/(pow(nsqrij,p_att))
                                        +sumo*(0.5*prop->k_align*(dxij.dot(sumo)/pow(nsqrij,p_align))));
-            //assert_true(dxij.dot(sumo)>0.0);
-            //get<force>(particles[i])+=sumo*(0.5*prop->k_align*(dxij.dot(sumo)/pow(nsqrij,p_align)));
             }
         }
         
         get<nn>(particles[i])=neibs;
-        std::cout << "# neibs=" << neibs << std::endl;
     }
 }
 
@@ -451,7 +426,8 @@ void Part_set::Export(int t){
     exportfile.close();
 }
 
-
+// saving to .ply
+// @TODO : problem in the tags of exported ply files
 void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* simul_prop){
     //std::ifstream ss(fname, std::ios::binary);
     std::string filename;
@@ -511,10 +487,6 @@ void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* si
     //struct int3 { int32_t aa,bb,cc; };
     //std::vector<int3> fff(nf);
     //std::memcpy(fff.data(), faces->buffer.get(), numIndicesBytes);
-    //std::cout << "we should get " << nf << " faces" << std::endl;
-    //std::cout << "# Copied buffer " << std::endl;
-    //std::cout << "# Example of face " << fff[0].aa << " " << fff[0].bb << " " << fff[0].cc << " ... looks good ?"<< std::endl;
-    
     // Let's try writing...
     exampleOutFile.add_properties_to_element("vertex", { "x", "y", "z" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
     exampleOutFile.add_properties_to_element("vertex", { "nx", "ny", "nz" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);

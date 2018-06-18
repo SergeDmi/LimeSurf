@@ -5,66 +5,117 @@ using namespace Aboria;
 #include "meshless_spin_props.h"
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
-//#include "elastic_spin_parts.h"
-#define MAXNEIGHBOURS 30
 
 
 class Part_set {
+    
     friend class Elastic_part_set;
     typedef std::pair <int,double> pair_n;
     typedef std::vector<pair_n> neigh_pairs;
     
-    std::vector<int> NEIGHBOURS;
+    // We decided to use Aboria to create the particle set
+    // It should be super convenient if we do a liquid particle set
+    // For now, it's way overkill
+    
     ABORIA_VARIABLE(orientation,vdouble3,"orientation");
     ABORIA_VARIABLE(torque,vdouble3,"orientation");
     ABORIA_VARIABLE(force ,vdouble3,"orientation");
-    //ABORIA_VARIABLE(neighbours,std::vector<int>,"neighbours");
     ABORIA_VARIABLE(neighbours,neigh_pairs,"neighbours");
-    //ABORIA_VARIABLE(restings,std::vector<double>,"resting");
     ABORIA_VARIABLE(nn,int,"neighbour number");
     ABORIA_VARIABLE(state,double,"state");
     ABORIA_VARIABLE(nface ,int,"face number");
     
+    // The particle set
     typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state>,3> particle_type;
-    //typedef Particles<std::tuple<orientation>,<test>,2> container_type;
-    
     typedef typename particle_type::position position;
     
-    
+    // This is convenient if we read faces from a ply file
     typedef struct  {int x,y,z ;} face;
     typedef std::vector<face> face_list;
 
 public:
-    face_list triangles;
-    int n_faces;
+    // Creator
     Part_set(Part_set_props*);
+    
+    // Actually populates the particle set
     void create();
+    
+    // Create from a file
     void create(std::string);
+    
+    // Properties
     Part_set_props* prop;
-    int num();
-    //int PutOnSphere(int,double);
+    
+    // Check divergence of simul
+    bool is_diverging() {return diverging ;}
+    
+    // returns number of particles
+    int num() { return number;}
+    
+    // Performs a time step
     virtual void NextStep(const Meshless_props*);
+    
+    // APply the computed forces
     void IntegrateForces(const Meshless_props*);
-    int identify_furthest_neighbour(neigh_pairs,int );
+    
+    // Get rids of far away neighbour...
     int pop_furthest_neighbour(neigh_pairs*,int );
-    //void ComputeForcesViscous();
-    //void ComputeForcesElastic();
+    
+    // Compute the forces on each particle
     virtual void ComputeForces();
+    
+    // Find the neighbours of every particle
     virtual void GetNeighbours();
+    
+    // Export to text
     void Export(int);
+    
+    // Export to ply
     void Export_bly(std::string,int,const Meshless_props* );
+    
+    // Getting ready to simulate
     virtual void GetStarted();
+    
+    // @TODO : improve CheckBoxSizze()
+    // Make sure the box is big enough
     void CheckBoxSize();
+    
+    // Making sure the Particle set loaded is correct
     void CheckPartSet();
+    
+    // Set forces & torques to 0
     void ClearForces();
+    
+    // Put particles on a sphere
     int PutOnSphere();
+    
+    //Put particles on a sheet
     int PutOnSheet();
+    
+    // Load particles from file
     int load_from_text(std::string);
+    
+    // Max number of neighbours
     int max_neighbours;
+    
+    // Normalizes the normals
     void RenormNorms();
-    bool diverging;
+    
 protected:
+    // List of faces
+    face_list triangles;
+    
+    // All particles, aka vertex
     particle_type particles;
+    
+    // Number of particles
     int number;
+    
+    // Number of faces
+    int n_faces;
+    
+    // Current state of simulation
+    bool diverging;
 
+    
 };

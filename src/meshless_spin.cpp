@@ -7,40 +7,53 @@
 
 int main(int argc, char* argv[])
 {
-    //std::istringstream fname(argv[1]);
+    // Reading input
     ifstream config(argv[1]);
     
+    // Making a glossary from config file
     Glossary glos(config);
+    
+    // simulation properties
     Meshless_props simul_prop(glos);
+    
+    // Porperties of the particle set
     Part_set_props set_prop(glos);
-    Part_set set1(&set_prop);
+    
+    //Part_set set1(&set_prop);
+    // Now making an elastic simulation
+    // @TODO : this should be done much more elegantly
     Elastic_part_set set2(&set_prop);
+    
+    // Dummy inpyt name
     std::string fname_in="cell.ply";
+    
+    // Export name
     std::string fname_out="simulated_cell";
-    //glos.read_strings(argc-1, argv+1);
-    std::cout << "# Created set1" << std::endl;
+    
     if (argc>2) {
-        //std::cout << "# +++Created set1" << std::endl;
+        
         fname_in=argv[2];
         set2.create(fname_in);
-        //set1.GetStarted();
-        //set1.Export_bly(fname);
-        //std::cout << "# Created set1--++++++" << std::endl;
+        
     }
     else
     {
-        //std::cout << "# -- Created set1" << std::endl;
+        
         set2.create();
-        //std::cout << "# Created set1-----" << std::endl;
+        
     }
 
     
+    // Getting ready to simulate
+    set2.GetStarted();
+    
+    // Preparing times
     double t_save=0;
     int n_save=0;
-    set2.GetStarted();
     double t=0;
-    while (t<simul_prop.Tend && !set2.diverging) {
-        // Next time step
+    
+    // Simulation steps
+    while (t<simul_prop.Tend && !set2.is_diverging()) {
         t+=simul_prop.dt;
         set2.NextStep(&simul_prop);
         
@@ -58,5 +71,5 @@ int main(int argc, char* argv[])
     set2.ComputeForces();
     set2.Export(0);
     set2.Export_bly(fname_out,n_save,&simul_prop);
-    return (int)set2.diverging;
+    return (int)set2.is_diverging();
 }
