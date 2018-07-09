@@ -7,8 +7,10 @@ Meshless_props::Meshless_props(const Glossary opt) {
     // Times
     dt=0.01;
     Tend=1.0;
+    n_frames=0;
     opt.set(dt,"dt");
     opt.set(Tend,"Tend");
+    dt_frames=Tend;
     // Number of times we should save the shape
     opt.set(n_frames,"n_frames");
     
