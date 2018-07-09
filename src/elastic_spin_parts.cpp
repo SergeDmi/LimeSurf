@@ -6,12 +6,12 @@
 #include <random>
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
-
 #include "elastic_spin_parts.h"
 #include <iostream>
 #include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
+#include "elastic_parts_props.h"
 
 using namespace tinyply;
 
@@ -19,10 +19,10 @@ using namespace tinyply;
 const double PI = boost::math::constants::pi<double>();
 
 // Dummy creator
-Elastic_part_set::Elastic_part_set(Part_set_props * p) : Part_set(p), prop(p)
+Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
 {
     prop=p;
-}
+};
 
 // Here we populate the spring set from the face list
 void Elastic_part_set::GetNeighbours() {
@@ -35,6 +35,7 @@ void Elastic_part_set::GetNeighbours() {
     neigh_pairs pairs_j;
     int si,sj;
     double k_elast=prop->k_elast;
+    n_springs=0;
     
     // We go through all the faces and populate interactions
     for (int i = 0; i < n_faces; ++i) {
@@ -58,6 +59,7 @@ void Elastic_part_set::GetNeighbours() {
             
             // If it's a new edge, we register it
             if (exists==false) {
+                n_springs++;
                 // Finding the length of the edge
                 posi=get<position>(particles[ix]);
                 posj=get<position>(particles[jx]);
@@ -80,7 +82,7 @@ void Elastic_part_set::GetNeighbours() {
                 get<nn>(particles[jx])=sj;
                 
                 // Now the easiest part : we create the link
-                double k0=k_elast/(dist*dist);
+                double k0=k_elast/(4.0*dist*dist);
                 link linker{ix,jx,k0,dist};
                 springs.push_back(linker);
             }

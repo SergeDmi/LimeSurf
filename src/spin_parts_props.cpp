@@ -28,8 +28,9 @@ Part_set_props::Part_set_props(const Glossary opt) {
     k_bend=1.0;
     visco=1.0;
     Rvisc=1.0;
-    e=1.0;
+   
     pressure=0;
+    relax=0;
     
     // For viscous sets
     k_att=2.0;
@@ -50,6 +51,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
+    opt.set(relax, "relax");
     
     opt.set(visco, "visco",0);
     opt.set(Rvisc, "visco",1);
@@ -70,7 +72,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);
-    opt.set(e, "prestrain");
+    
     opt.set(elastic, "elastic");
     
     for (int i=0; i<6; ++i) {

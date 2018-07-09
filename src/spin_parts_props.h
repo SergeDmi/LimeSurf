@@ -8,6 +8,7 @@ class Part_set_props {
 
     friend class Part_set;
     friend class Elastic_part_set;
+    friend class Simple_viscoel_part_set;
     
 public:
     Part_set_props(const Glossary);
@@ -23,9 +24,10 @@ public:
     double k_align,p_align; // alignment potential and power law
     double visco,Rvisc;     // viscosity (translational & rotational)
     double L;               // box size
-    double e;               // strain 
+    
     double renorm_rate;     // rate at which normals are normalized can be quite low
     double Fmax,Fmax2;      // Maximum force
+    double relax;           // linkers relaxation rate
     vdouble3 corner_0,corner_1; // Corners of box
     int max_neighbours;
     

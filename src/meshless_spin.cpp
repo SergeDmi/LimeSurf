@@ -1,5 +1,6 @@
 //#include "spin_parts.h"
 #include "elastic_spin_parts.h"
+#include "elastic_parts_props.h"
 #include <sstream>
 #include "glossary.h"
 #include <fstream>
@@ -16,8 +17,8 @@ int main(int argc, char* argv[])
     // simulation properties
     Meshless_props simul_prop(glos);
     
-    // Porperties of the particle set
-    Part_set_props set_prop(glos);
+    // Properties of the particle set
+    Elastic_set_props set_prop(glos);
     
     //Part_set set1(&set_prop);
     // Now making an elastic simulation

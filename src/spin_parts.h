@@ -1,15 +1,18 @@
 #include <random>
 #include "Aboria.h"
 using namespace Aboria;
-#include "spin_parts_props.h"
+//#include "spin_parts_props.h"
 #include "meshless_spin_props.h"
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 
+class Part_set_props;
 
 class Part_set {
     
     friend class Elastic_part_set;
+    friend class Simple_viscoel_part_set;
+protected:
     typedef std::pair <int,double> pair_n;
     typedef std::vector<pair_n> neigh_pairs;
     
@@ -101,6 +104,9 @@ public:
     // Normalizes the normals
     void RenormNorms();
     
+    // Find furthest points in any direction
+    void FindBounds();
+    
 protected:
     // List of faces
     face_list triangles;
@@ -117,5 +123,6 @@ protected:
     // Current state of simulation
     bool diverging;
 
-    
+    // Furthest points (xmin xmax ymin ymax zmin zmax)
+    double bounds[6];
 };

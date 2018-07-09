@@ -8,6 +8,7 @@ using namespace Aboria;
 #include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
+#include "spin_parts_props.h"
 using namespace tinyply;
 
 
@@ -219,7 +220,7 @@ void Part_set::CheckBoxSize() {
             if (posi[ix]<bottomleft[ix]) {
                 bottomleft[ix]=posi[ix];
             }
-            else if (posi[ix]>prop->corner_1[ix]) {
+            else if (posi[ix]>topeuright[ix]) {
                 topeuright[ix]=posi[ix];
               
             }
@@ -234,6 +235,29 @@ void Part_set::CheckBoxSize() {
         if (topeuright[ix]>prop->corner_1[ix]) { prop->corner_1[ix]=topeuright[ix];}
     }
         std::cout << "# bounding box from " << prop->corner_0 << " to " << prop->corner_1 << std::endl;
+}
+
+// Finds the furthest points in x,x, y,y, z,z
+void Part_set::FindBounds() {
+    vdouble3 bottomleft(INFINITY,INFINITY,INFINITY);
+    vdouble3 topeuright(-INFINITY,-INFINITY,-INFINITY);
+    // Looping on all points to find the min & max of x y z
+    for (int i = 0; i < number; ++i) {
+        vdouble3 posi=get<position>(particles[i]);
+        for (int ix=0; ix<3; ++ix) {
+            if (posi[ix]<bottomleft[ix]) {
+                bottomleft[ix]=posi[ix];
+            }
+            else if (posi[ix]>topeuright[ix]) {
+                topeuright[ix]=posi[ix];   
+            }
+        }
+    }
+    // Now we can update bounds
+    for (int ix=0; ix<3; ++ix) {
+        bounds[ix]=bottomleft[ix];
+        bounds[3+ix]=topeuright[ix];
+    }
 }
 
 // Get the closest neighbours
@@ -255,7 +279,7 @@ void Part_set::GetNeighbours() {
             ide=get<id>(j);
             if (ide!=idi) {
                     dir=get<position>(j)-pos1;
-                    pair_n ppp(ide,sqrt(dir.squaredNorm())/prop->e);
+                    pair_n ppp(ide,sqrt(dir.squaredNorm()));
                     pairs.push_back(ppp);
                     n++;
             }
