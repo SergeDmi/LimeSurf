@@ -69,7 +69,7 @@ void Simple_viscoel_part_set::GetNeighbours() {
         ax=std::abs(ax-bounds[2*max_axis]);
         //ax=abs(posij[max_axis]-bounds[2*max_axis]);
         //px=abs(posij[max_axis]-bounds[2*max_axis+1]);
-        timescale=prop->time_plastic*(exp(-std::min(ax,px)/prop->size_plastic)) ;
+        timescale=prop->time_plastic*exp(pow(std::min(ax,px),2.0)/(2.0*pow(prop->size_plastic,2.0)));
         link_times.push_back(timescale);
     }        
 }

@@ -82,7 +82,8 @@ void Elastic_part_set::GetNeighbours() {
                 get<nn>(particles[jx])=sj;
                 
                 // Now the easiest part : we create the link
-                double k0=k_elast/(4.0*dist*dist);
+                //double k0=k_elast/(4.0*dist*dist);
+                double k0=k_elast/(dist*dist);
                 link linker{ix,jx,k0,dist};
                 springs.push_back(linker);
             }
@@ -135,28 +136,35 @@ void Elastic_part_set::ComputeForces(){
         j=get<1>(linker);   // second vertex
         k0=get<2>(linker);  // stiffness
         l0=get<3>(linker);  // resting length
-        
+
         // We need number of edges to compute pressure
         ni=get<nn>(particles[i]);
         nj=get<nn>(particles[j]);
         
+
         // Position & orientation of vertices
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
         posj=get<position>(particles[j]);
         orsj=get<orientation>(particles[j]);
 
-       // Vector & norm of edge
-       dxij=posj-posi;
-       norm2=dxij.squaredNorm();
-       dir=dxij/sqrt(norm2);
-       
-       // Force and torque
-       get<force>(particles[i])+=k0*dxij*(norm2-l0*l0)+(orsi*(press*norm2)/ni);
-       get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
-       
-       get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+(orsj*(press*norm2)/nj);
-       get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
+        // Vector & norm of edge
+        dxij=posj-posi;
+        norm2=dxij.squaredNorm();
+        dir=dxij/sqrt(norm2);
+
+        // Force and torque
+        //get<force>(particles[i])+=k0*dxij*(norm2-l0*l0)+(orsi*(press*norm2)/ni);
+        //get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
+
+        //get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+(orsj*(press*norm2)/nj);
+        //get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
+        
+        get<force>(particles[i])+=k0*dxij*(norm2-l0*l0)+orsi*(press*norm2);
+        get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
+
+        get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+orsj*(press*norm2);
+        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge
