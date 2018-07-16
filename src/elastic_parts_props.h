@@ -17,8 +17,8 @@
 #include "spin_parts_props.h"
 
 using namespace Aboria;
-#ifndef ELASTIC_PARTS_PROP_H
-#define ELASTIC_PARTS_PROP_H
+#ifndef ELASTIC_PARTS_PROPS_H
+#define ELASTIC_PARTS_PROPS_H
 
 
 class Elastic_set_props : public Part_set_props 
@@ -33,8 +33,8 @@ class Elastic_set_props : public Part_set_props
         
         
     protected:
-        // prestrain
-        double e;
+        // prestrain : how much the imported link is stretched
+        double prestrain;
 };
 
 

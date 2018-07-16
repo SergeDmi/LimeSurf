@@ -84,16 +84,12 @@ void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
     double norm2;
     vdouble3 dir;
     vdouble3 tri;
-    double proj;
-    double p_bend=prop->p_bend/2.0;
     double align=prop->k_align*2.0;
     int i,j;
     double l0,k0;
-    double press=prop->pressure*sqrt(3.0)/4.0;
+    double press=prop->pressure*area_ratio;
     double stretch;
-    //double rate=simul_prop->dt/prop->relax;
-    double rate;
-    // We loop over all springs
+
     // Man C++11 is nice
     for (int ix=0;ix<n_springs;++ix) {
         link linker=springs[ix];
@@ -131,4 +127,34 @@ void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
         std::cerr << "Diverging system " << std::endl;
         diverging=true;
     }
+}
+
+// Exporting vertices to a file
+void Simple_viscoel_part_set::Export(int t){
+    std::string numero(std::to_string(t));
+    std::string filename;
+    filename="vertices_"+numero+".txt";
+    ofstream exportfile;
+    exportfile.open(filename);
+    //myfile << "Writing this to a file.\n";
+    int i,j;
+    double l0,k0,t0,norm2,strain;
+    vdouble3 posi,posj,dxij;
+    exportfile << "# X Y Z X Y Z l0 k0 t0 strain \n";
+    for (int ix=0;ix<n_springs;++ix) {
+        link linker=springs[ix];
+        i=get<0>(linker);   // first vertex
+        j=get<1>(linker);   // second vertex
+        k0=get<2>(linker);  // stiffness
+        l0=get<3>(linker);  // resting length
+        t0=link_times[ix];
+        posi=get<position>(particles[i]);
+        posj=get<position>(particles[j]);
+        dxij=posj-posi;
+        norm2=dxij.squaredNorm();
+        strain=(norm2)/(l0*l0)-1;
+        exportfile << posi[0] << " " << posi[1] << " " << posi[2] << " " << posj[0] << " " << posj[1] << " " << posj[2] << " ";
+        exportfile << l0 << " " << k0 << " " << t0 << " " << strain << " \n";        
+    }
+    exportfile.close();
 }

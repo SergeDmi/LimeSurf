@@ -35,6 +35,9 @@ public:
     // Find nearest neighbours
     void GetNeighbours();
     
+    // Export the links
+    void Export(int );
+    
 protected :
     // relaxation times of the links
     std::vector<double> link_times;

@@ -14,9 +14,13 @@ using namespace tinyply;
 
 const double PI = boost::math::constants::pi<double>();
 
-// Dummy creator
-Part_set::Part_set(Part_set_props * p) {
+// Dummy constructor
+Part_set::Part_set() {
+    number=0;
+    diverging=false;
+}   
 
+Part_set::Part_set(Part_set_props * p) {
     number=0;
     prop=p;
     double L=prop->L;
@@ -162,9 +166,7 @@ int Part_set::PutOnSphere(){
 
 // Put many particles on a sheet with hexagonal lattice
 int Part_set::PutOnSheet(){
-    int N=prop->init_number;
     double R=prop->init_radius;
-    
     double L=prop->L;
     vdouble3 pos1;
     vdouble3 pos2;
@@ -202,7 +204,6 @@ int Part_set::PutOnSheet(){
 
 // Makes sure everything is in place
 void Part_set::GetStarted(){
-    double L=prop->L;
     CheckBoxSize();
     particles.init_neighbour_search(prop->corner_0,prop->corner_1,vbool3(false,false,false),prop->Rsearch);
     std::cout << "# initiated neighbour serch xith Rsearch" << prop->Rsearch << std::endl;
@@ -396,8 +397,6 @@ void Part_set::ComputeForces(){
     vdouble3 posi;
     vdouble3 orsi;
     int idi,idj;
-    double L=prop->L;
-    double cc_flat;
     double p_att=(1.0+prop->p_att)/2.0;
     double p_align=(1.0+prop->p_align)/2.0;
     double p_rep=(prop->p_rep+prop->p_att)/2.0;

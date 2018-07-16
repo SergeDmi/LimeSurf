@@ -31,9 +31,6 @@ class Simple_viscoel_set_props : public Elastic_set_props
         /// constructor
         Simple_viscoel_set_props(const Glossary );
         
-
-        
-        
     protected:
         // distance on which cell wall is plastic
         double size_plastic;

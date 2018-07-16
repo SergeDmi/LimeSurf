@@ -12,9 +12,9 @@
 
 Elastic_set_props::Elastic_set_props(const Glossary opt) : Part_set_props(opt) {
     
-     e=1.0;
+    prestrain=1.0;
     
-    opt.set(e, "prestrain");
+    opt.set(prestrain, "prestrain");
     
     
 }

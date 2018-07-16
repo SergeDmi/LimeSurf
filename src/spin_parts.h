@@ -38,6 +38,9 @@ protected:
 
 public:
     // Creator
+    Part_set();
+            
+    // Creator
     Part_set(Part_set_props*);
     
     // Actually populates the particle set
@@ -71,7 +74,7 @@ public:
     virtual void GetNeighbours();
     
     // Export to text
-    void Export(int);
+    virtual void Export(int);
     
     // Export to ply
     void Export_bly(std::string,int,const Meshless_props* );

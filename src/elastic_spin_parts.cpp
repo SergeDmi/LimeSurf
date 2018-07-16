@@ -26,15 +26,18 @@ Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
 
 // Here we populate the spring set from the face list
 void Elastic_part_set::GetNeighbours() {
-    int ix,jx;
-    vdouble3 dir(0,0,0);
+    int ix,jx,kx;
+    vdouble3 dir,mir,are;
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
+    vdouble3 posk(0,0,0);
     double dist;
     neigh_pairs pairs_i;
     neigh_pairs pairs_j;
     int si,sj;
     double k_elast=prop->k_elast;
+    double Atot=0;
+    double l2tot=0;
     n_springs=0;
     
     // We go through all the faces and populate interactions
@@ -45,6 +48,17 @@ void Elastic_part_set::GetNeighbours() {
                 case 0 : ix=triangles[i].x;jx=triangles[i].y ; break ;
                 case 1 : ix=triangles[i].y;jx=triangles[i].z ; break ;
                 case 2 : ix=triangles[i].z;jx=triangles[i].x ; break ;
+            }
+            // Computing triangle surface are
+            if (j==0) {
+                kx=triangles[i].z ;
+                posi=get<position>(particles[ix]);
+                posj=get<position>(particles[jx]);
+                posk=get<position>(particles[kx]);
+                dir=posj-posi;
+                mir=posk-posi;
+                are=cross(dir,mir);
+                Atot+=sqrt(are.squaredNorm());
             }
             // Probably useless : noting to how many faces a vertex belong
             get<nface>(particles[ix])+=1;
@@ -65,7 +79,7 @@ void Elastic_part_set::GetNeighbours() {
                 posj=get<position>(particles[jx]);
                 dir=posj-posi;
                 // The edge could be pre strained
-                dist=sqrt(dir.squaredNorm())/prop->e;
+                dist=sqrt(dir.squaredNorm())/prop->prestrain;
                 // We create the pair...  Needed for initiation but there could be a better way
                 pair_n pair_i(jx,dist);
                 pair_n pair_j(ix,dist);
@@ -85,12 +99,16 @@ void Elastic_part_set::GetNeighbours() {
                 //double k0=k_elast/(4.0*dist*dist);
                 double k0=k_elast/(dist*dist);
                 link linker{ix,jx,k0,dist};
+                l2tot+=dist*dist;
                 springs.push_back(linker);
             }
             
         }
         
     }
+    Atot/=2.0;
+    area_ratio=Atot/l2tot;
+    std::cout << "# Found area ratio : " << area_ratio << std::endl;
     
 }
 
@@ -100,6 +118,7 @@ void Elastic_part_set::GetNeighbours() {
 
 // Here we do the actual time step : compute and apply forces
 void Elastic_part_set::NextStep(const Meshless_props* simul_prop){
+    //std::cout << "#" ;
     // Set all forces & torques to 0
     Part_set::ClearForces();
     // Computing forces and torques
@@ -117,17 +136,14 @@ void Elastic_part_set::NextStep(const Meshless_props* simul_prop){
 void Elastic_part_set::ComputeForces(){
     vdouble3 posi,posj;
     vdouble3 orsi,orsj;
-    vdouble3 dxij;
-    int ni,nj;
-    double norm2;
+    vdouble3 dxij,felast;
+    double norm2=0;
     vdouble3 dir;
-    vdouble3 tri;
-    double proj;
     double p_bend=prop->p_bend/2.0;
-    double align=prop->k_align*2.0;
+    double k_align=prop->k_align*2.0;
     int i,j;
-    double l0,k0;
-    double press=prop->pressure*sqrt(3.0)/4.0;
+    double l0,k0,project;
+    double press=prop->pressure*area_ratio;
     
     // We loop over all springs
     // Man C++11 is nice
@@ -138,8 +154,8 @@ void Elastic_part_set::ComputeForces(){
         l0=get<3>(linker);  // resting length
 
         // We need number of edges to compute pressure
-        ni=get<nn>(particles[i]);
-        nj=get<nn>(particles[j]);
+        //ni=get<nn>(particles[i]);
+        //nj=get<nn>(particles[j]);
         
 
         // Position & orientation of vertices
@@ -159,12 +175,13 @@ void Elastic_part_set::ComputeForces(){
 
         //get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+(orsj*(press*norm2)/nj);
         //get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
-        
-        get<force>(particles[i])+=k0*dxij*(norm2-l0*l0)+orsi*(press*norm2);
-        get<torque>(particles[i])-=align*dir.dot(orsi+orsj)*cross(dir,orsi);
+        felast=k0*dxij*(norm2-l0*l0);
+        project=k_align*dir.dot(orsi+orsj);
+        get<force>(particles[i])+=felast+orsi*(press*norm2);
+        get<torque>(particles[i])-=project*cross(dir,orsi);
 
-        get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+orsj*(press*norm2);
-        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
+        get<force>(particles[j])+=-felast+orsj*(press*norm2);
+        get<torque>(particles[j])-=project*cross(dir,orsj);
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge
@@ -177,6 +194,7 @@ void Elastic_part_set::ComputeForces(){
 void Elastic_part_set::GetStarted(){
     
     particles.init_id_search();
+    Part_set::FindBounds();
     GetNeighbours();
     
     Part_set::CheckPartSet();

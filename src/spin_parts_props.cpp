@@ -5,6 +5,8 @@
 #include <sstream>
 #include "spin_parts_props.h"
 
+// Empty constructor for convenience
+Part_set_props::Part_set_props() {};
 
 Part_set_props::Part_set_props(const Glossary opt) {
     

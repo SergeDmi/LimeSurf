@@ -11,6 +11,10 @@ class Part_set_props {
     friend class Simple_viscoel_part_set;
     
 public:
+    // Empty constructor
+    Part_set_props();
+    
+    // Real constructor
     Part_set_props(const Glossary);
 
     double R0;              // Equilibrium distance between parts

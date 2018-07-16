@@ -52,6 +52,9 @@ protected:
     // Particles set properties
     Elastic_set_props *prop;
     
+    // fraction of area per link
+    double area_ratio;
+    
 };
 
 
