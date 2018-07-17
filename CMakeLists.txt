@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
-
+SET(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
+#SET(CMAKE_CXX_COMPILER /opt/intel/compilers_and_libraries/linux/bin/intel64/icc)
 #add_library(tinyply tiny/tinyply.cpp)
 
 # Boost
@@ -19,6 +20,9 @@ list(APPEND INCLUDES ${VTK_INCLUDE_DIRS})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -parallel")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --fast-math -mrecip")
 # Aboria
 set(Aboria_LOG_LEVEL 1 CACHE STRING "Logging level (1 = least, 3 = most)")
 add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
