@@ -52,20 +52,11 @@ int main(int argc, char* argv[])
     //Part_set test_set(&set_prop);
     //test_set=set2; 
    
-    // Dummy inpyt name
-    std::string fname_in="cell.ply";
-    
     // Export name
     std::string fname_out="simulated_cell";
+  
+    cell_wall->create();   
     
-    if (argc>2) {   
-        fname_in=argv[2];
-        cell_wall->create(fname_in);       
-    }
-    else
-    {
-        cell_wall->create();   
-    }
 
     
     // Getting ready to simulate

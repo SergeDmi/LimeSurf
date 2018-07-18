@@ -18,7 +18,7 @@ using namespace tinyply;
 
 const double PI = boost::math::constants::pi<double>();
 
-// Dummy creator
+// Dummy constructor
 Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
 {
     prop=p;

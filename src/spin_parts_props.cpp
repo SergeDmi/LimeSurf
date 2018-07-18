@@ -50,6 +50,11 @@ Part_set_props::Part_set_props(const Glossary opt) {
     double box[6];
     
     // reading these parameters from the config file !
+    load_from_file=opt.set(fname_in,"load_from");
+    if (load_from_file>0) {
+        std::cout << fname_in << std::endl;
+    }
+    
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");

@@ -46,9 +46,6 @@ public:
     // Actually populates the particle set
     void create();
     
-    // Create from a file
-    void create(std::string);
-    
     // Properties
     Part_set_props* prop;
     

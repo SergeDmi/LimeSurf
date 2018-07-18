@@ -30,7 +30,11 @@ Part_set::Part_set(Part_set_props * p) {
 
 // If particles need to be created from properties
 void Part_set::create() {
-    
+    if (prop->load_from_file>0) {
+        number=load_from_text(prop->fname_in);
+        
+    }
+    else {
     if (prop->init_shape==0){
         number=PutOnSphere();
     }
@@ -38,18 +42,12 @@ void Part_set::create() {
     if (prop->init_shape==1){
         number=PutOnSheet();
     }
-    
+    }
      std::cout << "# created " << number << "particles, with expected R0 " << prop->R0 << std::endl;
+     
 }
 
 
-// Particles created from text file
-void Part_set::create(std::string fname) {
-    
-    number=load_from_text(fname);
-    
-    std::cout << "# created " << number << "particles, with expected R0 " << prop->R0 << std::endl;
-}
 
 // Loading from ply file
 // Copied from tinyply's example
