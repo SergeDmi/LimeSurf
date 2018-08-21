@@ -120,7 +120,7 @@ void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
        get<force>(particles[j])+=-k0*dxij*stretch+(orsj*(press*norm2)/nj);
        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
        
-       get<3>(linker)+=(simul_prop->dt)*link_times[ix]*stretch/l0;
+       get<3>(linker)+=(simul_prop->dt)*stretch/(l0*link_times[ix]);
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge
