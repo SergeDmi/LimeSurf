@@ -17,6 +17,7 @@ public:
     // Real constructor
     Part_set_props(const Glossary);
     std::string fname_in;   // contains file to be loaded
+    //fname_in.reserve(10000);
     int load_from_file;    // flag if a file needs to be loaded
     double R0;              // Equilibrium distance between parts
     double minR,minR2;      // Minimum interaction distance (avoid dvg)

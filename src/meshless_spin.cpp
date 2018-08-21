@@ -53,12 +53,12 @@ int main(int argc, char* argv[])
     //test_set=set2; 
    
     // Export name
-    std::string fname_out="simulated_cell";
+    
   
     cell_wall->create();   
     
 
-    
+    std::string fname_out="simulated_cell";
     // Getting ready to simulate
     cell_wall->GetStarted();
     

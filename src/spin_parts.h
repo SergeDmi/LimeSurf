@@ -95,8 +95,8 @@ public:
     //Put particles on a sheet
     int PutOnSheet();
     
-    // Load particles from file
-    int load_from_text(std::string);
+    // Load particles from file in prop->fname_in
+    int load_from_text();
     
     // Max number of neighbours
     int max_neighbours;

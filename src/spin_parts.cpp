@@ -31,7 +31,9 @@ Part_set::Part_set(Part_set_props * p) {
 // If particles need to be created from properties
 void Part_set::create() {
     if (prop->load_from_file>0) {
-        number=load_from_text(prop->fname_in);
+        std::string test=prop->fname_in;
+        std::cout << "# ... Trying to load " << test << std::endl;
+        number=load_from_text();
         
     }
     else {
@@ -52,11 +54,12 @@ void Part_set::create() {
 // Loading from ply file
 // Copied from tinyply's example
 // @TODO : make sure that memcpy is cosher
-int Part_set::load_from_text(std::string fname){
-    std::ifstream ss(fname, std::ios::binary);
+int Part_set::load_from_text(){
+    //std::cout << "# ... acquiring file " << prop->fname_in << std::endl;
+    std::ifstream ss(prop->fname_in, std::ios::binary);
     if (ss.fail())
     {
-        throw std::runtime_error("failed to open " + fname);
+        throw std::runtime_error("failed to open " + prop->fname_in);
     }
     PlyFile file;
     file.parse_header(ss);
