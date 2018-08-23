@@ -38,7 +38,7 @@ Meshless_props::Meshless_props(const Glossary opt) {
     
     // Deducing the interval between two saves
     if (n_frames) {
-        dt_frames=Tend/n_frames;
+        dt_frames=Tend/(n_frames);
     }
     else {
         dt_frames=Tend;
