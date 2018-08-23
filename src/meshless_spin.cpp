@@ -72,6 +72,8 @@ int main(int argc, char* argv[])
     // We export simulation state in a text file
     cell_wall->Export(n_export);
     n_export++;
+    cell_wall->Export_bly(fname_out,n_save,&simul_prop);
+    n_save++;
     
     // Simulation steps
     while (t<simul_prop.Tend && !cell_wall->is_diverging()) {
@@ -80,7 +82,7 @@ int main(int argc, char* argv[])
         
         // Saving if needed
         t_save+=simul_prop.dt;
-        if (t_save>simul_prop.dt_frames) {
+        if (t_save>simul_prop.dt_frames ) {
             t_save=0;
             cell_wall->Export_bly(fname_out,n_save,&simul_prop);
             n_save++;
