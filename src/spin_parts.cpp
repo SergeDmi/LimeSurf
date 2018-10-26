@@ -434,10 +434,11 @@ void Part_set::ComputeForces(){
 // Temporary dirty exporting to a file
 void Part_set::Export(int t){
 #ifdef HAVE_VTK
-    vtkWriteGrid("particles",t,particles.get_grid(true));
+    //vtkWriteGrid("particles",t,particles.get_grid(true));
 #endif
     ofstream exportfile;
-    exportfile.open ("particles_out.txt");
+    std::string fname_out="particles_out_"+std::to_string(t)+".txt";
+    exportfile.open(fname_out);
     //myfile << "Writing this to a file.\n";
     exportfile << "# X  Y Z   Nx  Ny  Nz Fx Fy Fz Nneigh ID \n";
     for (int i = 0; i < number; ++i) {
