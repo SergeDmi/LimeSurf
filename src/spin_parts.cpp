@@ -63,7 +63,8 @@ int Part_set::load_from_text(){
     }
     PlyFile file;
     file.parse_header(ss);
-    std::shared_ptr<PlyData> vertices, normals, colors, faces, texcoords;
+    std::shared_ptr<PlyData> vertices, normals, colors, faces, tetra,texcoords;
+    bool is_tetra=1;
     
     try { vertices = file.request_properties_from_element("vertex", { "x", "y", "z" }); }
     catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
@@ -74,9 +75,17 @@ int Part_set::load_from_text(){
     try { faces = file.request_properties_from_element("face", { "vertex_index" }); }
     catch (const std::exception & e) { std::cerr << "tinyply exception: " << e.what() << std::endl; }
     
+    try { tetra = file.request_properties_from_element("tetrahedra", { "vertex_index" }); }
+    catch (const std::exception & e) { is_tetra=0; }
+    
     file.read(ss);
     int nv=vertices->count;
     int nf=faces->count;
+    int nt;
+    if (is_tetra) {
+        nt=tetra->count;
+    }
+    else {nt=0;}
     
     if (normals->count != nv) {
         std::cerr << " Error : number of vertices and normals should be the same" << std::endl;
@@ -96,6 +105,14 @@ int Part_set::load_from_text(){
     face_list tris(nf);
     std::memcpy(tris.data(), faces->buffer.get(), numFacesBytes);
     triangles=tris;
+    
+    tetr_list quatrs(nt);
+    if (is_tetra) {
+        const size_t numTetrasBytes = tetra->buffer.size_bytes();
+        std::memcpy(quatrs.data(), tetra->buffer.get(), numTetrasBytes);
+        
+    }
+    tetrahedra=quatrs;
     
     const size_t numVerticesBytes = vertices->buffer.size_bytes();
     const size_t numNormals_Bytes =  normals->buffer.size_bytes();

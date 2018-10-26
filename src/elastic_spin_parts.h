@@ -21,8 +21,8 @@ class Elastic_set_props;
 class Elastic_part_set : public Part_set
 {
 protected:
-    // Link between two points (int,int) with a stifness and resting length (double double)
-    typedef std::tuple <int,int,double,double> link;
+    // Link between two points (int,int) with a stiffness and resting length (double double) and status (double)
+    typedef std::tuple <int,int,double,double,double> link;
     // Set of all springs
     typedef std::vector<link> spring_set;
 

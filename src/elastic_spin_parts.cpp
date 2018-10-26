@@ -31,6 +31,7 @@ void Elastic_part_set::GetNeighbours() {
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
     vdouble3 posk(0,0,0);
+    double status=1.0;
     double dist;
     neigh_pairs pairs_i;
     neigh_pairs pairs_j;
@@ -98,7 +99,7 @@ void Elastic_part_set::GetNeighbours() {
                 // Now the easiest part : we create the link
                 //double k0=k_elast/(4.0*dist*dist);
                 double k0=k_elast/(dist*dist);
-                link linker{ix,jx,k0,dist};
+                link linker{ix,jx,k0,dist,status};
                 l2tot+=dist*dist;
                 springs.push_back(linker);
             }
@@ -109,6 +110,16 @@ void Elastic_part_set::GetNeighbours() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     std::cout << "# Found area ratio : " << area_ratio << std::endl;
+    
+    int count=0;
+    for (int i = 0; i < number; ++i) {
+        if (get<nface>(particles[i])==0) {
+            count++;
+            particles.erase(particles.begin()+i);
+            
+        }
+    }
+    std::cout << "# Removed unbound vertices : " << count << std::endl;
     
 }
 
@@ -142,7 +153,7 @@ void Elastic_part_set::ComputeForces(){
     double p_bend=prop->p_bend/2.0;
     double k_align=prop->k_align*2.0;
     int i,j;
-    double l0,k0,project;
+    double l0,k0,project,status;
     double press=prop->pressure*area_ratio;
     
     // We loop over all springs
@@ -152,7 +163,7 @@ void Elastic_part_set::ComputeForces(){
         j=get<1>(linker);   // second vertex
         k0=get<2>(linker);  // stiffness
         l0=get<3>(linker);  // resting length
-
+        status=get<4>(linker);  // status
         // We need number of edges to compute pressure
         //ni=get<nn>(particles[i]);
         //nj=get<nn>(particles[j]);
@@ -177,11 +188,11 @@ void Elastic_part_set::ComputeForces(){
         //get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
         felast=k0*dxij*(norm2-l0*l0);
         project=k_align*dir.dot(orsi+orsj);
-        get<force>(particles[i])+=felast+orsi*(press*norm2);
-        get<torque>(particles[i])-=project*cross(dir,orsi);
+        get<force>(particles[i])+=felast+orsi*(press*norm2)*status;
+        get<torque>(particles[i])-=project*cross(dir,orsi)*status;
 
-        get<force>(particles[j])+=-felast+orsj*(press*norm2);
-        get<torque>(particles[j])-=project*cross(dir,orsj);
+        get<force>(particles[j])+=-felast+orsj*(press*norm2)*status;
+        get<torque>(particles[j])-=project*cross(dir,orsj)*status;
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge

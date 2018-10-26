@@ -35,6 +35,10 @@ protected:
     // This is convenient if we read faces from a ply file
     typedef struct  {int x,y,z ;} face;
     typedef std::vector<face> face_list;
+    
+     // This is convenient if we read tetrahedra from a ply file
+    typedef struct  {int i,j,k,l;} tetr;
+    typedef std::vector<tetr> tetr_list;
 
 public:
     // Creator
@@ -110,6 +114,9 @@ public:
 protected:
     // List of faces
     face_list triangles;
+    
+    // List of tetrahedra
+    tetr_list tetrahedra;
     
     // All particles, aka vertex
     particle_type particles;
