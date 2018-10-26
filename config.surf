@@ -1,25 +1,37 @@
-dt=0.01
-Tend=100
+% Importing mesh from file
+load_from=/home/dmitrief/Sync/ownCloud/work/yeast_wall/sims/resized_finer_c3/test/before_gonfle.ply
+
+% Elastic simulations
+mechanics=1
 
 
-%shape=sheet
-%radius=20
+%% Simulation set up
+% box is automatically adjusted if too small
+box=0,0,0,510,520,520
+% Although not really needed in elastic sims
 
-box=250,200,50,359,650,200
+%% Simulation parameters
+Fmax=infinity
+dt=0.002
+Tend=12000
+Rmax=5.5; % Maximum distance between pairs of points.
 
-%Rmin=0.5;
-Rmax=6.2;
-visco=1,1;
 
-%attraction=9,5
-attraction=0.3333,5
-repulsion=15,9
+%% Bending helps the normal being updated with time
+% should not be very important
+%bending=0.5,5;
+bending=0.0;
 
-align=0.8,5;
-bending=0.5,5;
-%Rsearch=7.0;
+%% Physical parameters
+%R0=3.2          % resting distance between points
+align=1       % alignment of normals to compute pressure
+k_elast=1
+n_frames=12
+pressure=0.2;  % pressure
+% translation and rotation viscosity
+% not so important, we look for equilibrium shape
+prestrain=1.0;
+changing_times=6100
+changing_pressure=0
 
-elastic=1
-R0=3.5
-k_elast=5
-pressure=0.2;
+
