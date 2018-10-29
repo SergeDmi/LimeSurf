@@ -6,11 +6,15 @@ using namespace Aboria;
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 
+#ifndef SPIN_PARTS_H
+#define SPIN_PARTS_H
+
 class Part_set_props;
 
 class Part_set {
     
     friend class Elastic_part_set;
+    friend class Tetr_elastic_part_set;
     friend class Simple_viscoel_part_set;
 protected:
     typedef std::pair <int,double> pair_n;
@@ -37,7 +41,7 @@ protected:
     typedef std::vector<face> face_list;
     
      // This is convenient if we read tetrahedra from a ply file
-    typedef struct  {int i,j,k,l;} tetr;
+    typedef struct  {int x,y,z,k;} tetr;
     typedef std::vector<tetr> tetr_list;
 
 public:
@@ -127,9 +131,14 @@ protected:
     // Number of faces
     int n_faces;
     
+    // Number of tetrahedra
+    int n_tetras;
+    
     // Current state of simulation
     bool diverging;
 
     // Furthest points (xmin xmax ymin ymax zmin zmax)
     double bounds[6];
 };
+
+#endif

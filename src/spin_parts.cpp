@@ -135,6 +135,7 @@ int Part_set::load_from_text(){
     }
     
     n_faces=nf;
+    n_tetras=nt;
     
     return nv;
 }
@@ -327,7 +328,15 @@ void Part_set::GetNeighbours() {
 void Part_set::CheckPartSet() {
     int count=0;
     int tnuoc=666;
+    vdouble3 orsi;
+    vdouble3 zero(0,0,0);
+    double normi;
     for (int i = 0; i < number; ++i) {
+        orsi=get<orientation>(particles[i]);
+        normi=orsi.squaredNorm();
+        if (std::isnan(normi)) {
+            get<orientation>(particles[i])=zero;
+        }
         neigh_pairs pairs=get<neighbours>(particles[i]);
         int n=static_cast<int>(pairs.size());
         

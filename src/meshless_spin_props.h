@@ -32,6 +32,7 @@ public:
         VISCOUS  = 0,           // Purely viscous simulation
         ELASTIC  = 1,           // Purely elastic simulation
         SIMPLE_VISCOEL = 2,     // Simple visco-elastic implementation
+        TETRA_ELASTIC  = 4,     // Purely elastic tetrahedron simulation
     };
     
     // Time sequence

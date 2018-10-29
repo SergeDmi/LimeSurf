@@ -24,7 +24,7 @@ using namespace Aboria;
 class Elastic_set_props : public Part_set_props 
 {
     friend class Elastic_part_set;
-    
+    friend class Tetr_elastic_part_set;
     public:
         /// constructor
         Elastic_set_props(const Glossary );

@@ -110,16 +110,26 @@ void Elastic_part_set::GetNeighbours() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     std::cout << "# Found area ratio : " << area_ratio << std::endl;
+    std::cout << "# Generated " << n_springs << " springs " << std::endl;
+    //particles.erase( std::remove_if(particles.begin(), particles.end(), [](auto& obj){return obj.nfaces == 0;}), particles.end() );
+
     
+    /*
     int count=0;
-    for (int i = 0; i < number; ++i) {
-        if (get<nface>(particles[i])==0) {
+    for (auto it = particles.begin(); it != particles.end(); )
+    {
+        if (get<nface>(*it)==0) {
+            it = particles.erase(it);
             count++;
-            particles.erase(particles.begin()+i);
-            
+        }
+        else {
+            it++;
         }
     }
-    std::cout << "# Removed unbound vertices : " << count << std::endl;
+     number=number-count;
+     std::cout << "# Total removed unbound vertices : " << count << std::endl;
+    */
+   
     
 }
 
@@ -168,7 +178,6 @@ void Elastic_part_set::ComputeForces(){
         //ni=get<nn>(particles[i]);
         //nj=get<nn>(particles[j]);
         
-
         // Position & orientation of vertices
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
@@ -187,12 +196,15 @@ void Elastic_part_set::ComputeForces(){
         //get<force>(particles[j])+=-k0*dxij*(norm2-l0*l0)+(orsj*(press*norm2)/nj);
         //get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
         felast=k0*dxij*(norm2-l0*l0);
+        
         project=k_align*dir.dot(orsi+orsj);
         get<force>(particles[i])+=felast+orsi*(press*norm2)*status;
         get<torque>(particles[i])-=project*cross(dir,orsi)*status;
-
+        
         get<force>(particles[j])+=-felast+orsj*(press*norm2)*status;
         get<torque>(particles[j])-=project*cross(dir,orsj)*status;
+        
+        
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge

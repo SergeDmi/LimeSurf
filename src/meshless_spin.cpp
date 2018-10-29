@@ -1,4 +1,5 @@
 //#include "spin_parts.h"
+#include "tetr_elastic_spin_parts.h"
 #include "simple_viscoel_spin_parts.h"
 #include "simple_viscoel_parts_props.h"
 #include "meshless_spin_props.h"
@@ -40,6 +41,12 @@ int main(int argc, char* argv[])
             Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(&wall_props);
             cell_wall=wall;
             std::cout << "# Starting viscoelastic simulation" << std::endl;
+            break; }
+        case 4 : {
+            Elastic_set_props wall_props(glos);
+            Tetr_elastic_part_set *wall = new Tetr_elastic_part_set(&wall_props);
+            cell_wall=wall;
+            std::cout << "# Starting elastic simulation" << std::endl;
             break; }
     }
     // Properties of the particle set

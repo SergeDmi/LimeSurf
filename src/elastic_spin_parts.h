@@ -16,10 +16,15 @@ using namespace Aboria;
 //#include "elastic_parts_props.h"
 #include "spin_parts.h"
 
+
+#ifndef ELASTIC_SPIN_PARTS_H
+#define ELASTIC_SPIN_PARTS_H
+
 class Elastic_set_props;
 
 class Elastic_part_set : public Part_set
 {
+    friend class Tetr_elastic_part_set;
 protected:
     // Link between two points (int,int) with a stiffness and resting length (double double) and status (double)
     typedef std::tuple <int,int,double,double,double> link;
@@ -56,6 +61,6 @@ protected:
     double area_ratio;
     
 };
-
+#endif
 
 
