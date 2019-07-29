@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-SET(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
+#SET(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
 #SET(CMAKE_CXX_COMPILER /opt/intel/compilers_and_libraries/linux/bin/intel64/icc)
 #add_library(tinyply tiny/tinyply.cpp)
 
