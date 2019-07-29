@@ -35,6 +35,8 @@ class Elastic_set_props : public Part_set_props
     protected:
         // prestrain : how much the imported link is stretched
         double prestrain;
+        int power_law;
+
 };
 
 

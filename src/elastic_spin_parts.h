@@ -10,10 +10,9 @@
  *
  * Created on May 17, 2018, 11:23 AM
  */
-//#include <random>
+
 #include "Aboria.h"
 using namespace Aboria;
-//#include "elastic_parts_props.h"
 #include "spin_parts.h"
 
 
@@ -25,6 +24,7 @@ class Elastic_set_props;
 class Elastic_part_set : public Part_set
 {
     friend class Tetr_elastic_part_set;
+    
 protected:
     // Link between two points (int,int) with a stiffness and resting length (double double) and status (double)
     typedef std::tuple <int,int,double,double,double> link;
@@ -57,9 +57,17 @@ protected:
     // Particles set properties
     Elastic_set_props *prop;
     
-    // fraction of area per link
+    // fraction of area per link ; matters for elasticity
     double area_ratio;
     
+    // Update area measurements
+    void UpdateAreas();
+    
+    //  mean fraction of area per link  ; matters for pressure
+    double mean_area_ratio;
+    
+    // this computes the module of the force on a linker
+    std::function<double(const double,const double,const double)> compute_force;
 };
 #endif
 

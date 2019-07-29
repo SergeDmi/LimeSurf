@@ -14,13 +14,11 @@ class Part_set_props;
 class Part_set {
     
     friend class Elastic_part_set;
-    friend class Triangle_part_set;
     friend class Tetr_elastic_part_set;
     friend class Simple_viscoel_part_set;
 protected:
     typedef std::pair <int,double> pair_n;
     typedef std::vector<pair_n> neigh_pairs;
-    typedef std::vector<int> in_faces;
     
     // We decided to use Aboria to create the particle set
     // It should be super convenient if we do a liquid particle set
@@ -30,13 +28,12 @@ protected:
     ABORIA_VARIABLE(torque,vdouble3,"orientation");
     ABORIA_VARIABLE(force ,vdouble3,"orientation");
     ABORIA_VARIABLE(neighbours,neigh_pairs,"neighbours");
-    ABORIA_VARIABLE(in_triangles,in_faces,"in_triangles");
     ABORIA_VARIABLE(nn,int,"neighbour number");
     ABORIA_VARIABLE(state,double,"state");
     ABORIA_VARIABLE(nface ,int,"face number");
     
     // The particle set
-    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state,in_triangles>,3> particle_type;
+    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state>,3> particle_type;
     typedef typename particle_type::position position;
     
     // This is convenient if we read faces from a ply file
