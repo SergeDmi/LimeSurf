@@ -3,6 +3,8 @@
 #include "simple_viscoel_spin_parts.h"
 #include "simple_viscoel_parts_props.h"
 #include "meshless_spin_props.h"
+#include "elastic_triangle_parts.h"
+#include "triangle_parts_props.h"
 #include <sstream>
 #include "glossary.h"
 #include <fstream>
@@ -41,6 +43,12 @@ int main(int argc, char* argv[])
             Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(&wall_props);
             cell_wall=wall;
             std::cout << "# Starting viscoelastic simulation" << std::endl;
+            break; }
+        case 3 : {
+            Triangle_set_props wall_props(glos);
+            Triangle_part_set *wall = new Triangle_part_set(&wall_props);
+            cell_wall=wall;
+            std::cout << "# Starting triangular elastic simulation" << std::endl;
             break; }
         case 4 : {
             Elastic_set_props wall_props(glos);
