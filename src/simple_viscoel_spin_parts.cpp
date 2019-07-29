@@ -9,11 +9,12 @@
 #include <math.h>
 //#include "spin_parts.h"
 #include "simple_viscoel_spin_parts.h"
+#include <fstream>
 #include <iostream>
 #include "assert_macro.h"
 #include <limits>
 #include "simple_viscoel_parts_props.h"
-
+using namespace std;
 
 
 const double PI = boost::math::constants::pi<double>();

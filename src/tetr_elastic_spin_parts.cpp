@@ -14,7 +14,7 @@
 #include "elastic_parts_props.h"
 
 using namespace tinyply;
-
+using namespace std;
 
 const double PI = boost::math::constants::pi<double>();
 
@@ -33,8 +33,9 @@ void Tetr_elastic_part_set::GetNeighbours() {
     vdouble3 dir,mir,are;
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
-    
-    
+    int power_law=prop->power_law;
+    std::cout << "# power law : " << power_law << std::endl;
+    double k0;
     // Here the status is 0 : not an internal surface
     double status=0.0;
     double dist;
@@ -42,8 +43,6 @@ void Tetr_elastic_part_set::GetNeighbours() {
     neigh_pairs pairs_j;
     int si,sj;
     double k_elast=prop->k_elast;
-    double Atot=0;
-    double l2tot=0;
     
     std::cout << "by now we have  " << n_springs << "springs" << std::endl;
     int count=0;
@@ -81,7 +80,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
             
             // If it's a new edge, we register it
             if (exists==false) {
-                n_springs++;
+                
                 // Finding the length of the edge
                 posi=get<position>(particles[ix]);
                 posj=get<position>(particles[jx]);
@@ -105,14 +104,29 @@ void Tetr_elastic_part_set::GetNeighbours() {
                 
                 // Now the easiest part : we create the link
                 //double k0=k_elast/(4.0*dist*dist);
-                double k0=k_elast/(dist*dist);
                 
+                switch(power_law) {
+                    case 1 : k0=k_elast*dist;           // k_elast is Y :  N/m^2
+                        break;
+                    case 2 : k0=k_elast/(dist*dist);    // k_elast is Y h : N/m
+                        break;
+                    case 3 : k0=k_elast/pow(dist,3.0);  // k_elast is Y : N/m^2
+                        break;
+                }
                 // TEMPORARY
                 //k0=0.0;
                 
-                link linker{ix,jx,k0,dist,status};
-                l2tot+=dist*dist;
-                springs.push_back(linker);
+                
+                if (std::isnan(k0)) {
+                    std::cerr << "Error : a link has a NaN k0 " << std::endl;
+                } else {
+                    n_springs++;
+                    link linker{ix,jx,k0,dist,status};
+                    springs.push_back(linker);
+                }
+                
+                
+                
             }
             
         }

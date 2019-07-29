@@ -3,12 +3,10 @@
 #include "simple_viscoel_spin_parts.h"
 #include "simple_viscoel_parts_props.h"
 #include "meshless_spin_props.h"
-#include "elastic_triangle_parts.h"
-#include "triangle_parts_props.h"
 #include <sstream>
 #include "glossary.h"
 #include <fstream>
-
+using namespace std;
 
 int main(int argc, char* argv[])
 {
@@ -23,38 +21,38 @@ int main(int argc, char* argv[])
     
     // Empty creation of particle set and properties
     Part_set * cell_wall;
+    Part_set_props * wall_props;
     
     // Now we properly define our particle set
     switch (simul_prop.mechanics) {
         case 0 : {
-            Part_set_props wall_props(glos);
-            Part_set * wall=new Part_set(&wall_props);
+            Part_set_props  * props = new Part_set_props(glos);
+            wall_props=props;
+            Part_set * wall=new Part_set(props);
             cell_wall=wall;
             std::cout << "# Starting viscous simulation" << std::endl;
             break; }
         case 1 : {  
-            Elastic_set_props wall_props(glos);
-            Elastic_part_set *wall = new Elastic_part_set(&wall_props);
+            Elastic_set_props  * props = new Elastic_set_props(glos);
+            wall_props=props;
+            Elastic_part_set * wall=new Elastic_part_set(props);
             cell_wall=wall;
             std::cout << "# Starting elastic simulation" << std::endl;
+            //std::cout << "fname in should in meshless : " << wall_props->fname_in << std::endl;
             break; }
         case 2 : {
-            Simple_viscoel_set_props wall_props(glos);
-            Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(&wall_props);
+            Simple_viscoel_set_props *props = new Simple_viscoel_set_props(glos);
+            wall_props=props;
+            Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(props);
             cell_wall=wall;
             std::cout << "# Starting viscoelastic simulation" << std::endl;
             break; }
-        case 3 : {
-            Triangle_set_props wall_props(glos);
-            Triangle_part_set *wall = new Triangle_part_set(&wall_props);
-            cell_wall=wall;
-            std::cout << "# Starting triangular elastic simulation" << std::endl;
-            break; }
         case 4 : {
-            Elastic_set_props wall_props(glos);
-            Tetr_elastic_part_set *wall = new Tetr_elastic_part_set(&wall_props);
+            Elastic_set_props  * props = new Elastic_set_props(glos);
+            wall_props=props;
+            Tetr_elastic_part_set *wall = new Tetr_elastic_part_set(props);
             cell_wall=wall;
-            std::cout << "# Starting elastic simulation" << std::endl;
+            std::cout << "# Starting 3D elastic simulation" << std::endl;
             break; }
     }
     // Properties of the particle set
@@ -69,10 +67,10 @@ int main(int argc, char* argv[])
    
     // Export name
     
-  
+    std::cout << "fname in should in meshless : " << cell_wall->prop->fname_in << std::endl;
     cell_wall->create();   
+    std::cout << "Created cell wall " << std::endl;
     
-
     std::string fname_out="simulated_cell";
     // Getting ready to simulate
     cell_wall->GetStarted();
@@ -90,9 +88,11 @@ int main(int argc, char* argv[])
     cell_wall->Export_bly(fname_out,n_save,&simul_prop);
     n_save++;
     
+    //std::cout << "Starting sim " << std::endl;
     // Simulation steps
     while (t<simul_prop.Tend && !cell_wall->is_diverging()) {
         t+=simul_prop.dt;
+        //std::cout << t << std::endl;
         cell_wall->NextStep(&simul_prop);
         
         // Saving if needed

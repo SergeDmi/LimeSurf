@@ -13,8 +13,9 @@
 Elastic_set_props::Elastic_set_props(const Glossary opt) : Part_set_props(opt) {
     
     prestrain=1.0;
-    
+    power_law=2;
     opt.set(prestrain, "prestrain");
-    
+    opt.set(power_law, "power_law");
+    std::cout << "power law : " << power_law << std::endl;
     
 }

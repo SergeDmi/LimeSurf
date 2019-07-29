@@ -4,6 +4,7 @@
 //using namespace Aboria;
 #include <sstream>
 #include "spin_parts_props.h"
+using namespace std;
 
 // Empty constructor for convenience
 Part_set_props::Part_set_props() {};
@@ -43,20 +44,22 @@ Part_set_props::Part_set_props(const Glossary opt) {
     Fmax=DBL_MAX;
     
     // For elastic sets :
-    max_neighbours=9;
+    max_neighbours=15;
     
     // Misc parameters
     renorm_rate=0.001;
+    opt.set(renorm_rate, "renorm_rate");
     double box[6];
     
     // reading these parameters from the config file !
     std::string str;
+    str.reserve(10000);
     fname_in.reserve(1000);
     load_from_file=opt.set(str,"load_from");
     
     if (load_from_file>0) {
         fname_in.append(str);
-        //std::cout << "fname_in : " << fname_in << std::endl;
+        std::cout << "fname_in : " << fname_in << std::endl;
     }
     
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));

@@ -5,12 +5,13 @@ using namespace Aboria;
 #include <math.h>
 #include "spin_parts.h"
 #include <iostream>
+#include <fstream>
 #include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "spin_parts_props.h"
 using namespace tinyply;
-
+using namespace std;
 
 const double PI = boost::math::constants::pi<double>();
 
@@ -30,6 +31,7 @@ Part_set::Part_set(Part_set_props * p) {
 
 // If particles need to be created from properties
 void Part_set::create() {
+    std::cout << "# starting particle creation ; load " << prop->fname_in << " if " << prop->load_from_file << std::endl;
     if (prop->load_from_file>0) {
         std::string test=prop->fname_in;
         std::cout << "# ... Trying to load " << test << std::endl;
@@ -129,7 +131,8 @@ int Part_set::load_from_text(){
         get<orientation>(p) = dir;
         get<force>(p) = zero;
         get<torque>(p) = zero;
-        
+        get<state>(p) = -1.0;
+        get<nn>(p) = 0;
         particles.push_back(p);
         
     }
@@ -391,7 +394,8 @@ void Part_set::ClearForces() {
 
 // Adding forces to particles
 void Part_set::IntegrateForces(const Meshless_props* simul_prop){
-    float dt=simul_prop->dt;
+    double dt_trans=simul_prop->dt/prop->visco;
+    double dt_rot=simul_prop->dt/prop->Rvisc;
     vdouble3 forcei;
     for (int i = 0; i < number; ++i) {
         
@@ -404,8 +408,8 @@ void Part_set::IntegrateForces(const Meshless_props* simul_prop){
         //}
         
         // Applying force & torque
-        get<position>(particles[i])+=((forcei)*(dt/prop->visco));
-        get<orientation>(particles[i])+=cross(get<orientation>(particles[i]),get<torque>(particles[i]))*(dt/prop->Rvisc);
+        get<position>(particles[i])+=((forcei)*(dt_trans));
+        get<orientation>(particles[i])+=cross(get<orientation>(particles[i]),get<torque>(particles[i]))*(dt_rot);
     }
 }
 
@@ -414,7 +418,9 @@ void Part_set::RenormNorms(){
     vdouble3 normi;
     for (int i = 0; i < number; ++i) {
         normi=get<orientation>(particles[i]);
-        get<orientation>(particles[i])/=sqrt(normi.squaredNorm());
+        if ((get<state>(particles[i])>0)) {
+            get<orientation>(particles[i])/=sqrt(normi.squaredNorm());            
+        }
     }
 }
 
