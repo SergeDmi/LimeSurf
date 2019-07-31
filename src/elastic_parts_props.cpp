@@ -10,6 +10,7 @@
 #include <sstream>
 #include "elastic_parts_props.h"
 
+
 Elastic_set_props::Elastic_set_props(const Glossary opt) : Part_set_props(opt) {
     
     prestrain=1.0;

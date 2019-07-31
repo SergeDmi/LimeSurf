@@ -21,7 +21,7 @@ using namespace Aboria;
 #define TRIANGLE_PARTS_PROPS_H
 
 
-class Triange_set_props : public Elastic_set_props
+class Triangle_set_props : public Elastic_set_props
 {
     friend class Triangle_part_set;
     //friend class Tetr_elastic_part_set;

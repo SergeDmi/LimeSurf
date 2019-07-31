@@ -4,6 +4,9 @@
 #include "Aboria.h"
 using namespace Aboria;
 
+#ifndef SPIN_PARTS_PROPS_H
+#define SPIN_PARTS_PROPS_H
+
 class Part_set_props {
 
     friend class Part_set;
@@ -47,3 +50,5 @@ public:
     
     
 };
+
+#endif

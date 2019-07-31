@@ -10,7 +10,7 @@
 #include <sstream>
 #include "triangle_parts_props.h"
 
-Triangle_set_props::Triangle_set_props(const Glossary opt) : Part_set_props(opt) {
+Triangle_set_props::Triangle_set_props(const Glossary opt) : Elastic_set_props(opt) {
     
     prestrain=1.0;
     

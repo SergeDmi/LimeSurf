@@ -28,10 +28,8 @@ class Elastic_set_props : public Part_set_props
     public:
         /// constructor
         Elastic_set_props(const Glossary );
-        
-
-        
-        
+    
+    
     protected:
         // prestrain : how much the imported link is stretched
         double prestrain;

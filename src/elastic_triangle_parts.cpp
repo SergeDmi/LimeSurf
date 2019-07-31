@@ -41,8 +41,8 @@ void Triangle_part_set::GetNeighbours() {
     double Atot=0;
     double l2tot=0;
     n_springs=0;
-    int i,j,k,l,m;
-    int iix,kkx;
+    int i,j,l,m;
+    int iix;
     //int count;
     in_faces list_faces;
     
@@ -54,9 +54,9 @@ void Triangle_part_set::GetNeighbours() {
                  case 2 : ix=triangles[i].z ; break ;
              }
              
-             list_faces=get<triangles>(particles[ix]);
+             list_faces=get<in_triangles>(particles[ix]);
              list_faces.push_back(i);
-             get<triangles>(particles[ix])=list_faces;
+             get<in_triangles>(particles[ix])=list_faces;
              
              
          }
@@ -117,9 +117,9 @@ void Triangle_part_set::GetNeighbours() {
                 get<nn>(particles[ix])=si;
                 get<nn>(particles[jx])=sj;
                 
-                list_faces=get<triangles>(particles[ix]);
+                list_faces=get<in_triangles>(particles[ix]);
                 // identifying the other face
-                for(k : list_faces) {
+                for(auto k : list_faces) {
                     if (k != i) {
                         if (triangles[k].x==ix or triangles[k].y==ix or triangles[k].z==ix) {
                             // We found the other triangle !!!!
