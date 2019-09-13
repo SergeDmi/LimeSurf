@@ -145,10 +145,10 @@ void Elastic_part_set::GetNeighbours() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     mean_area_ratio=Atot/l2mean;
-    std::cout << "# Found area ratio : " << area_ratio << std::endl;
-    std::cout << "# Found mean area ratio : " << mean_area_ratio << std::endl;
-    std::cout << "# Found Gamma : " << mean_area_ratio/area_ratio << std::endl;
-    std::cout << "# Generated " << n_springs << " springs " << std::endl;
+    //std::cout << "# Found area ratio : " << area_ratio << std::endl;
+    //std::cout << "# Found mean area ratio : " << mean_area_ratio << std::endl;
+    //std::cout << "# Found Gamma : " << mean_area_ratio/area_ratio << std::endl;
+    //std::cout << "# Generated " << n_springs << " springs " << std::endl;
     //particles.erase( std::remove_if(particles.begin(), particles.end(), [](auto& obj){return obj.nfaces == 0;}), particles.end() );
    
 }
@@ -211,8 +211,8 @@ void Elastic_part_set::UpdateAreas() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     mean_area_ratio=Atot/l2mean;
-    std::cout << "# Found area ratio : " << area_ratio << std::endl;
-    std::cout << "# Found mean area ratio : " << mean_area_ratio << std::endl;
+    //std::cout << "# Found area ratio : " << area_ratio << std::endl;
+    //std::cout << "# Found mean area ratio : " << mean_area_ratio << std::endl;
     //particles.erase( std::remove_if(particles.begin(), particles.end(), [](auto& obj){return obj.nfaces == 0;}), particles.end() );
    
 }

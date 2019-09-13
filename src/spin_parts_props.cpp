@@ -51,6 +51,10 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(renorm_rate, "renorm_rate");
     double box[6];
     
+    // Confinement 
+    x_conf=0;y_conf=0;z_conf=0;
+    x_max=0 ;y_max=0 ;z_max=0 ;
+    
     // reading these parameters from the config file !
     std::string str;
     str.reserve(10000);
@@ -82,7 +86,16 @@ Part_set_props::Part_set_props(const Glossary opt) {
     p_align=p_att;
     
     opt.set(k_align, "align",0);
-    opt.set(k_align, "align",0);
+    
+    opt.set(z_max, "z_conf",0);
+    opt.set(z_conf, "z_conf",1);
+    
+    opt.set(z_max, "y_conf",0);
+    opt.set(z_conf, "y_conf",1);
+    
+    opt.set(z_max, "x_conf",0);
+    opt.set(z_conf, "x_conf",1);
+    
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);

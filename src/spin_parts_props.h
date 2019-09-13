@@ -40,6 +40,9 @@ public:
     vdouble3 corner_0,corner_1; // Corners of box
     int max_neighbours;
     
+    double x_max, y_max, z_max ;
+    double x_conf,y_conf,z_conf;
+    
     // @todo ; with keylist
     int init_shape;
     int init_number;

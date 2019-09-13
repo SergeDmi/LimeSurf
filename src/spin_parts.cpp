@@ -19,6 +19,7 @@ const double PI = boost::math::constants::pi<double>();
 Part_set::Part_set() {
     number=0;
     diverging=false;
+   
 }   
 
 Part_set::Part_set(Part_set_props * p) {
@@ -27,6 +28,27 @@ Part_set::Part_set(Part_set_props * p) {
     double L=prop->L;
     diverging=false;
    
+    //double x_conf=prop->x_conf;
+    //double y_conf=prop->y_conf;
+    //double z_conf=prop->z_conf;
+    // Makin da functions yo
+    if (prop->x_conf>0) {
+        add_x_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[0]-=pp->x_conf*((posi[0]>pp->x_max)*(posi[0]-pp->x_max) + (posi[0]<-pp->x_max)*(posi[0]+pp->x_max)); };
+    } else {
+        add_x_conf = [] (vdouble3& force, vdouble3 posi ) {};
+    }
+    
+    if (prop->y_conf>0) {
+        add_y_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[1]-=pp->x_conf*((posi[1]>pp->y_max)*(posi[1]-pp->y_max) + (posi[1]<-pp->y_max)*(posi[1]+pp->y_max)); };
+    } else {
+        add_y_conf = [] (vdouble3& force, vdouble3 posi ) {};
+    }
+    
+    if (prop->z_conf>0) {
+        add_z_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[2]-=pp->z_conf*((posi[2]>pp->z_max)*(posi[2]-pp->z_max) + (posi[2]<-pp->z_max)*(posi[2]+pp->z_max)); };
+    } else {
+        add_z_conf = [] (vdouble3& force, vdouble3 posi ) {};
+    }
 }
 
 // If particles need to be created from properties
@@ -461,6 +483,36 @@ void Part_set::ComputeForces(){
         get<nn>(particles[i])=neibs;
     }
 }
+
+// Confinement forces
+void Part_set::AddConfinementForces(){
+    vdouble3 posi;
+    //vdouble3 orsi;
+    vdouble3 forcei;
+    vdouble3 zero(0,0,0);
+    //int idi,idj;
+    //double p_att=(1.0+prop->p_att)/2.0;
+    //double p_align=(1.0+prop->p_align)/2.0;
+    //double p_rep=(prop->p_rep+prop->p_att)/2.0;
+    //int neibs;
+    if (prop->x_conf+prop->y_conf+prop->z_conf>0) {
+        // There is actually confinement
+        //for (int i = 0; i < number; ++i) {
+        for (auto part : particles) {
+            forcei=zero;
+            posi=get<position>(part);
+            
+            add_x_conf(forcei,posi);
+            add_y_conf(forcei,posi);
+            add_z_conf(forcei,posi);
+            //idi=get<id>(particles[i]);
+            
+            get<force>(part)+=forcei;
+        }
+    }
+    
+}
+
 
 
 // Temporary dirty exporting to a file

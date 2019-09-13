@@ -79,6 +79,9 @@ public:
     // Compute the forces on each particle
     virtual void ComputeForces();
     
+    // Confining potential
+    virtual void AddConfinementForces();
+    
     // Find the neighbours of every particle
     virtual void GetNeighbours();
     
@@ -143,6 +146,11 @@ protected:
 
     // Furthest points (xmin xmax ymin ymax zmin zmax)
     double bounds[6];
+    
+    // Confinement forces
+    std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
+    std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
+    std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
 };
 
 #endif
