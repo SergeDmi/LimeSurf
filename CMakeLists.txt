@@ -31,8 +31,12 @@ add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
 list(APPEND INCLUDES Aboria/src)
 list(APPEND INCLUDES Aboria/third-party)
 
+# Tinyply
 list(APPEND INCLUDES tinyply/source)
 
+# yaml-cpp
+list(APPEND INCLUDES yaml-cpp/include)
+list(APPEND INCLUDES yaml-cpp/src)
 # Cytosim
 list(APPEND INCLUDES Cytosim)
 
@@ -46,6 +50,7 @@ file(GLOB all_SRC
     "src/*.cpp"
     "Cytosim/*.cc"
 	"tinyply/source/tinyply.cpp"
+    "yaml-cpp/src"
 )
 
 #MESSAGE( STATUS ${all_SRC})

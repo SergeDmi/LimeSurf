@@ -12,6 +12,8 @@ using namespace Aboria;
 #include "spin_parts_props.h"
 using namespace tinyply;
 using namespace std;
+#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+
 
 const double PI = boost::math::constants::pi<double>();
 
