@@ -1,0 +1,6 @@
+[submodule "Aboria"]
+	path = Aboria
+	url = https://github.com/aboria/Aboria.git
+[submodule "tinyply"]
+	path = tinyply
+	url = https://github.com/ddiakopoulos/tinyply.git
