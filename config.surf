@@ -1,5 +1,6 @@
 % Importing mesh from file
-load_from=/home/dmitrief/Sync/ownCloud/work/yeast_wall/sims/resized_finer_c3/test/before_gonfle.ply
+%load_from=/home/dmitrief/Sync/ownCloud/work/yeast_wall/sims/resized_finer_c3/test/before_gonfle.ply
+load_from=thin_cleaned_sorbitol_10_2.ply
 
 % Elastic simulations
 mechanics=1
@@ -9,6 +10,8 @@ mechanics=1
 % box is automatically adjusted if too small
 box=0,0,0,510,520,520
 % Although not really needed in elastic sims
+y_conf=1.0,10.0
+z_conf=1.0,10.0
 
 %% Simulation parameters
 Fmax=infinity
@@ -31,7 +34,8 @@ pressure=0.2;  % pressure
 % translation and rotation viscosity
 % not so important, we look for equilibrium shape
 prestrain=1.0;
-changing_times=6100
-changing_pressure=0
+
+% changing_times=6100
+% changing_pressure=0
 
 
