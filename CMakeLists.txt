@@ -31,20 +31,21 @@ add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
 list(APPEND INCLUDES Aboria/src)
 list(APPEND INCLUDES Aboria/third-party)
 
-list(APPEND INCLUDES tiny)
+list(APPEND INCLUDES tinyply/source)
 
 # Cytosim
 list(APPEND INCLUDES Cytosim)
 
 # LimeSurf
-list(APPEND INCLUDES .)
+#list(APPEND INCLUDES .)
+list(APPEND INCLUDES src)
 
 include_directories(src ${INCLUDES})
 
 file(GLOB all_SRC
     "src/*.cpp"
     "Cytosim/*.cc"
-	"tiny/*.cpp"
+	"tinyply/source/tinyply.cpp"
 )
 
 #MESSAGE( STATUS ${all_SRC})
