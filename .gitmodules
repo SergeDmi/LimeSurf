@@ -4,3 +4,6 @@
 [submodule "tinyply"]
 	path = tinyply
 	url = https://github.com/ddiakopoulos/tinyply.git
+[submodule "yaml-cpp"]
+	path = yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
