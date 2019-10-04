@@ -200,10 +200,12 @@ int Part_set::PutOnSphere(){
             get<torque>(p) = zero;
             
             // Using aboria's power
-            for (auto tpl: euclidean_search(particles.get_query(),get<position>(p),mindist)) {
+            
+            for (auto tpl=euclidean_search(particles.get_query(),get<position>(p),mindist); tpl!=false ; ++tpl) {
                 neighbours++;
                 break;
             }
+             
         }
         get<state>(p) = neighbours;
         particles.push_back(p);
@@ -322,11 +324,13 @@ void Part_set::GetNeighbours() {
         neigh_pairs pairs;
         pos1=get<position>(particles[i]);
         int idi=get<id>(particles[i]);
-        for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
-            const typename particle_type::value_type& j = std::get<0>(tpl);
-            ide=get<id>(j);
+        //for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
+        for (auto tpl = euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax); tpl!=false ; ++tpl ) {
+            //const typename particle_type::value_type& j = std::get<0>(tpl);
+            //const auto j = std::get<0>(*tpl);
+            ide=get<id>(*tpl);
             if (ide!=idi) {
-                    dir=get<position>(j)-pos1;
+                    dir=get<position>(*tpl)-pos1;
                     pair_n ppp(ide,sqrt(dir.squaredNorm()));
                     pairs.push_back(ppp);
                     n++;
@@ -453,6 +457,7 @@ void Part_set::RenormNorms(){
 // Computing forces with viscous setting (i.e. changeable nearest neighbours)
 //@TODO : verify this part
 void Part_set::ComputeForces(){
+    
     vdouble3 posi;
     vdouble3 orsi;
     int idi,idj;
@@ -465,14 +470,16 @@ void Part_set::ComputeForces(){
         posi=get<position>(particles[i]);
         orsi=get<orientation>(particles[i]);
         idi=get<id>(particles[i]);
-        for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
-             typename particle_type::value_type j = std::get<0>(tpl);
+        //for (auto tpl: euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax)) {
+        for (auto tpl = euclidean_search(particles.get_query(),get<position>(particles[i]),prop->Rmax); tpl!=false ; ++tpl ) {
+             //typename particle_type::value_type j = std::get<0>(*tpl);
+             //const typename particle_type::value_type& j = std::get<0>(*tpl);
             
-            idj=get<id>(j);
+            idj=get<id>(*tpl);
             if (idi!=idj) {
                 neibs++;
-                vdouble3 posj=get<position>(j);
-                vdouble3 orsj=get<orientation>(j);
+                vdouble3 posj=get<position>(*tpl);
+                vdouble3 orsj=get<orientation>(*tpl);
                 vdouble3 sumo=orsi+orsj;
                 vdouble3 dxij=posj-posi;
                 double nsqrij=std::max(dxij.squaredNorm(),prop->minR);
@@ -486,6 +493,7 @@ void Part_set::ComputeForces(){
         
         get<nn>(particles[i])=neibs;
     }
+     //* */
 }
 
 // Confinement forces
