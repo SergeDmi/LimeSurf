@@ -228,6 +228,8 @@ void Elastic_part_set::NextStep(const Meshless_props* simul_prop){
     Part_set::ClearForces();
     // Computing forces and torques
     ComputeForces();
+    // Add confinement forces;
+    Part_set::AddConfinementForces();
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
     //From time to time we should check that the normals are normalized

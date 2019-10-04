@@ -90,11 +90,11 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(z_max, "z_conf",0);
     opt.set(z_conf, "z_conf",1);
     
-    opt.set(z_max, "y_conf",0);
-    opt.set(z_conf, "y_conf",1);
+    opt.set(y_max, "y_conf",0);
+    opt.set(y_conf, "y_conf",1);
     
-    opt.set(z_max, "x_conf",0);
-    opt.set(z_conf, "x_conf",1);
+    opt.set(x_max, "x_conf",0);
+    opt.set(x_conf, "x_conf",1);
     
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);

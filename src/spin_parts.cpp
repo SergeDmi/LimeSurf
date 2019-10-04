@@ -33,18 +33,21 @@ Part_set::Part_set(Part_set_props * p) {
     //double z_conf=prop->z_conf;
     // Makin da functions yo
     if (prop->x_conf>0) {
+        std::cout << "# There will be confinement along x" << std::endl;
         add_x_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[0]-=pp->x_conf*((posi[0]>pp->x_max)*(posi[0]-pp->x_max) + (posi[0]<-pp->x_max)*(posi[0]+pp->x_max)); };
     } else {
         add_x_conf = [] (vdouble3& force, vdouble3 posi ) {};
     }
     
     if (prop->y_conf>0) {
-        add_y_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[1]-=pp->x_conf*((posi[1]>pp->y_max)*(posi[1]-pp->y_max) + (posi[1]<-pp->y_max)*(posi[1]+pp->y_max)); };
+        std::cout << "# There will be confinement along y" << std::endl;
+        add_y_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[1]-=pp->y_conf*((posi[1]>pp->y_max)*(posi[1]-pp->y_max) + (posi[1]<-pp->y_max)*(posi[1]+pp->y_max)); };
     } else {
         add_y_conf = [] (vdouble3& force, vdouble3 posi ) {};
     }
     
     if (prop->z_conf>0) {
+        std::cout << "# There will be confinement along z" << std::endl;
         add_z_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[2]-=pp->z_conf*((posi[2]>pp->z_max)*(posi[2]-pp->z_max) + (posi[2]<-pp->z_max)*(posi[2]+pp->z_max)); };
     } else {
         add_z_conf = [] (vdouble3& force, vdouble3 posi ) {};
@@ -396,6 +399,7 @@ int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
 // One simulation step
 void Part_set::NextStep(const Meshless_props* simul_prop){
     ComputeForces();
+    AddConfinementForces();
     IntegrateForces(simul_prop);
     if (!(prop->elastic)) {
         particles.update_positions();
@@ -504,10 +508,14 @@ void Part_set::AddConfinementForces(){
             
             add_x_conf(forcei,posi);
             add_y_conf(forcei,posi);
+            
+            //std::cout << " force bla "  << forcei[0] << " , " << forcei[1] << " , " << forcei[2] << std::endl;
             add_z_conf(forcei,posi);
             //idi=get<id>(particles[i]);
             
             get<force>(part)+=forcei;
+            
+            //std::cout << " force i "  << forcei[0] << " , " << forcei[1] << " , " << forcei[2] << std::endl;
         }
     }
     
