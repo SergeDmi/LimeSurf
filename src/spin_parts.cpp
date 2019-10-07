@@ -34,6 +34,7 @@ Part_set::Part_set(Part_set_props * p) {
     //double y_conf=prop->y_conf;
     //double z_conf=prop->z_conf;
     // Makin da functions yo
+    /*
     if (prop->x_conf>0) {
         std::cout << "# There will be confinement along x" << std::endl;
         add_x_conf = [pp=prop] (vdouble3& force, vdouble3 posi ) { force[0]-=pp->x_conf*((posi[0]>pp->x_max)*(posi[0]-pp->x_max) + (posi[0]<-pp->x_max)*(posi[0]+pp->x_max)); };
@@ -54,6 +55,7 @@ Part_set::Part_set(Part_set_props * p) {
     } else {
         add_z_conf = [] (vdouble3& force, vdouble3 posi ) {};
     }
+    */
 }
 
 // If particles need to be created from properties
@@ -403,9 +405,9 @@ int Part_set::pop_furthest_neighbour(neigh_pairs * pairs, int n) {
 
 
 // One simulation step
-void Part_set::NextStep(const Meshless_props* simul_prop){
-    ComputeForces();
-    AddConfinementForces();
+void Part_set::NextStep(const Simul_props & simul_prop){
+    ComputeForces(simul_prop);
+    AddConfinementForces(simul_prop);
     IntegrateForces(simul_prop);
     if (!(prop->elastic)) {
         particles.update_positions();
@@ -425,9 +427,9 @@ void Part_set::ClearForces() {
 }
 
 // Adding forces to particles
-void Part_set::IntegrateForces(const Meshless_props* simul_prop){
-    double dt_trans=simul_prop->dt/prop->visco;
-    double dt_rot=simul_prop->dt/prop->Rvisc;
+void Part_set::IntegrateForces(const Simul_props & simul_prop){
+    double dt_trans=simul_prop.dt/prop->visco;
+    double dt_rot=simul_prop.dt/prop->Rvisc;
     vdouble3 forcei;
     for (int i = 0; i < number; ++i) {
         
@@ -458,7 +460,7 @@ void Part_set::RenormNorms(){
 
 // Computing forces with viscous setting (i.e. changeable nearest neighbours)
 //@TODO : verify this part
-void Part_set::ComputeForces(){
+void Part_set::ComputeForces(const Simul_props & simul_prop){
     
     vdouble3 posi;
     vdouble3 orsi;
@@ -499,7 +501,7 @@ void Part_set::ComputeForces(){
 }
 
 // Confinement forces
-void Part_set::AddConfinementForces(){
+void Part_set::AddConfinementForces(const Simul_props & simul_prop){
     vdouble3 posi;
     //vdouble3 orsi;
     vdouble3 forcei;
@@ -509,18 +511,20 @@ void Part_set::AddConfinementForces(){
     //double p_align=(1.0+prop->p_align)/2.0;
     //double p_rep=(prop->p_rep+prop->p_att)/2.0;
     //int neibs;
-    if (prop->x_conf+prop->y_conf+prop->z_conf>0) {
+    
+    //if (prop->x_conf+prop->y_conf+prop->z_conf>0) {
+    if ( simul_prop.is_confinement ) {        
         // There is actually confinement
         //for (int i = 0; i < number; ++i) {
         for (auto part : particles) {
             forcei=zero;
             posi=get<position>(part);
-            
-            add_x_conf(forcei,posi);
-            add_y_conf(forcei,posi);
+            simul_prop.add_confinement_force(forcei,posi);
+            //add_x_conf(forcei,posi);
+            //add_y_conf(forcei,posi);
             
             //std::cout << " force bla "  << forcei[0] << " , " << forcei[1] << " , " << forcei[2] << std::endl;
-            add_z_conf(forcei,posi);
+            //add_z_conf(forcei,posi);
             //idi=get<id>(particles[i]);
             
             get<force>(part)+=forcei;
@@ -555,12 +559,13 @@ void Part_set::Export(int t){
 
 // saving to .ply
 // @TODO : problem in the tags of exported ply files
-void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* simul_prop){
+void Part_set::Export_bly(int n_frame,const Simul_props & simul_prop, double t){
+    std::string fname=prop->fname_out+simul_prop.name;
     //std::ifstream ss(fname, std::ios::binary);
     std::string filename;
     std::filebuf fb;
     std::string numero(std::to_string(n_frame));
-    std::string uno(std::to_string(simul_prop->n_frames));
+    std::string uno(std::to_string(simul_prop.n_frames));
     while (numero.length()<uno.length()) {
         numero="0"+numero;
     }
@@ -575,6 +580,7 @@ void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* si
     struct float3 { float x, y, z; };
     std::vector<float3> verts(number);
     std::vector<float3> norms(number);
+    //std::cout << "number of vertices : " << number << std::endl;
     for (int idi = 0; idi < number; ++idi) {
         // We search by ID to make sure no particle reshuffling occured
         auto i = particles.get_query().find(idi);
@@ -586,40 +592,16 @@ void Part_set::Export_bly(std::string fname,int n_frame,const Meshless_props* si
         //norms[idi]={(float)orsi[0],(float)orsi[1],(float)orsi[2]};
         //std::cout << " "  << idi << std::flush;
     }
-    //std::cout << "size of verts "  << verts.size() << std::endl;
-    // Ok now it gets risky ! trying to reconstitute the faces...
-    /*
-    std::ifstream ss(fname, std::ios::binary);
-    if (ss.fail())
-    {
-        throw std::runtime_error("failed to open " + fname);
-    }
-    PlyFile file;
-    file.parse_header(ss);
-    std::shared_ptr<PlyData> vertices, normals, colors, faces, texcoords;
     
-    //try { vertices = file.request_properties_from_element("vertex", { "x", "y", "z" }); }
-    //catch (const std::exception & e) { std::cerr << "tinyply exception:aaaa " << e.what() << std::endl; }
-
-    try { faces = file.request_properties_from_element("face", { "vertex_index" }); }
-    catch (const std::exception & e) {std::cerr << "tinyply exception XX: " << e.what() << std::endl;}
-    
-    file.read(ss);
-    const size_t numIndicesBytes = faces->buffer.size_bytes();
-    int nf=faces->count;
-    */
-    //if (faces->t == tinyply::Type::INT32) { std::cout << "Seems we are using INT32 and buffer size is " << numIndicesBytes << std::endl ; }
-
-    //struct int3 { int n,a,b,c,d,e,f,g,h,m,o; };
-    //struct int3 { int32_t aa,bb,cc; };
-    //std::vector<int3> fff(nf);
-    //std::memcpy(fff.data(), faces->buffer.get(), numIndicesBytes);
-    // Let's try writing...
-    exampleOutFile.add_properties_to_element("vertex", { "x", "y", "z" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
-    exampleOutFile.add_properties_to_element("vertex", { "nx", "ny", "nz" }, Type::FLOAT32, 3*verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);
-    exampleOutFile.add_properties_to_element("face", { "vertex_index" }, Type::UINT32, 3*triangles.size(), reinterpret_cast<uint8_t*>(triangles.data()), Type::UINT16, 3);
-
+    exampleOutFile.add_properties_to_element("vertex", { "x", "y", "z" }, 
+                            Type::FLOAT32, verts.size(), reinterpret_cast<uint8_t*>(verts.data()), Type::INVALID, 0);
+    exampleOutFile.add_properties_to_element("vertex", { "nx", "ny", "nz" }, 
+                            Type::FLOAT32, verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);
+    exampleOutFile.add_properties_to_element("face", { "vertex_index" },
+                            Type::UINT32,  triangles.size(), reinterpret_cast<uint8_t*>(triangles.data()), Type::UINT8, 3);
+                            
     exampleOutFile.get_comments().push_back("generated by tinyply");
+    exampleOutFile.get_comments().push_back("time "+std::to_string(t));
     exampleOutFile.write(outputStream, false);
         
     fb.close();

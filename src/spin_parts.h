@@ -2,7 +2,7 @@
 #include "Aboria.h"
 using namespace Aboria;
 //#include "spin_parts_props.h"
-#include "meshless_spin_props.h"
+#include "simul_props.h"
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 
@@ -68,19 +68,19 @@ public:
     int num() { return number;}
     
     // Performs a time step
-    virtual void NextStep(const Meshless_props*);
+    virtual void NextStep(const Simul_props &);
     
     // APply the computed forces
-    void IntegrateForces(const Meshless_props*);
+    void IntegrateForces(const Simul_props &);
     
     // Get rids of far away neighbour...
     int pop_furthest_neighbour(neigh_pairs*,int );
     
     // Compute the forces on each particle
-    virtual void ComputeForces();
+    virtual void ComputeForces(const Simul_props &);
     
     // Confining potential
-    virtual void AddConfinementForces();
+    virtual void AddConfinementForces(const Simul_props &);
     
     // Find the neighbours of every particle
     virtual void GetNeighbours();
@@ -89,7 +89,7 @@ public:
     virtual void Export(int);
     
     // Export to ply
-    void Export_bly(std::string,int,const Meshless_props* );
+    void Export_bly(int,const Simul_props & , double );
     
     // Getting ready to simulate
     virtual void GetStarted();
@@ -148,9 +148,9 @@ protected:
     double bounds[6];
     
     // Confinement forces
-    std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
-    std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
-    std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
+    //std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
+    //std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
+    //std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
 };
 
 #endif

@@ -10,7 +10,9 @@ using namespace std;
 Part_set_props::Part_set_props() {};
 
 Part_set_props::Part_set_props(const Glossary opt) {
+    // @TODO : replace all glos - YAML
     
+    fname_out="simulated_";
     // Shape to be created
     init_shape=0;
     init_number=100;
@@ -136,4 +138,9 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(pressure, "pressure");
     
     std::cout << "# Fmax2=" << Fmax2 << std::endl;
+    
+}
+
+void Part_set_props::read_physical_properties(YAML::Node config) {
+    
 }

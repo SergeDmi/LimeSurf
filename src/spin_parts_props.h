@@ -2,6 +2,8 @@
 #include <sstream>
 #include "glossary.h"
 #include "Aboria.h"
+#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+
 using namespace Aboria;
 
 #ifndef SPIN_PARTS_PROPS_H
@@ -20,6 +22,7 @@ public:
     // Real constructor
     Part_set_props(const Glossary);
     std::string fname_in;   // contains file to be loaded
+    std::string fname_out;
     //fname_in.reserve(10000);
     int load_from_file;    // flag if a file needs to be loaded
     double R0;              // Equilibrium distance between parts
@@ -51,6 +54,7 @@ public:
     bool elastic;
     double k_elast;
     
+    virtual void read_physical_properties(YAML::Node);
     
 };
 

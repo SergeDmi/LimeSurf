@@ -27,10 +27,10 @@ public:
     Simple_viscoel_part_set(Simple_viscoel_set_props *);
     
     // Time step for the particle set
-    void NextStep(const Meshless_props*);
+    void NextStep(const Simul_props &);
     
     // Compute forces
-    void ComputeForces(const Meshless_props*);
+    void ComputeForces(const Simul_props &);
     
     // Find nearest neighbours
     void GetNeighbours();

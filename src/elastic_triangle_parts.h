@@ -37,7 +37,7 @@ public:
     Triangle_part_set(Triangle_set_props *);
     
     // Time step for the particle set
-    void NextStep(const Meshless_props*);
+    void NextStep(const Simul_props &);
     
     // Read from the list of faces to create links and find neighbours
     void GetNeighbours();
@@ -46,7 +46,7 @@ public:
     void GetStarted();
     
     // Compute forces
-    void ComputeForces();
+    void ComputeForces(const Simul_props &);
     
 protected:
     // Springs between particles

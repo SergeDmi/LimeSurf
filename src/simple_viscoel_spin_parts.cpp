@@ -28,11 +28,12 @@ Simple_viscoel_part_set::Simple_viscoel_part_set(Simple_viscoel_set_props * p) :
 
 
 // Here we do the actual time step : compute and apply forces
-void Simple_viscoel_part_set::NextStep(const Meshless_props* simul_prop){
+void Simple_viscoel_part_set::NextStep(const Simul_props & simul_prop){
     // Set all forces & torques to 0
     Part_set::ClearForces();
     // Computing forces and torques
     ComputeForces(simul_prop);
+    Part_set::AddConfinementForces(simul_prop);
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
     //From time to time we should check that the normals are normalized
@@ -77,7 +78,7 @@ void Simple_viscoel_part_set::GetNeighbours() {
 
 
 // The physics part : computing interaction between vertices
-void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
+void Simple_viscoel_part_set::ComputeForces(const Simul_props & simul_prop){
     vdouble3 posi,posj;
     vdouble3 orsi,orsj;
     vdouble3 dxij;
@@ -88,7 +89,7 @@ void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
     double align=prop->k_align*2.0;
     int i,j;
     double l0,k0;
-    double press=prop->pressure*area_ratio;
+    double press=simul_prop.pressure*area_ratio;
     double stretch;
 
     // Man C++11 is nice
@@ -121,7 +122,7 @@ void Simple_viscoel_part_set::ComputeForces(const Meshless_props* simul_prop){
        get<force>(particles[j])+=-k0*dxij*stretch+(orsj*(press*norm2)/nj);
        get<torque>(particles[j])-=align*dir.dot(orsi+orsj)*cross(dir,orsj);
        
-       get<3>(linker)+=(simul_prop->dt)*stretch/(l0*link_times[ix]);
+       get<3>(linker)+=(simul_prop.dt)*stretch/(l0*link_times[ix]);
     }
     if (std::isnan(norm2)) {
         // Checking if we diverge

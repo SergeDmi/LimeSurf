@@ -186,12 +186,13 @@ void Triangle_part_set::GetNeighbours() {
 
 
 // Here we do the actual time step : compute and apply forces
-void Triangle_part_set::NextStep(const Meshless_props* simul_prop){
+void Triangle_part_set::NextStep(const Simul_props & simul_prop){
     //std::cout << "#" ;
     // Set all forces & torques to 0
     Part_set::ClearForces();
     // Computing forces and torques
-    ComputeForces();
+    ComputeForces(simul_prop);
+    Part_set::AddConfinementForces(simul_prop);
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
     //From time to time we should check that the normals are normalized
@@ -202,7 +203,7 @@ void Triangle_part_set::NextStep(const Meshless_props* simul_prop){
 }
 
 // The physics part : computing interaction between vertices
-void Triangle_part_set::ComputeForces(){
+void Triangle_part_set::ComputeForces(const Simul_props & simul_prop){
     vdouble3 posi,posj;
     vdouble3 orsi,orsj;
     vdouble3 dxij,felast;
@@ -212,7 +213,7 @@ void Triangle_part_set::ComputeForces(){
     double k_align=prop->k_align*2.0;
     int i,j;
     double l0,k0,project,status;
-    double press=prop->pressure*area_ratio;
+    double press=simul_prop.pressure*area_ratio;
     
     // We loop over all springs
     // Man C++11 is nice

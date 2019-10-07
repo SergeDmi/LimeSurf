@@ -221,15 +221,15 @@ void Elastic_part_set::UpdateAreas() {
 
 
 // Here we do the actual time step : compute and apply forces
-void Elastic_part_set::NextStep(const Meshless_props* simul_prop){
+void Elastic_part_set::NextStep(const Simul_props & simul_prop){
     double rand_val;
     //std::cout << "#" ;
     // Set all forces & torques to 0
     Part_set::ClearForces();
     // Computing forces and torques
-    ComputeForces();
+    ComputeForces(simul_prop);
     // Add confinement forces;
-    Part_set::AddConfinementForces();
+    Part_set::AddConfinementForces(simul_prop);
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
     //From time to time we should check that the normals are normalized
@@ -242,7 +242,7 @@ void Elastic_part_set::NextStep(const Meshless_props* simul_prop){
 }
 
 // The physics part : computing interaction between vertices
-void Elastic_part_set::ComputeForces(){
+void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
     vdouble3 posi,posj;
     vdouble3 orsi,orsj;
     vdouble3 dxij,felast;
@@ -261,7 +261,7 @@ void Elastic_part_set::ComputeForces(){
     double k_align=prop->k_align*2.0;
     int i,j;
     double l0,k0,project,status,norm,eff_press,nn_i,nn_j;
-    double press=(prop->pressure)*mean_area_ratio;
+    double press=(simul_prop.pressure)*mean_area_ratio;
     //int power_law=prop->power_law;
     //double plaw=1.0*power_law;
 
