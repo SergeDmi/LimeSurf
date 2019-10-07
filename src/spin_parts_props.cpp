@@ -7,55 +7,20 @@
 using namespace std;
 
 // Empty constructor for convenience
-Part_set_props::Part_set_props() {};
+Part_set_props::Part_set_props() {
+    init();
+};
 
 Part_set_props::Part_set_props(const Glossary opt) {
     // @TODO : replace all glos - YAML
+    init();
     
-    fname_out="simulated_";
-    // Shape to be created
-    init_shape=0;
-    init_number=100;
-    init_radius=50;
-    
-    // kind of set
-    elastic=0;
-    
-    // Distance between particles & box size
-    // @TODO : this needs a serous cleanup
-    Rmax=3;
-    minR=0.5;
-    L=200.0;
-    
-    // Physical parameters
-    // For any set :
-    k_align=1.0;
-    k_bend=1.0;
-    visco=1.0;
-    Rvisc=1.0;
-   
-    pressure=0;
-    relax=0;
-    
-    // For viscous sets
-    k_att=2.0;
-    k_rep=1.0;
-    p_rep=12.0;
-    p_att=6.0;
-    R0=1.0;
-    Fmax=DBL_MAX;
-    
-    // For elastic sets :
-    max_neighbours=15;
-    
-    // Misc parameters
-    renorm_rate=0.001;
     opt.set(renorm_rate, "renorm_rate");
     double box[6];
     
     // Confinement 
-    x_conf=0;y_conf=0;z_conf=0;
-    x_max=0 ;y_max=0 ;z_max=0 ;
+    //x_conf=0;y_conf=0;z_conf=0;
+    //x_max=0 ;y_max=0 ;z_max=0 ;
     
     // reading these parameters from the config file !
     std::string str;
@@ -89,6 +54,7 @@ Part_set_props::Part_set_props(const Glossary opt) {
     
     opt.set(k_align, "align",0);
     
+    /*
     opt.set(z_max, "z_conf",0);
     opt.set(z_conf, "z_conf",1);
     
@@ -98,6 +64,8 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(x_max, "x_conf",0);
     opt.set(x_conf, "x_conf",1);
     
+     */
+     
     opt.set(k_bend, "bending",0);
     opt.set(p_align, "align",1);
     opt.set(p_bend, "bending",1);
@@ -135,12 +103,138 @@ Part_set_props::Part_set_props(const Glossary opt) {
     opt.set(Rsearch, "Rsearch");
     opt.set(Rmax, "Rmax");
     
-    opt.set(pressure, "pressure");
+    //opt.set(pressure, "pressure");
     
     std::cout << "# Fmax2=" << Fmax2 << std::endl;
     
 }
 
-void Part_set_props::read_physical_properties(YAML::Node config) {
+Part_set_props::Part_set_props(const YAML::const_iterator config) {
+    init();
+    
+    Read_config(config);
+}
+
+
+void Part_set_props::init() {
+      
+    fname_out="simulated_";
+    // Shape to be created
+    init_shape=0;
+    init_number=100;
+    init_radius=50;
+    
+    // kind of set
+    elastic=0;
+    
+    // Distance between particles & box size
+    // @TODO : this needs a serous cleanup
+    Rmax=3;
+    minR=0.5;
+    L=200.0;
+    
+    // Physical parameters
+    // For any set :
+    k_align=1.0;
+    k_bend=1.0;
+    visco=1.0;
+    Rvisc=1.0;
+   
+    //pressure=0;
+    relax=0;
+    
+    // For viscous sets
+    k_att=2.0;
+    k_rep=1.0;
+    p_rep=12.0;
+    p_att=6.0;
+    R0=1.0;
+    Fmax=DBL_MAX;
+    
+    // For elastic sets :
+    max_neighbours=15;
+    
+    // Misc parameters
+    renorm_rate=0.001;
+}
+
+
+//void Part_set_props::Read_config(const YAML::const_iterator config) {
+    
+    
+void Part_set_props::Read_config(const YAML::const_iterator config) {
+    //auto conf=config->second;
+    //opt.set(dt,"dt");
+    //opt.set(Tend,"Tend");
+    //opt.set(n_frames,"n_frames");
+    name=config->first.as<std::string>();
+    auto conf=config->second;
+    
+    if (conf["source"]) {
+        std::string str;
+        str.reserve(10000);
+        fname_in.reserve(1000);
+        str=conf["source"].as<std::string>();
+        fname_in.append(str);
+        
+    }
+    
+     if (conf["dt"]) {
+        //std::cout << "getting dt from : " << conf["dt"].as<std::double_t>() << std::endl;
+        //dt=conf["dt"].as<std::double_t>();
+    }
+    
+     if (conf["n_frames"]) {
+        // std::cout << "getting n_frames from : " << conf["n_frames"].as<std::double_t>() << std::endl;
+        //n_frames=conf["n_frames"].as<std::double_t>();
+    }
+    
+    if (conf["pressure"]) {
+        //pressure=conf["pressure"].as<std::double_t>();
+    }
+    /*
+    if (conf["confinement"]) {
+        int i=-1;
+        YAML::Node confs=conf["confinement"];
+        for(auto confine=confs.begin();confine!=confs.end();++confine) {
+            std::string key=confine->first.as<std::string>();
+            // std::cout << "WESH we got " << key << std::endl;
+            if        (key=="x") {
+                i=0;
+            } else if (key=="y") {
+                i=1;
+            } else if (key=="z") {
+                i=2;
+            }
+            
+             if (i>=0) {
+                //std::cout << "somehow got that we are confied on axis : " << i << std::endl;
+                YAML::Node coco=confine->second;
+                if        (coco["min"]) {
+                    confine_min[i]=coco["min"].as<std::double_t>();
+                }
+                if (coco["max"]) {
+                    confine_max[i]=coco["max"].as<std::double_t>();
+                }
+                if (coco["stiffness"]) {
+                    confine_pot[i]=coco["stiffness"].as<std::double_t>();
+                    //std::cout << key << " : " << confine_min[i] << " , " << confine_max[i] << " : " << confine_pot[i] << std::endl;
+                }
+            }   
+            else {
+                std::cout << "Warning : could not understand confinement axis" << key << std::endl;
+            }
+
+        }
+       
+            
+        //    confine_pot[i]=confs[i].as<std::double_t>();
+        //pressure=conf["confinements"].as<std::double_t>();
+    }
+    
+    
+}
+
+ */
     
 }

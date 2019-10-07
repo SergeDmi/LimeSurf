@@ -16,47 +16,53 @@
 using namespace std;
 
 typedef std::vector<Simul_props> properties;
+typedef std::vector<Mesh>        meshes    ;
+
 
 void const make_props(properties & props, const YAML::Node & yaconf) {
     YAML::Node all_runs = yaconf["runs"];
     Simul_props prop;
     for(YAML::const_iterator it=all_runs.begin();it!=all_runs.end();++it) {
-        //YAML::Node run=*it;
-        //std::cout << "         wtf : " << run.as<std::string>() <<  std::endl;
-        
-        //prop.Read_config(it->first,it->second);
         prop.Read_config(it);
         props.push_back(prop);
-        //props.Read_config(*it);
     }
 }
 
-void make_run(const Simul_props & prop, Mesh & mesh) {
+void const make_meshes(meshes & meshugas, const YAML::Node & yaconf) {
+    YAML::Node all_meshes = yaconf["meshes"];
+    Mesh mesh;
+    for(YAML::const_iterator it=all_meshes.begin();it!=all_meshes.end();++it) {
+        mesh.Read_config(it);
+        meshugas.push_back(mesh);
+    }
+}
+
+void make_run(const Simul_props & prop, meshes meshugas) {
     // Preparing times
     double t_save=0;
     int n_save=0;
     double t=0;
     int n_change=0;
     int n_export=0;
-    
-    while (t<prop.Tend && !mesh.cell_wall->is_diverging()) {
-        t+=prop.dt;
-        //std::cout << t << std::endl;
-        mesh.cell_wall->NextStep(prop);
-
-        // Saving if needed
-        t_save+=prop.dt;
-        if (t_save>prop.dt_frames ) {
-            t_save=0;
-            mesh.cell_wall->Export_bly(n_save,prop,t);
-            n_save++;
-            
+    bool is_diverging=0;
+    for (auto mesh: meshugas) {
+        while (t<prop.Tend && !is_diverging) {
+            t+=prop.dt;
+            //std::cout << t << std::endl;
+            mesh.cell_wall->NextStep(prop);
+            is_diverging=mesh.cell_wall->is_diverging();
+            // Saving if needed
+            t_save+=prop.dt;
+            if (t_save>prop.dt_frames ) {
+                t_save=0;
+                mesh.cell_wall->Export_bly(n_save,prop,t);
+                n_save++;
+                
+            }
         }
     }
     
-    if ( mesh.cell_wall->is_diverging() ) {
-        std::cout << " Wall is diverging for run " << prop.name << std::endl;
-    }
+    
 }
 
 int main(int argc, char* argv[])
@@ -69,12 +75,14 @@ int main(int argc, char* argv[])
     //YAML::Node yaconf2 = YAML::LoadFile("conf.yaml");
     YAML::Node yaconf2 = YAML::LoadFile(argv[2]);
     Mesh mesh(glos);
+    meshes all_meshes;
     mesh.Initiate();
     //Simul_props simul_prop(glos);
     properties runs;
     make_props(runs,yaconf2);
-    
-    
+    //make_meshes(all_meshes,yaconf2);
+    //mesh
+    all_meshes.push_back(mesh);
     std::cout << "fname in should in meshless : " << mesh.cell_wall->prop->fname_in << std::endl;
     mesh.cell_wall->create();   
     std::cout << "Created cell wall " << std::endl;
@@ -85,8 +93,9 @@ int main(int argc, char* argv[])
     
     
     
-    for(auto run=runs.begin();run!=runs.end();++run) {
-        make_run(*run,mesh);
+    //for(auto run=runs.begin();run!=runs.end();++run) {
+    for (auto run: runs) {
+        make_run(run,all_meshes);
      }
      
     /*

@@ -19,23 +19,23 @@ using namespace Aboria;
 const double PI = boost::math::constants::pi<double>();
 
 // Dummy constructor
-Mesh::Mesh( YAML::Node config) {
+Mesh::Mesh(const YAML::const_iterator config) {
     cell_wall=nullptr;
     wall_props=nullptr;
     
-    node=config;
+    //node=config;
     //glos=new Glossary;
     
 }   
 
 
 // Dummy constructor
-Mesh::Mesh( Glossary config) {
+Mesh::Mesh(const Glossary config) {
     cell_wall=nullptr;
     wall_props=nullptr;
     
     //node=new YAML::Node;
-    glos=config;
+    glos=Glossary(config);
     std::cout << "# Starting FROM GLOSSARY" << std::endl;
 
 }   
@@ -82,6 +82,6 @@ void Mesh::Initiate() {
     }
 }
 
-void Mesh::Update(YAML::Node config) {
-    wall_props->read_physical_properties(config);
-}
+//void Mesh::Update(YAML::Node config) {
+//    wall_props->read_physical_properties(config);
+//}
