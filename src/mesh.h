@@ -29,11 +29,14 @@ class Mesh {
     
 public:
     // Actual Creator
-    Mesh(YAML::Node);
+    Mesh(const YAML::const_iterator );
     
      // Actual Creator
-    Mesh(Glossary);
+    Mesh(const Glossary );
     
+    Mesh() {};
+    
+    void Read_config(const YAML::const_iterator) {};
     // Empty creation of particle set and properties
     Part_set * cell_wall;
     Part_set_props * wall_props;
@@ -44,7 +47,7 @@ public:
     
     void Initiate();
     
-    void Update(YAML::Node);
+    //void Update(YAML::Node);
             
 };
 

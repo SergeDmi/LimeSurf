@@ -16,20 +16,31 @@ class Part_set_props {
     friend class Simple_viscoel_part_set;
     
 public:
-    // Empty constructor
+    // Dummy constructor
     Part_set_props();
     
     // Real constructor
     Part_set_props(const Glossary);
+    
+     // constructor
+    // Deprecated : Simul_props(const Glossary) ;
+    Part_set_props(const YAML::const_iterator);
+    
+    // Initialization
+    void init();
+    // Actual reading from file
+    void Read_config(const YAML::const_iterator);
+
     std::string fname_in;   // contains file to be loaded
     std::string fname_out;
+    std::string name;
     //fname_in.reserve(10000);
     int load_from_file;    // flag if a file needs to be loaded
     double R0;              // Equilibrium distance between parts
     double minR,minR2;      // Minimum interaction distance (avoid dvg)
     double Rmax;            // Max interaction distance
     double Rsearch;         // Search radius
-    double pressure;        // A pressure
+    //double pressure;        // A pressure
     double k_rep,p_rep;     // repulsive potential and power law
     double k_att,p_att;     // attractive potential and power law
     double k_bend,p_bend;   // bending potential and power law
@@ -43,8 +54,8 @@ public:
     vdouble3 corner_0,corner_1; // Corners of box
     int max_neighbours;
     
-    double x_max, y_max, z_max ;
-    double x_conf,y_conf,z_conf;
+    //double x_max, y_max, z_max ;
+    //double x_conf,y_conf,z_conf;
     
     // @todo ; with keylist
     int init_shape;
@@ -54,7 +65,7 @@ public:
     bool elastic;
     double k_elast;
     
-    virtual void read_physical_properties(YAML::Node);
+    //virtual void read_physical_properties(YAML::Node);
     
 };
 
