@@ -50,8 +50,9 @@ file(GLOB all_SRC
     "src/*.cpp"
     "Cytosim/*.cc"
 	"tinyply/source/tinyply.cpp"
-    "yaml-cpp/src"
-)
+    "yaml-cpp/src/*.cpp"
+    "yaml-cpp/include/*.cpp"
+    )
 
 #MESSAGE( STATUS ${all_SRC})
 
