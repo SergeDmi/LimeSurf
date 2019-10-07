@@ -1,0 +1,75 @@
+mesh:
+    source: thin_cleaned_sorbitol_9_2.ply
+    type: 1
+    # 1: elastic ; 2: ? ; 3: ? ; 4: ?
+    power_law: 2
+    prestrain: 1.0
+    k_elast: 1.0
+
+runs:
+    1:
+        confinement:
+            y:  
+                min: -15.0
+                max:  15.0
+                stiffness: 0.01
+            z:  
+                min: -15.0
+                max:  15.0
+                stiffness: 1.0
+
+        pressure: -0.02
+
+        duration: 500.0
+        dt : 0.01
+        n_frames: 10
+            
+    2:
+        confinement:
+            z:
+                stiffness: 0.0
+
+
+
+
+% Importing mesh from file
+%load_from=/home/dmitrief/Sync/ownCloud/work/yeast_wall/sims/resized_finer_c3/test/before_gonfle.ply
+load_from=thin_cleaned_sorbitol_9_2.ply
+
+% Elastic simulations
+mechanics=1
+
+
+%% Simulation set up
+% box is automatically adjusted if too small
+box=0,0,0,510,520,520
+% Although not really needed in elastic sims
+y_conf=15.0,10.0
+z_conf=15.0,10.0
+
+%% Simulation parameters
+Fmax=infinity
+dt=0.008
+Tend=6000
+Rmax=5.5; % Maximum distance between pairs of points.
+
+
+%% Bending helps the normal being updated with time
+% should not be very important
+%bending=0.5,5;
+bending=0.0;
+
+%% Physical parameters
+%R0=3.2          % resting distance between points
+align=1       % alignment of normals to compute pressure
+k_elast=1
+n_frames=12
+pressure=0.04;  % pressure
+% translation and rotation viscosity
+% not so important, we look for equilibrium shape
+prestrain=1.0;
+
+% changing_times=6100
+% changing_pressure=0
+
+
