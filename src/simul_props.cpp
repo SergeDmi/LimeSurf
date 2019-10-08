@@ -143,6 +143,9 @@ void Simul_props::Make_confinement() {
                         ); 
             }
          };
+    } 
+    else {
+        add_confinement_force=[] (vdouble3& force, vdouble3 posi ) {};
     }
     
 }
