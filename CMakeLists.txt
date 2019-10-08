@@ -22,6 +22,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -parallel")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --fast-math -mrecip")
@@ -38,7 +39,7 @@ list(APPEND INCLUDES tinyply/source)
 list(APPEND INCLUDES yaml-cpp/include)
 list(APPEND INCLUDES yaml-cpp/src)
 # Cytosim
-list(APPEND INCLUDES Cytosim)
+#list(APPEND INCLUDES Cytosim)
 
 # LimeSurf
 #list(APPEND INCLUDES .)
@@ -48,7 +49,7 @@ include_directories(src ${INCLUDES})
 
 file(GLOB all_SRC
     "src/*.cpp"
-    "Cytosim/*.cc"
+    #   "Cytosim/*.cc"
 	"tinyply/source/tinyply.cpp"
     "yaml-cpp/src/*.cpp"
     "yaml-cpp/include/*.cpp"
