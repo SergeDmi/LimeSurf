@@ -8,7 +8,7 @@
 #include <math.h>
 #include "tetr_elastic_spin_parts.h"
 #include <iostream>
-#include "assert_macro.h"
+//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "elastic_parts_props.h"

@@ -12,9 +12,10 @@
  */
 #include <math.h>
 #include <sstream>
-#include "glossary.h"
+//#include "glossary.h"
 #include "Aboria.h"
 #include "elastic_parts_props.h"
+#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
 using namespace Aboria;
 
@@ -29,7 +30,8 @@ class Simple_viscoel_set_props : public Elastic_set_props
     
     public:
         /// constructor
-        Simple_viscoel_set_props(const Glossary );
+        //Simple_viscoel_set_props(const Glossary );
+         Simple_viscoel_set_props(const YAML::const_iterator );
         
     protected:
         // distance on which cell wall is plastic

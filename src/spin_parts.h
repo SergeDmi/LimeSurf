@@ -17,6 +17,7 @@ class Part_set {
     friend class Tetr_elastic_part_set;
     friend class Simple_viscoel_part_set;
     friend class Triangle_part_set;
+    friend class Viscous_part_set;
 protected:
     typedef std::pair <int,double> pair_n;
     typedef std::vector<pair_n> neigh_pairs;
@@ -56,7 +57,7 @@ public:
     Part_set(Part_set_props*);
     
     // Actually populates the particle set
-    void create();
+    virtual void create();
     
     // Properties
     Part_set_props* prop;
@@ -73,9 +74,6 @@ public:
     // APply the computed forces
     void IntegrateForces(const Simul_props &);
     
-    // Get rids of far away neighbour...
-    int pop_furthest_neighbour(neigh_pairs*,int );
-    
     // Compute the forces on each particle
     virtual void ComputeForces(const Simul_props &);
     
@@ -86,7 +84,7 @@ public:
     virtual void GetNeighbours();
     
     // Export to text
-    virtual void Export(int);
+    virtual void Export(int , double);
     
     // Export to ply
     void Export_bly(int,const Simul_props & , double );
@@ -94,21 +92,11 @@ public:
     // Getting ready to simulate
     virtual void GetStarted();
     
-    // @TODO : improve CheckBoxSizze()
-    // Make sure the box is big enough
-    void CheckBoxSize();
-    
     // Making sure the Particle set loaded is correct
     void CheckPartSet();
     
     // Set forces & torques to 0
     void ClearForces();
-    
-    // Put particles on a sphere
-    int PutOnSphere();
-    
-    //Put particles on a sheet
-    int PutOnSheet();
     
     // Load particles from file in prop->fname_in
     int load_from_text();
@@ -119,7 +107,7 @@ public:
     // Normalizes the normals
     void RenormNorms();
     
-    // Find furthest points in any direction
+     // Find furthest points in any direction
     void FindBounds();
     
 protected:

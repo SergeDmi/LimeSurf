@@ -8,7 +8,7 @@
 #include <math.h>
 #include "elastic_spin_parts.h"
 #include <iostream>
-#include "assert_macro.h"
+//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "elastic_parts_props.h"
@@ -325,7 +325,7 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
 // Makes sure everything is in place
 void Elastic_part_set::GetStarted(){
     //std::cout << "# Getting started in Elastic_part_set " << std::endl;
-    //Part_set::GetStarted();
+    Part_set::GetStarted();
     particles.init_id_search();
     Part_set::FindBounds();
     GetNeighbours();

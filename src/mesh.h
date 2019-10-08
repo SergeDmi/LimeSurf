@@ -15,7 +15,7 @@ using namespace Aboria;
 #include "elastic_triangle_parts.h"
 #include "triangle_parts_props.h"
 
-#include "glossary.h"
+//#include "glossary.h"
 
 
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
@@ -32,18 +32,18 @@ public:
     Mesh(const YAML::const_iterator );
     
      // Actual Creator
-    Mesh(const Glossary );
+    //Mesh(const Glossary );
     
     Mesh() {};
     
-    void Read_config(const YAML::const_iterator) {};
+    //void Read_config(const YAML::const_iterator) {};
     // Empty creation of particle set and properties
     Part_set * cell_wall;
     Part_set_props * wall_props;
     
     // Stores a configuration
-    Glossary glos;
-    YAML::Node node;
+    //Glossary glos;
+    YAML::const_iterator node;
     
     void Initiate();
     

@@ -12,9 +12,10 @@
  */
 #include <math.h>
 #include <sstream>
-#include "glossary.h"
+//#include "glossary.h"
 #include "Aboria.h"
 #include "elastic_parts_props.h"
+#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
 using namespace Aboria;
 #ifndef TRIANGLE_PARTS_PROPS_H
@@ -27,8 +28,8 @@ class Triangle_set_props : public Elastic_set_props
     //friend class Tetr_elastic_part_set;
 public:
     /// constructor
-    Triangle_set_props(const Glossary );
-    
+    //Triangle_set_props(const Glossary );
+    Triangle_set_props(const YAML::const_iterator );
     
     
     
@@ -36,6 +37,7 @@ protected:
     // prestrain : how much the imported link is stretched
     // double prestrain;
     double rigidity;
+    double p_bend;
 };
 
 

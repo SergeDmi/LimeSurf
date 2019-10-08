@@ -15,6 +15,7 @@
 using namespace Aboria;
 //#include "elastic_parts_props.h"
 #include "elastic_spin_parts.h"
+#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
 class Elastic_set_props;
 

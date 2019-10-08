@@ -8,7 +8,7 @@
 #include <math.h>
 #include "elastic_triangle_parts.h"
 #include <iostream>
-#include "assert_macro.h"
+//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "triangle_parts_props.h"

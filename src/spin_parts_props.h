@@ -1,6 +1,6 @@
 #include <math.h>
 #include <sstream>
-#include "glossary.h"
+//#include "glossary.h"
 #include "Aboria.h"
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
@@ -20,7 +20,7 @@ public:
     Part_set_props();
     
     // Real constructor
-    Part_set_props(const Glossary);
+    //Part_set_props(const Glossary);
     
      // constructor
     // Deprecated : Simul_props(const Glossary) ;
@@ -30,12 +30,27 @@ public:
     void init();
     // Actual reading from file
     void Read_config(const YAML::const_iterator);
+    
+    
+    
+    // Type of simulation
+    int mechanics;    
+    
+    enum MechType
+    {
+        VISCOUS  = 0,           // Purely viscous simulation
+        ELASTIC  = 1,           // Purely elastic simulation
+        SIMPLE_VISCOEL = 2,     // Simple visco-elastic implementation
+        TETRA_ELASTIC  = 4,     // Purely elastic tetrahedron simulation
+    };
 
     std::string fname_in;   // contains file to be loaded
     std::string fname_out;
     std::string name;
     //fname_in.reserve(10000);
-    int load_from_file;    // flag if a file needs to be loaded
+    //int load_from_file;    // flag if a file needs to be loaded
+    double k_elast,k_align,renorm_rate,visco,Rvisc;
+    /*
     double R0;              // Equilibrium distance between parts
     double minR,minR2;      // Minimum interaction distance (avoid dvg)
     double Rmax;            // Max interaction distance
@@ -53,18 +68,19 @@ public:
     double relax;           // linkers relaxation rate
     vdouble3 corner_0,corner_1; // Corners of box
     int max_neighbours;
-    
+    */
     //double x_max, y_max, z_max ;
     //double x_conf,y_conf,z_conf;
     
     // @todo ; with keylist
+    /*
     int init_shape;
     int init_number;
     double init_radius;
     
     bool elastic;
     double k_elast;
-    
+    */
     //virtual void read_physical_properties(YAML::Node);
     
 };

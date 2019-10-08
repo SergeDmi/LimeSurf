@@ -1,5 +1,5 @@
 #include <random>
-#include "glossary.h"
+//#include "glossary.h"
 //#include "Aboria.h"
 //using namespace Aboria;
 #include <sstream>
@@ -11,50 +11,33 @@ Part_set_props::Part_set_props() {
     init();
 };
 
+
+/*
 Part_set_props::Part_set_props(const Glossary opt) {
     // @TODO : replace all glos - YAML
     init();
     
     opt.set(renorm_rate, "renorm_rate");
-    double box[6];
+ 
     
     // Confinement 
     //x_conf=0;y_conf=0;z_conf=0;
     //x_max=0 ;y_max=0 ;z_max=0 ;
     
     // reading these parameters from the config file !
+    /*
     std::string str;
     str.reserve(10000);
     fname_in.reserve(1000);
-    load_from_file=opt.set(str,"load_from");
+    //load_from_file=opt.set(str,"load_from");
+    fname_in.append(str);
+        //std::cout << "fname_in : " << fname_in << std::endl;
     
     if (load_from_file>0) {
         fname_in.append(str);
         std::cout << "fname_in : " << fname_in << std::endl;
     }
     
-    opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
-    opt.set(init_number, "number");
-    opt.set(init_radius, "radius");
-    opt.set(relax, "relax");
-    
-    opt.set(visco, "visco",0);
-    opt.set(Rvisc, "visco",1);
-    opt.set(Rvisc, "Rvisco");
-    opt.set(max_neighbours,"max_neighbours");
-    
-   
-    opt.set(k_att, "attraction",0);
-    opt.set(k_rep, "repulsion",0);
-    opt.set(p_att, "attraction",1);
-    opt.set(p_rep, "repulsion",1);
-    
-    p_bend=p_att;
-    p_align=p_att;
-    
-    opt.set(k_align, "align",0);
-    
-    /*
     opt.set(z_max, "z_conf",0);
     opt.set(z_conf, "z_conf",1);
     
@@ -63,51 +46,15 @@ Part_set_props::Part_set_props(const Glossary opt) {
     
     opt.set(x_max, "x_conf",0);
     opt.set(x_conf, "x_conf",1);
+   
     
-     */
-     
-    opt.set(k_bend, "bending",0);
-    opt.set(p_align, "align",1);
-    opt.set(p_bend, "bending",1);
+    opt.set(mechanics, "mechanics");
     
-    opt.set(elastic, "elastic");
-    
-    for (int i=0; i<6; ++i) {
-        opt.set(box[i], "box",i);
-    }
-    
-
-    corner_0=vdouble3(box[0],box[1],box[2]);
-    corner_1=vdouble3(box[3],box[4],box[5]);
-    
-    // Computing R0
-    if (k_att>0) {
-            R0=pow(p_rep*k_rep/(p_att*k_att),1.0/(p_rep-p_att));
-    }
-    opt.set(R0, "R0");
-    minR=0.75*R0;
-    Rmax=2.0*R0;
-
-    k_elast=1.0;
     opt.set(k_elast, "k_elast");
-    opt.set(minR, "Rmin");
-    minR2=pow(minR,2.0);
-    if (k_rep>0) {
-        Fmax=k_rep/pow(minR,p_rep);
-    }
-    opt.set(Fmax, "Fmax");
-    Fmax2=Fmax*Fmax;
-    
-    opt.set(Rmax, "Rmax");
-    Rsearch=Rmax;
-    opt.set(Rsearch, "Rsearch");
-    opt.set(Rmax, "Rmax");
-    
-    //opt.set(pressure, "pressure");
-    
-    std::cout << "# Fmax2=" << Fmax2 << std::endl;
     
 }
+
+*/
 
 Part_set_props::Part_set_props(const YAML::const_iterator config) {
     init();
@@ -120,39 +67,20 @@ void Part_set_props::init() {
       
     fname_out="simulated_";
     // Shape to be created
-    init_shape=0;
-    init_number=100;
-    init_radius=50;
     
-    // kind of set
-    elastic=0;
+    mechanics=1;
     
-    // Distance between particles & box size
-    // @TODO : this needs a serous cleanup
-    Rmax=3;
-    minR=0.5;
-    L=200.0;
     
     // Physical parameters
     // For any set :
     k_align=1.0;
-    k_bend=1.0;
+    k_elast=1.0;
     visco=1.0;
     Rvisc=1.0;
-   
     //pressure=0;
-    relax=0;
+    //relax=0;
     
-    // For viscous sets
-    k_att=2.0;
-    k_rep=1.0;
-    p_rep=12.0;
-    p_att=6.0;
-    R0=1.0;
-    Fmax=DBL_MAX;
-    
-    // For elastic sets :
-    max_neighbours=15;
+   
     
     // Misc parameters
     renorm_rate=0.001;
@@ -179,62 +107,48 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         
     }
     
-     if (conf["dt"]) {
-        //std::cout << "getting dt from : " << conf["dt"].as<std::double_t>() << std::endl;
-        //dt=conf["dt"].as<std::double_t>();
-    }
+      //opt.set(k_align, "align",0);
     
-     if (conf["n_frames"]) {
-        // std::cout << "getting n_frames from : " << conf["n_frames"].as<std::double_t>() << std::endl;
-        //n_frames=conf["n_frames"].as<std::double_t>();
-    }
-    
-    if (conf["pressure"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
-    }
     /*
-    if (conf["confinement"]) {
-        int i=-1;
-        YAML::Node confs=conf["confinement"];
-        for(auto confine=confs.begin();confine!=confs.end();++confine) {
-            std::string key=confine->first.as<std::string>();
-            // std::cout << "WESH we got " << key << std::endl;
-            if        (key=="x") {
-                i=0;
-            } else if (key=="y") {
-                i=1;
-            } else if (key=="z") {
-                i=2;
-            }
-            
-             if (i>=0) {
-                //std::cout << "somehow got that we are confied on axis : " << i << std::endl;
-                YAML::Node coco=confine->second;
-                if        (coco["min"]) {
-                    confine_min[i]=coco["min"].as<std::double_t>();
-                }
-                if (coco["max"]) {
-                    confine_max[i]=coco["max"].as<std::double_t>();
-                }
-                if (coco["stiffness"]) {
-                    confine_pot[i]=coco["stiffness"].as<std::double_t>();
-                    //std::cout << key << " : " << confine_min[i] << " , " << confine_max[i] << " : " << confine_pot[i] << std::endl;
-                }
-            }   
-            else {
-                std::cout << "Warning : could not understand confinement axis" << key << std::endl;
-            }
-
-        }
-       
-            
-        //    confine_pot[i]=confs[i].as<std::double_t>();
-        //pressure=conf["confinements"].as<std::double_t>();
+    opt.set(z_max, "z_conf",0);
+    opt.set(z_conf, "z_conf",1);
+    
+    opt.set(y_max, "y_conf",0);
+    opt.set(y_conf, "y_conf",1);
+    
+    opt.set(x_max, "x_conf",0);
+    opt.set(x_conf, "x_conf",1);
+    
+     */
+     
+    //opt.set(k_bend, "bending",0);
+    //opt.set(p_align, "align",1);
+    //opt.set(p_bend, "bending",1);
+    
+    if (conf["k_elast"]) {
+        k_elast=conf["k_elast"].as<std::double_t>();
     }
     
+    if (conf["align"]) {
+        k_align=conf["align"].as<std::double_t>();
+    }
     
-}
-
- */
+     if (conf["renorm"]) {
+        renorm_rate=conf["renorm"].as<std::double_t>();
+    }
     
+     if (conf["visco"]) {
+        visco=conf["visco"].as<std::double_t>();
+        std::cout << " set visco to " << visco << std::endl;
+    }
+    
+     if (conf["Rvisc"]) {
+        Rvisc=conf["Rvisc"].as<std::double_t>();
+    }
+    
+    if (conf["mechanics"]) {
+        //pressure=conf["pressure"].as<std::double_t>();
+        mechanics=conf["mechanics"].as<std::int8_t>();
+    }
+ 
 }

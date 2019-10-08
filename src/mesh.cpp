@@ -6,7 +6,7 @@ using namespace Aboria;
 #include "spin_parts.h"
 #include <iostream>
 #include <fstream>
-#include "assert_macro.h"
+//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "mesh.h"
@@ -23,35 +23,20 @@ Mesh::Mesh(const YAML::const_iterator config) {
     cell_wall=nullptr;
     wall_props=nullptr;
     
-    //node=config;
-    //glos=new Glossary;
     
-}   
-
-
-// Dummy constructor
-Mesh::Mesh(const Glossary config) {
-    cell_wall=nullptr;
-    wall_props=nullptr;
     
-    //node=new YAML::Node;
-    glos=Glossary(config);
-    std::cout << "# Starting FROM GLOSSARY" << std::endl;
-
-}   
-
-void Mesh::Initiate() {
     int mechanics=1;
     switch (mechanics) {
         case 0 : {
-            Part_set_props  * props = new Part_set_props(glos);
+            Part_set_props  * props = new Part_set_props(config);
             wall_props=props;
             Part_set * wall=new Part_set(props);
             cell_wall=wall;
             std::cout << "# Starting viscous simulation" << std::endl;
             break; }
         case 1 : {  
-            Elastic_set_props  * props = new Elastic_set_props(glos);
+            //Elastic_set_props  * props = new Elastic_set_props(glos);
+            Elastic_set_props  * props = new Elastic_set_props(config);
             wall_props=props;
             Elastic_part_set * wall=new Elastic_part_set(props);
             cell_wall=wall;
@@ -59,27 +44,38 @@ void Mesh::Initiate() {
             //std::cout << "fname in should in meshless : " << wall_props->fname_in << std::endl;
             break; }
         case 2 : {
-            Simple_viscoel_set_props *props = new Simple_viscoel_set_props(glos);
+            Simple_viscoel_set_props *props = new Simple_viscoel_set_props(config);
             wall_props=props;
             Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(props);
             cell_wall=wall;
             std::cout << "# Starting viscoelastic simulation" << std::endl;
             break; }
         case 3 : {
-            Triangle_set_props  * props = new Triangle_set_props(glos);
+            Triangle_set_props  * props = new Triangle_set_props(config);
             wall_props=props;
             Triangle_part_set * wall=new Triangle_part_set(props);
             cell_wall=wall;
             std::cout << "# Starting triangular elastic simulation" << std::endl;
             break; }                           
         case 4 : {
-            Elastic_set_props  * props = new Elastic_set_props(glos);
+            Elastic_set_props  * props = new Elastic_set_props(config);
             wall_props=props;
             Tetr_elastic_part_set *wall = new Tetr_elastic_part_set(props);
             cell_wall=wall;
             std::cout << "# Starting 3D elastic simulation" << std::endl;
             break; }
     }
+    
+    //node=config;
+    //glos=new Glossary;
+    std::cout << "# Starting FROM YAML CONFIG" << std::endl;
+}   
+
+
+
+void Mesh::Initiate() {
+    cell_wall->create();
+    cell_wall->GetStarted();
 }
 
 //void Mesh::Update(YAML::Node config) {

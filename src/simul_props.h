@@ -1,6 +1,6 @@
 #include <math.h>
 #include <sstream>
-#include "glossary.h"
+//#include "glossary.h"
 #include "Aboria.h"
 using namespace Aboria;
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
@@ -48,17 +48,6 @@ public:
     
     // Number of frames (saving timepoints)
     int n_frames;
-  
-    // Type of simulation
-    int mechanics;    
-    
-    enum SimulType
-    {
-        VISCOUS  = 0,           // Purely viscous simulation
-        ELASTIC  = 1,           // Purely elastic simulation
-        SIMPLE_VISCOEL = 2,     // Simple visco-elastic implementation
-        TETRA_ELASTIC  = 4,     // Purely elastic tetrahedron simulation
-    };
     
     // Time sequence
     typedef std::vector<double> double_list;

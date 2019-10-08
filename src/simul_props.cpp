@@ -1,4 +1,3 @@
-#include "glossary.h"
 #include <sstream>
 #include "simul_props.h"
 #include "Aboria.h"
@@ -29,8 +28,6 @@ Simul_props::Simul_props(const YAML::const_iterator config) {
 }
 
 void Simul_props::init() {
-    int s = ELASTIC;
-    mechanics=s;
     // Times
     dt=0.01;
     Tend=1.0;
