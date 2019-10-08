@@ -1,7 +1,4 @@
 #include "mesh.h"
-//#include <sstream>
-//#include "glossary.h"
-//#include <fstream>
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
 using namespace std;
@@ -40,8 +37,6 @@ int make_run(const Simul_props & prop, meshes & meshugas) {
         double t_save=0;
         int n_save=0;
         double t=0;
-        int n_change=0;
-        int n_export=0;
         bool is_diverging=0;
         // Runnning for all times 
         while (t<prop.Tend && !is_diverging) {
