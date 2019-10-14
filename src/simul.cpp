@@ -21,8 +21,10 @@ void const make_props(properties & props, const YAML::Node & yaconf) {
 // Builds the vector of meshes from the config file
 void const make_meshes(meshes & meshugas, const YAML::Node & yaconf) {
     YAML::Node all_meshes = yaconf["meshes"];
+    Part_set_props prop;
     for(YAML::const_iterator it=all_meshes.begin();it!=all_meshes.end();++it) {
-        Mesh mesh(it);
+        prop.Read_config(it);
+        Mesh mesh(it,prop);
         mesh.Initiate();
         meshugas.push_back(mesh);
     }
