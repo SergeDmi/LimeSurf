@@ -30,8 +30,10 @@ class Elastic_set_props : public Part_set_props
         /// constructor
         //Elastic_set_props(const Glossary );
         Elastic_set_props(const YAML::const_iterator);
+        Elastic_set_props(const YAML::const_iterator, Part_set_props & );
         
         void init();
+        void Read_config(const YAML::const_iterator);
     
     protected:
         // prestrain : how much the imported link is stretched

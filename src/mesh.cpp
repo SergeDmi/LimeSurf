@@ -18,14 +18,25 @@ using namespace Aboria;
 
 const double PI = boost::math::constants::pi<double>();
 
-// Dummy constructor
-Mesh::Mesh(const YAML::const_iterator config) {
+Mesh::Mesh(const YAML::const_iterator config )  {
     cell_wall=nullptr;
     wall_props=nullptr;
+    Part_set_props  props =  Part_set_props(config);
     
+    Create_mesh(config,props);
+}
+
+// Dummy constructor
+Mesh::Mesh(const YAML::const_iterator config , Part_set_props & props) {
+    cell_wall=nullptr; 
+    wall_props=nullptr;  
     
+    Create_mesh(config,props);
+    }
     
-    int mechanics=1;
+void Mesh::Create_mesh(const YAML::const_iterator config , Part_set_props & propal) {
+    //propal.Read_config(config);
+    int mechanics=propal.mechanics;
     switch (mechanics) {
         case 0 : {
             Part_set_props  * props = new Part_set_props(config);
@@ -36,7 +47,7 @@ Mesh::Mesh(const YAML::const_iterator config) {
             break; }
         case 1 : {  
             //Elastic_set_props  * props = new Elastic_set_props(glos);
-            Elastic_set_props  * props = new Elastic_set_props(config);
+            Elastic_set_props  * props = new Elastic_set_props(config,propal);
             wall_props=props;
             Elastic_part_set * wall=new Elastic_part_set(props);
             cell_wall=wall;

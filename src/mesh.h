@@ -23,6 +23,8 @@ using namespace Aboria;
 //#ifndef SPIN_PARTS_H
 //#define SPIN_PARTS_H
 
+// Todo : a nicer way to make mesh from config, so that we can keep config from other meshes ?
+
 // Mesh is a wrapper class containing both a wall (*cell_wall) and its properties (*wall_props)
 class Mesh {
     
@@ -30,11 +32,13 @@ class Mesh {
 public:
     // Actual Creator
     Mesh(const YAML::const_iterator );
-    
+    Mesh(const YAML::const_iterator , Part_set_props &);
      // Actual Creator
     //Mesh(const Glossary );
     
     Mesh() {};
+    
+    void Create_mesh(const YAML::const_iterator , Part_set_props &);
     
     //void Read_config(const YAML::const_iterator) {};
     // Empty creation of particle set and properties

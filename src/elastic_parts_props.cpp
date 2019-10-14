@@ -13,12 +13,28 @@
 
 
 
+Elastic_set_props::Elastic_set_props(const YAML::const_iterator config, Part_set_props & propal) : Part_set_props(propal) {
+    
+    init();
+
+    Read_config(config);
+}
 
 Elastic_set_props::Elastic_set_props(const YAML::const_iterator config) : Part_set_props(config) {
     
     init();
 
-    auto conf=config->second;
+    Read_config(config);
+}
+
+void Elastic_set_props::init() {
+    prestrain=1.0;
+    power_law=2;
+}
+
+
+void Elastic_set_props::Read_config(const YAML::const_iterator config) {
+     auto conf=config->second;
     
     if (conf["prestrain"]) {
         prestrain=conf["prestrain"].as<std::double_t>();
@@ -32,9 +48,4 @@ Elastic_set_props::Elastic_set_props(const YAML::const_iterator config) : Part_s
     }
     std::cout << "power law : " << power_law << std::endl;
     
-}
-
-void Elastic_set_props::init() {
-    prestrain=1.0;
-    power_law=2;
 }

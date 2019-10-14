@@ -62,10 +62,24 @@ Part_set_props::Part_set_props(const YAML::const_iterator config) {
     Read_config(config);
 }
 
+Part_set_props::Part_set_props(const Part_set_props & props) {
+    init();
+    
+    fname_out=props.fname_out;
+    fname_in=props.fname_in;
+    mechanics=props.mechanics;
+    k_align=props.k_align;
+    k_elast=props.k_elast;
+    visco=props.visco;
+    Rvisc=props.Rvisc;
+    renorm_rate=props.renorm_rate;
+    
+}
 
 void Part_set_props::init() {
       
     fname_out="simulated_";
+    fname_in="config.yaml";
     // Shape to be created
     
     mechanics=1;
@@ -103,7 +117,7 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         str.reserve(10000);
         fname_in.reserve(1000);
         str=conf["source"].as<std::string>();
-        fname_in.append(str);
+        fname_in.assign(str);
         
     }
     

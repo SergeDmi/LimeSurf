@@ -9,6 +9,9 @@ using namespace Aboria;
 #ifndef SPIN_PARTS_PROPS_H
 #define SPIN_PARTS_PROPS_H
 
+// @TODO :
+// implement copy constructor ?
+
 class Part_set_props {
 
     friend class Part_set;
@@ -25,6 +28,8 @@ public:
      // constructor
     // Deprecated : Simul_props(const Glossary) ;
     Part_set_props(const YAML::const_iterator);
+    
+    Part_set_props(const Part_set_props &);
     
     // Initialization
     void init();
