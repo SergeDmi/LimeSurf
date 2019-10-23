@@ -100,6 +100,7 @@ int Part_set::load_from_text(){
     int nt;
     if (is_tetra) {
         nt=tetra->count;
+        std::cout << "# \tRead " << tetra->count << " total tetrahedrons "<< std::endl;
     }
     else {nt=0;}
     
@@ -140,6 +141,7 @@ int Part_set::load_from_text(){
         typename particle_type::value_type p;
         vdouble3 pos(verts[i].x,verts[i].y,verts[i].z);
         vdouble3 dir(norms[i].x,norms[i].y,norms[i].z);
+     
         
         get<position>(p) = pos;
         get<orientation>(p) = dir;
@@ -149,9 +151,12 @@ int Part_set::load_from_text(){
         get<nn>(p) = 0;
         particles.push_back(p);
         
-        //if (i==0) {
-        //    std::cout << "Position  :  " << pos[0] << " , " << pos[1] << " , " << pos[2] << std::endl;
-        //}
+        /*
+        if (i==0) {
+            std::cout << "Position     :  " << pos[0] << " , " << pos[1] << " , " << pos[2] << std::endl;
+            std::cout << "Orientation  :  " << dir[0] << " , " << dir[1] << " , " << dir[2] << std::endl;
+        }
+         */
     }
    
     n_faces=nf;
@@ -295,6 +300,13 @@ void Part_set::AddConfinementForces(const Simul_props & simul_prop){
             //idi=get<id>(particles[i]);
             
             get<force>(part)+=forcei;
+            /*
+            for (int i=0 ; i<3 ; ++i) {
+                if (std::isnan(forcei[i])) {
+                    std::cout << " force i "  << forcei[0] << " , " << forcei[1] << " , " << forcei[2] << std::endl;
+                }
+            }
+            */
             
             //std::cout << " force i "  << forcei[0] << " , " << forcei[1] << " , " << forcei[2] << std::endl;
         }
