@@ -101,7 +101,14 @@ void Tetr_elastic_part_set::GetNeighbours() {
                 sj=static_cast<int>(pairs_j.size());
                 get<nn>(particles[ix])=si;
                 get<nn>(particles[jx])=sj;
-                
+                /*
+                if (si>0) {
+                    get<state>(particles[ix])=si;
+                }
+                if (sj>0) {
+                    get<state>(particles[jx])=sj;
+                }
+                */
                 // Now the easiest part : we create the link
                 //double k0=k_elast/(4.0*dist*dist);
                 
@@ -121,6 +128,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
                     std::cerr << "Error : a link has a NaN k0 " << std::endl;
                 } else {
                     n_springs++;
+                    //std::cout << "push back linker with ixes " << ix << "," << jx << "    k0=" << k0 << "  dist=" << dist << std::endl;
                     link linker{ix,jx,k0,dist,status};
                     springs.push_back(linker);
                 }
@@ -144,6 +152,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
 // Makes sure everything is in place
 void Tetr_elastic_part_set::GetStarted(){
     
+    Part_set::GetStarted();
     particles.init_id_search();
     Part_set::FindBounds();
     GetNeighbours();

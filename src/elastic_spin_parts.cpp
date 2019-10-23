@@ -193,12 +193,15 @@ void Elastic_part_set::UpdateAreas() {
         posj=get<position>(particles[j]);
         
         // Vector & norm of edge
+        if ( get<state>(particles[i])>0 && get<state>(particles[j])>0 ){
         dxij=posj-posi;
         norm2=dxij.squaredNorm();
         l2tot+=norm2;
         surfaces[ix]+=norm2;
         surfaces[jx]+=norm2;
-     }
+        }
+    }
+     
     
     // we go over all vertices to compute l2mean
      for (int i = 0; i < number; ++i) {
@@ -276,45 +279,54 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
         l0=get<3>(linker);  // resting length
         status=get<4>(linker);  // status : surface link or not
          
-        // Position & orientation of vertices
         posi=get<position>(particles[i]);
-        orsi=get<orientation>(particles[i]);
         posj=get<position>(particles[j]);
-        orsj=get<orientation>(particles[j]);
-        
-        // Number of neighbours of each vertex (in the inner mesh)
-        //nn_i=static_cast<double>(get<state>(particles[i]));
-        //nn_j=static_cast<double>(get<state>(particles[j]));
-        nn_i=get<state>(particles[i]);
-        nn_j=get<state>(particles[j]);
-        
-        //if (get<state>(particles[i]) != get<nn>(particles[i])) {
-        //    std::cerr << "state " << get<state>(particles[i]) <<  "    nn " << get<nn>(particles[i]) << std::endl;
-        //    std::cerr << "diffferent state and nn" << std::endl;
-        //}
+
         // Vector & norm of edge
         dxij=posj-posi;
         norm2=dxij.squaredNorm();
         norm=sqrt(norm2);
-        dir=dxij/norm;
+        
         
         // Force and torque
         // Force computation is done in a function to avoid branches
-        felast=harat*k0*dxij*compute_force(l0,norm,norm2);
-        project=k_align*dir.dot(orsi+orsj)*status;
-        eff_press=press*norm2*status;
-        
-        
-        
-        get<force>(particles[i])+=felast+orsi*eff_press/nn_i;
-        get<torque>(particles[i])-=project*cross(dir,orsi);
-        
-        get<force>(particles[j])+=-felast+orsj*eff_press/nn_j;
-        get<torque>(particles[j])-=project*cross(dir,orsj);
-        //tot_press_force+=eff_press/nn_i+eff_press/nn_j;
-        
+        felast=harat*k0*dxij*compute_force(l0,norm,norm2); 
+         
+         
+        // Branching should not be too much of a problem : 
+        //      links are ordered => good for branch predictions
+        // + : 
+        if (status<=0) {
+            get<force>(particles[i])+=felast;
+            get<force>(particles[j])-=felast;
+        }
+        else
+        {
+            dir=dxij/norm;
+             
+            // Position & orientation of vertices
+            orsi=get<orientation>(particles[i]);
+            orsj=get<orientation>(particles[j]);
+            
+            // Number of neighbours of each vertex (in the inner mesh)
+            nn_i=get<state>(particles[i]);
+            nn_j=get<state>(particles[j]);
+            //project=k_align*dir.dot(orsi+orsj)*status;
+            project=k_align*dir.dot(orsi+orsj);
+            eff_press=press*norm2;
+            //eff_press=press*norm2*status;
+            
+            
+            
+            get<force>(particles[i])+=felast+orsi*eff_press/nn_i;
+            get<torque>(particles[i])-=project*cross(dir,orsi);
+            get<force>(particles[j])+=-felast+orsj*eff_press/nn_j;
+            get<torque>(particles[j])-=project*cross(dir,orsj);
+            //tot_press_force+=eff_press/nn_i+eff_press/nn_j;
+        }
+
     }
-    if (std::isnan(norm2)) {
+    if (norm2 != norm2) {
         // Checking if we diverge
         std::cerr << "Diverging system " << std::endl;
         diverging=true;

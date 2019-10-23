@@ -121,23 +121,6 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         
     }
     
-      //opt.set(k_align, "align",0);
-    
-    /*
-    opt.set(z_max, "z_conf",0);
-    opt.set(z_conf, "z_conf",1);
-    
-    opt.set(y_max, "y_conf",0);
-    opt.set(y_conf, "y_conf",1);
-    
-    opt.set(x_max, "x_conf",0);
-    opt.set(x_conf, "x_conf",1);
-    
-     */
-     
-    //opt.set(k_bend, "bending",0);
-    //opt.set(p_align, "align",1);
-    //opt.set(p_bend, "bending",1);
     
     if (conf["k_elast"]) {
         k_elast=conf["k_elast"].as<std::double_t>();
@@ -160,9 +143,9 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         Rvisc=conf["Rvisc"].as<std::double_t>();
     }
     
-    if (conf["mechanics"]) {
+    if (conf["type"]) {
         //pressure=conf["pressure"].as<std::double_t>();
-        mechanics=conf["mechanics"].as<std::int8_t>();
+        mechanics=conf["type"].as<std::double_t>();
     }
  
 }
