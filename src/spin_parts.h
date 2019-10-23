@@ -75,13 +75,13 @@ public:
     void IntegrateForces(const Simul_props &);
     
     // Compute the forces on each particle
-    virtual void ComputeForces(const Simul_props &);
+    virtual void ComputeForces(const Simul_props &) {};
     
     // Confining potential
     virtual void AddConfinementForces(const Simul_props &);
     
     // Find the neighbours of every particle
-    virtual void GetNeighbours();
+    virtual void GetNeighbours() {};
     
     // Export to text
     virtual void Export(int , double);
@@ -135,10 +135,6 @@ protected:
     // Furthest points (xmin xmax ymin ymax zmin zmax)
     double bounds[6];
     
-    // Confinement forces
-    //std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
-    //std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
-    //std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
 };
 
 #endif

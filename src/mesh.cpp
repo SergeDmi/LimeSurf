@@ -11,63 +11,63 @@ using namespace Aboria;
 #include "tinyply.h"
 #include "mesh.h"
 
-//using namespace tinyply;
-//using namespace std;
-//#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
-
-
-const double PI = boost::math::constants::pi<double>();
-
 Mesh::Mesh(const YAML::const_iterator config )  {
+    // wall & props are null pointers to start with
     cell_wall=nullptr;
     wall_props=nullptr;
+    // We then create props from the config
     Part_set_props  props =  Part_set_props(config);
-    
+    // And then create mesh from the props
     Create_mesh(config,props);
 }
 
 // Dummy constructor
 Mesh::Mesh(const YAML::const_iterator config , Part_set_props & props) {
+    // wall & props are null pointers to start with
     cell_wall=nullptr; 
     wall_props=nullptr;  
-    
+    // And then create mesh from the props
     Create_mesh(config,props);
     }
     
+// Mesh creation from config and props
 void Mesh::Create_mesh(const YAML::const_iterator config , Part_set_props & propal) {
-    //propal.Read_config(config);
     int mechanics=propal.mechanics;
+    // mechanics is the type of mechanics, see Part_set_props
     switch (mechanics) {
+        // NOT IMPLEMENTED : viscous simulation
         case 0 : {
             Part_set_props  * props = new Part_set_props(config);
             wall_props=props;
             Part_set * wall=new Part_set(props);
             cell_wall=wall;
-            std::cout << "# Starting viscous simulation" << std::endl;
+            std::cerr << "# NOT IMPLEMENTED : viscous simulation" << std::endl;
             break; }
+        // Elastic simulation of thin (2D manifold) mesh
         case 1 : {  
-            //Elastic_set_props  * props = new Elastic_set_props(glos);
             Elastic_set_props  * props = new Elastic_set_props(config,propal);
             wall_props=props;
             Elastic_part_set * wall=new Elastic_part_set(props);
             cell_wall=wall;
-            std::cout << "# Starting elastic simulation" << std::endl;
-            //std::cout << "fname in should in meshless : " << wall_props->fname_in << std::endl;
+            std::cout << "# Starting 2D elastic simulation" << std::endl;
             break; }
+        // Visco-elastic simulation 
         case 2 : {
             Simple_viscoel_set_props *props = new Simple_viscoel_set_props(config);
             wall_props=props;
             Simple_viscoel_part_set * wall = new Simple_viscoel_part_set(props);
             cell_wall=wall;
-            std::cout << "# Starting viscoelastic simulation" << std::endl;
+            std::cerr << "# NOT IMPLEMENTED : visco-elastic simulation" << std::endl;
             break; }
+        // Thin + bending rigidity
         case 3 : {
             Triangle_set_props  * props = new Triangle_set_props(config);
             wall_props=props;
             Triangle_part_set * wall=new Triangle_part_set(props);
             cell_wall=wall;
-            std::cout << "# Starting triangular elastic simulation" << std::endl;
+            std::cerr << "# NOT IMPLEMENTED : 2D elastic simulation + bending" << std::endl;
             break; }                           
+        // Thick (3D manifold) elastic shell
         case 4 : {
             Elastic_set_props  * props = new Elastic_set_props(config);
             wall_props=props;
@@ -77,18 +77,14 @@ void Mesh::Create_mesh(const YAML::const_iterator config , Part_set_props & prop
             break; }
     }
     
-    //node=config;
-    //glos=new Glossary;
-    std::cout << "# Starting FROM YAML CONFIG" << std::endl;
 }   
 
 
-
+// Initiation
 void Mesh::Initiate() {
+    // Create the cell wall for real
     cell_wall->create();
+    // And gets it rolling
     cell_wall->GetStarted();
 }
 
-//void Mesh::Update(YAML::Node config) {
-//    wall_props->read_physical_properties(config);
-//}
