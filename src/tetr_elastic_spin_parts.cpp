@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 #include <random>
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 #include "tetr_elastic_spin_parts.h"
 #include <iostream>
-//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "elastic_parts_props.h"
@@ -16,7 +10,10 @@
 using namespace tinyply;
 using namespace std;
 
-const double PI = boost::math::constants::pi<double>();
+/*
+ A class implementing a set of particles connected by springs
+Some are on the surface, some are not...
+ */
 
 // Dummy constructor
 Tetr_elastic_part_set::Tetr_elastic_part_set(Elastic_set_props * p) : Elastic_part_set(p)
@@ -101,16 +98,6 @@ void Tetr_elastic_part_set::GetNeighbours() {
                 sj=static_cast<int>(pairs_j.size());
                 get<nn>(particles[ix])=si;
                 get<nn>(particles[jx])=sj;
-                /*
-                if (si>0) {
-                    get<state>(particles[ix])=si;
-                }
-                if (sj>0) {
-                    get<state>(particles[jx])=sj;
-                }
-                */
-                // Now the easiest part : we create the link
-                //double k0=k_elast/(4.0*dist*dist);
                 
                 switch(power_law) {
                     case 1 : k0=k_elast*dist;           // k_elast is Y :  N/m^2
@@ -120,10 +107,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
                     case 3 : k0=k_elast/pow(dist,3.0);  // k_elast is Y : N/m^2
                         break;
                 }
-                // TEMPORARY
-                //k0=0.0;
-                
-                
+               
                 if (std::isnan(k0)) {
                     std::cerr << "Error : a link has a NaN k0 " << std::endl;
                 } else {
@@ -141,17 +125,14 @@ void Tetr_elastic_part_set::GetNeighbours() {
         
     }
     
-    std::cout << "by now we have  " << n_springs << "springs" << std::endl;
+    std::cout << "# by now we have  " << n_springs << "springs" << std::endl;
     
-    
-    
-    
+   
 }
 
 
 // Makes sure everything is in place
 void Tetr_elastic_part_set::GetStarted(){
-    
     Part_set::GetStarted();
     particles.init_id_search();
     Part_set::FindBounds();

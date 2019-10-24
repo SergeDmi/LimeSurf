@@ -1,23 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 #include <random>
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 #include "elastic_spin_parts.h"
 #include <iostream>
-//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "elastic_parts_props.h"
-
 using namespace tinyply;
 
-
-const double PI = boost::math::constants::pi<double>();
-
+/*
+ Elastic_part_set is a set of particles connected by elastic springs
+ */
+ 
+// Constructor, from properties p.
 Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
 {
     prop=p;
@@ -37,14 +32,15 @@ Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
 
 // Here we populate the spring set from the face list
 void Elastic_part_set::GetNeighbours() {
-    int ix,jx,kx;
-    vdouble3 dir,mir,are;
+    // quite a few variables
+    int ix,jx,kx;                   // Indices
+    vdouble3 dir,mir,are;           // vectors
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
     vdouble3 posk(0,0,0);
     double status=1.0;
     double dist;
-    neigh_pairs pairs_i;
+    neigh_pairs pairs_i;            // vectors of pairs of neighbours
     neigh_pairs pairs_j;
     int si,sj;
     double k_elast=prop->k_elast;
@@ -54,7 +50,7 @@ void Elastic_part_set::GetNeighbours() {
     double k0,norm2;
     int power_law=prop->power_law;
     n_springs=0;
-        std::vector<double> surfaces(number);
+    std::vector<double> surfaces(number);
     
     // We go through all the faces and populate interactions
     for (int i = 0; i < n_faces; ++i) {
@@ -65,7 +61,7 @@ void Elastic_part_set::GetNeighbours() {
                 case 1 : ix=triangles[i].y;jx=triangles[i].z ; break ;
                 case 2 : ix=triangles[i].z;jx=triangles[i].x ; break ;
             }
-            // Computing triangle surface are
+            // Computing triangle surface area
             if (j==0) {
                 kx=triangles[i].z ;
                 posi=get<position>(particles[ix]);
@@ -134,7 +130,8 @@ void Elastic_part_set::GetNeighbours() {
         
     }
     
-    
+    // Here we define particle state as the number of neighbour. 
+    // Important to know wether a particle is on the surface or not
      for (int i = 0; i < number; ++i) {
          si=get<nn>(particles[i]);
          if (si>0) {
@@ -150,12 +147,7 @@ void Elastic_part_set::GetNeighbours() {
     //std::cout << "# Found Gamma : " << mean_area_ratio/area_ratio << std::endl;
     //std::cout << "# Generated " << n_springs << " springs " << std::endl;
     //particles.erase( std::remove_if(particles.begin(), particles.end(), [](auto& obj){return obj.nfaces == 0;}), particles.end() );
-   
 }
-
-
-
-
 
 // We update the areas and areas ratio !
 void Elastic_part_set::UpdateAreas() {
@@ -171,8 +163,9 @@ void Elastic_part_set::UpdateAreas() {
     double dist,norm2,sti;
    
     // We go through all the faces tom compute Atot
-    for (int fa = 0; fa < n_faces; ++fa) {
-        ix=triangles[fa].x;jx=triangles[fa].y ; kx=triangles[fa].z ;
+    //for (int fa = 0; fa < n_faces; ++fa) {
+    for (auto const triangle: triangles) {
+        ix=triangle.x;jx=triangle.y ; kx=triangle.z ;
         posi=get<position>(particles[ix]);
         posj=get<position>(particles[jx]);
         posk=get<position>(particles[kx]);
@@ -180,7 +173,6 @@ void Elastic_part_set::UpdateAreas() {
         mir=posk-posi;
         are=cross(dir,mir);
         Atot+=sqrt(are.norm());
-        
     }
     
     // We go through all linkers to compute l2tot and surfaces
@@ -326,11 +318,14 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
         }
 
     }
+    
     if (norm2 != norm2) {
         // Checking if we diverge
+        // Faster than diverging=std::isnan(norm2) !
         std::cerr << "Diverging system " << std::endl;
         diverging=true;
     }
+    
     //std::cout << " tot press force : " << tot_press_force << std::endl;
 }
 

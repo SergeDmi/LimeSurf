@@ -8,6 +8,7 @@ using namespace std;
 
 // Empty constructor for convenience
 Viscous_set_props::Viscous_set_props() : Part_set_props() {
+    std::cerr << "ERROR : Viscous set not implemented" << std::endl;
     init();
 };
 

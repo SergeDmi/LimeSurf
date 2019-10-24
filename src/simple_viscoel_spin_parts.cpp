@@ -23,6 +23,7 @@ const double PI = boost::math::constants::pi<double>();
 // Dummy creator
 Simple_viscoel_part_set::Simple_viscoel_part_set(Simple_viscoel_set_props * p) : Elastic_part_set(p), prop(p)
 {
+    std::cerr << "ERROR : Simple visco-elastic set not fully implemented" << std::endl;
     prop=p;
 };
 
