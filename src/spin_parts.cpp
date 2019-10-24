@@ -313,7 +313,7 @@ void Part_set::Export(int t, double time){
 // saving to .ply
 // @TODO : problem in the tags of exported ply files
 void Part_set::Export_bly(int n_frame,const Simul_props & simul_prop, double t){
-    std::string fname=prop->fname_out+simul_prop.name;
+    std::string fname=prop->fname_out+"_"+simul_prop.name;
     //std::ifstream ss(fname, std::ios::binary);
     std::string filename;
     std::filebuf fb;
