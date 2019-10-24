@@ -9,8 +9,8 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 
 ## Installation
 
-  Clone/download code in directory `<DIR>`
-  Then compile in `<DIR>` :
+Clone/download code in directory `<DIR>`
+Then compile in `<DIR>` :
 
 ```shell
     $ cd <DIR>
@@ -20,14 +20,14 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 
 ## Config file
 
-    Config file are yaml type. See *config.yaml* for an example.
+Config file are yaml type. See *config.yaml* for an example.
 
 ## Options
 
-    Pending.
+Pending.
 
 ## Mesh format
 
-    Format should be plain text or binary ply files. See *demo.ply* for an example.
+Format should be plain text or binary ply files. See *demo.ply* for an example.
 
 # Serge Dmitrieff -- http://biophysics.fr
