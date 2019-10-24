@@ -20,7 +20,7 @@ Then compile in `<DIR>` :
 
 ## Config file
 
-Config file are yaml type. See `config.yaml` for an example.
+Config file are yaml type. See [config.yaml](config.yaml) for an example.
 
 ## Options
 
@@ -28,6 +28,6 @@ Pending.
 
 ## Mesh format
 
-Format should be plain text or binary ply files. See `demo.ply` for an example.
+Format should be plain text or binary ply files. See [demo.ply](demo.ply) for an example.
 
 # Serge Dmitrieff -- http://biophysics.fr
