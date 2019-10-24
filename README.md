@@ -109,6 +109,6 @@ The program outputs ply files of the format NAME_RUN_TIME.ply, in which *NAME* i
 
 ### Compiling LimeSurf
 
-LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc.
+LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc. Thanks gcc devs for the amazing work !
 
 # Serge Dmitrieff -- http://biophysics.fr
