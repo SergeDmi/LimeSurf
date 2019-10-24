@@ -9,8 +9,8 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 
 ## Installation
 
-  Clone/download code in directory <DIR>
-  Then compile in <DIR> :
+  Clone/download code in directory `<DIR>`
+  Then compile in `<DIR>` :
 
 ```shell
     $ cd <DIR>
