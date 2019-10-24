@@ -105,22 +105,27 @@ void Part_set_props::init() {
     
     
 void Part_set_props::Read_config(const YAML::const_iterator config) {
-    //auto conf=config->second;
-    //opt.set(dt,"dt");
-    //opt.set(Tend,"Tend");
-    //opt.set(n_frames,"n_frames");
     name=config->first.as<std::string>();
+    fname_out=name;
+    
     auto conf=config->second;
     
     if (conf["source"]) {
         std::string str;
-        str.reserve(10000);
+        str.reserve(1000);
         fname_in.reserve(1000);
         str=conf["source"].as<std::string>();
         fname_in.assign(str);
         
     }
     
+    if (conf["out"]) {
+        std::string str1;
+        str1.reserve(100);
+        fname_in.reserve(100);
+        str1=conf["out"].as<std::string>();
+        fname_out.assign(str1);
+    }
     
     if (conf["k_elast"]) {
         k_elast=conf["k_elast"].as<std::double_t>();
