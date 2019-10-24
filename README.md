@@ -18,12 +18,19 @@ $ git submodule update --init --recursive
 ```
 
 Then compile in `<DIR>` :
-
 ```shell
     $ cd <DIR>
     $ cmake .
     $ make 
 ``` 
+
+For this you might need to install make, cmake, and the boost libraries. To do so on Ubuntu, use :
+```shell
+    $ sudo apt-get install make cmake
+    $ sudo apt-get install libboost-all-dev
+```
+On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh) as your package manager.
+On Windows, you can install Ubuntu on a virtual machine, see this [tutorial](https://brb.nci.nih.gov/seqtools/installUbuntu.html) for instance.
 
 ## Config file
 
