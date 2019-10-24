@@ -1,33 +1,23 @@
 cmake_minimum_required(VERSION 2.8)
+# You should not specify the compiler in the CMakeLists.txt file !
 #SET(CMAKE_CXX_COMPILER /usr/bin/clang++-6.0)
 #SET(CMAKE_CXX_COMPILER /opt/intel/compilers_and_libraries/linux/bin/intel64/icc)
-#add_library(tinyply tiny/tinyply.cpp)
+# You should not have specified the compiler in CMakeLists.txt
 
 # Boost
 find_package(Boost 1.50.0 REQUIRED)
 list(APPEND LIBRARIES ${Boost_LIBRARIES})
 list(APPEND INCLUDES ${Boost_INCLUDE_DIRS})
 
-# VTK
-#find_package(VTK REQUIRED)
-#if (VTK_FOUND)
-#    add_definitions(-DHAVE_VTK)
-#endif(VTK_FOUND)
-#list(APPEND LIBRARIES ${VTK_LIBRARIES})
-#list(APPEND INCLUDES ${VTK_INCLUDE_DIRS})
-
-#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-O3")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftree-vectorize")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -parallel")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+# a gcc special 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --fast-math -fno-finite-math-only -mrecip")
+# and an icc special
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --funroll-all-loops")
+
 # Aboria
 set(Aboria_LOG_LEVEL 1 CACHE STRING "Logging level (1 = least, 3 = most)")
 add_definitions(-DABORIA_LOG_LEVEL=${Aboria_LOG_LEVEL})
@@ -40,27 +30,20 @@ list(APPEND INCLUDES tinyply/source)
 # yaml-cpp
 list(APPEND INCLUDES yaml-cpp/include)
 list(APPEND INCLUDES yaml-cpp/src)
-# Cytosim
-#list(APPEND INCLUDES Cytosim)
 
-# LimeSurf
-#list(APPEND INCLUDES .)
 list(APPEND INCLUDES src)
 
 include_directories(src ${INCLUDES})
 
 file(GLOB all_SRC
     "src/*.cpp"
-    #   "Cytosim/*.cc"
 	"tinyply/source/tinyply.cpp"
     "yaml-cpp/src/*.cpp"
     "yaml-cpp/include/*.cpp"
     )
 
-#MESSAGE( STATUS ${all_SRC})
-
-set(SOURCE ${all_SRC}
-)
+set(SOURCE ${all_SRC})
 
 add_executable(meshless ${SOURCE})
+
 target_link_libraries(meshless ${LIBRARIES})
