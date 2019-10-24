@@ -25,9 +25,9 @@ Then compile in `<DIR>` :
     $ make
 ```
 
-For this you might need to install make, cmake, and the boost libraries. To do so on Ubuntu, use :
+For this you might need to install make, cmake, gcc and the boost libraries. To do so on Ubuntu, use :
 ```shell
-    $ sudo apt-get install make cmake
+    $ sudo apt-get install make cmake g++
     $ sudo apt-get install libboost-all-dev
 ```
 On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh) as your package manager.
@@ -83,7 +83,8 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.power_law` : power law of spring elasticity (*1*, *2* or *3*)  
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : *1.0* for no prestrain, *1.5* for *50%* prestrain)  
 `MESH.k_elast` : sping constant  
-`MESH.align` : normal alignment constant
+`MESH.align` : normal alignment constant  
+`MESH.out` : export name
 
 #### Runs
 
@@ -105,5 +106,9 @@ Format should be plain text or binary ply files. See [demo.ply](demo.ply) for an
 The program outputs ply files of the format NAME_RUN_TIME.ply, in which *NAME* is the name of the mesh provided in the config file (or the export name if given), *RUN* is the name of the run, and *T* is the time frame number.
 
 ## Misc
+
+### Compiling LimeSurf
+
+LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc.
 
 # Serge Dmitrieff -- http://biophysics.fr
