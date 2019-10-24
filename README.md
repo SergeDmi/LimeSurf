@@ -13,8 +13,9 @@ In which [config.yaml](config.yaml) is an appropriate config file.
 Clone/download code in directory `<DIR>` :
 
  ```shell 
-$ git checkout https://github.com/SergeDmi/LimeSurf.git <DIR>
-$ git submodule update --init --recursive
+    $ git checkout https://github.com/SergeDmi/LimeSurf.git <DIR>
+    $ cd <DIR>
+    $ git submodule update --init --recursive
 ```
 
 Then compile in `<DIR>` :
