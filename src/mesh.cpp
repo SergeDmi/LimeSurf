@@ -51,7 +51,7 @@ void Mesh::Create_mesh(const YAML::const_iterator config , Part_set_props & prop
             cell_wall=wall;
             std::cout << "# Starting 2D elastic simulation" << std::endl;
             break; }
-        // Visco-elastic simulation 
+        // NOT IMPLEMENTED Visco-elastic simulation 
         case 2 : {
             Simple_viscoel_set_props *props = new Simple_viscoel_set_props(config);
             wall_props=props;
@@ -59,7 +59,7 @@ void Mesh::Create_mesh(const YAML::const_iterator config , Part_set_props & prop
             cell_wall=wall;
             std::cerr << "# NOT IMPLEMENTED : visco-elastic simulation" << std::endl;
             break; }
-        // Thin + bending rigidity
+        // NOT IMPLEMENTED : Thin + bending rigidity
         case 3 : {
             Triangle_set_props  * props = new Triangle_set_props(config);
             wall_props=props;
