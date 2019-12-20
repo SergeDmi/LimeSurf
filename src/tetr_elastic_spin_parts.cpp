@@ -95,27 +95,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
                 //std::cout << "push back linker with ixes " << ix << "," << jx << "    k0=" << k0 << "  dist=" << dist << std::endl;
                 link linker{ix,jx,k0,dist,status};
                 springs.push_back(linker);
-                /*
-                
-                switch(power_law) {
-                    case 1 : k0=k_elast*dist;           // k_elast is Y :  N/m^2
-                        break;
-                    case 2 : k0=k_elast/(dist*dist);    // k_elast is Y h : N/m
-                        break;
-                    case 3 : k0=k_elast/pow(dist,3.0);  // k_elast is Y : N/m^2
-                        break;
-                }
-               
-                if (std::isnan(k0)) {
-                    std::cerr << "Error : a link has a NaN k0 " << std::endl;
-                } else {
-                    n_springs++;
-                    //std::cout << "push back linker with ixes " << ix << "," << jx << "    k0=" << k0 << "  dist=" << dist << std::endl;
-                    link linker{ix,jx,k0,dist,status};
-                    springs.push_back(linker);
-                }
-                
-                */
+             
                 
             }
             
