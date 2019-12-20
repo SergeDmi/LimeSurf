@@ -37,7 +37,7 @@ void Simul_props::init() {
     
     // By default, no confinement of course
     is_confinement=0;
-    add_confinement_force=[] (vdouble3& force, vdouble3 posi ) {};
+    add_confinement_force=[] (vdouble3& force, vdouble3 posi , double area ) {};
 }
 
 void Simul_props::Read_config(const YAML::const_iterator config) {
@@ -49,17 +49,14 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
     auto conf=config->second;
     
     if (conf["duration"]) {
-        std::cout << "getting duration from : " << conf["duration"].as<std::double_t>() << std::endl;
         Tend=conf["duration"].as<std::double_t>();
     }
     
      if (conf["dt"]) {
-         std::cout << "getting dt from : " << conf["dt"].as<std::double_t>() << std::endl;
         dt=conf["dt"].as<std::double_t>();
     }
     
      if (conf["n_frames"]) {
-         std::cout << "getting n_frames from : " << conf["n_frames"].as<std::double_t>() << std::endl;
         n_frames=conf["n_frames"].as<std::double_t>();
     }
     
@@ -81,7 +78,6 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
             }
             
              if (i>=0) {
-                //std::cout << "somehow got that we are confied on axis : " << i << std::endl;
                 YAML::Node coco=confine->second;
                 if        (coco["min"]) {
                     confine_min[i]=coco["min"].as<std::double_t>();
@@ -91,7 +87,6 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
                 }
                 if (coco["stiffness"]) {
                     confine_pot[i]=coco["stiffness"].as<std::double_t>();
-                    //std::cout << key << " : " << confine_min[i] << " , " << confine_max[i] << " : " << confine_pot[i] << std::endl;
                 }
             }   
             else {
@@ -100,9 +95,6 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
 
         }
        
-            
-        //    confine_pot[i]=confs[i].as<std::double_t>();
-        //pressure=conf["confinements"].as<std::double_t>();
     }
     
     
@@ -135,9 +127,9 @@ void Simul_props::Make_confinement() {
         is_confinement=1;
         
         add_confinement_force=
-         [conf=confine_pot,xmax=confine_max,xmin=confine_min,ixes=is_confined] (vdouble3& force, vdouble3 posi ) {
+         [conf=confine_pot,xmax=confine_max,xmin=confine_min,ixes=is_confined] (vdouble3& force, vdouble3 posi , double area) {
             for (auto j=ixes.begin();j!=ixes.end();++j) {
-                force[*j]-=conf[*j]*( 
+                force[*j]-=area*conf[*j]*( 
                               ( posi[*j] > xmax[*j] )*( posi[*j] - xmax[*j] ) 
                             + ( posi[*j] < xmin[*j] )*( posi[*j] - xmin[*j] )  
                         ); 
@@ -145,7 +137,7 @@ void Simul_props::Make_confinement() {
          };
     } 
     else {
-        add_confinement_force=[] (vdouble3& force, vdouble3 posi ) {};
+        add_confinement_force=[] (vdouble3& force, vdouble3 posi , double area) {};
     }
     
 }

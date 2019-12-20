@@ -73,6 +73,7 @@ Part_set_props::Part_set_props(const Part_set_props & props) {
     visco=props.visco;
     Rvisc=props.Rvisc;
     renorm_rate=props.renorm_rate;
+    verbose=props.verbose;
     
 }
 
@@ -83,7 +84,7 @@ void Part_set_props::init() {
     // Shape to be created
     
     mechanics=1;
-    
+    verbose=0;
     
     // Physical parameters
     // For any set :
@@ -131,12 +132,17 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         k_elast=conf["k_elast"].as<std::double_t>();
     }
     
+    
     if (conf["align"]) {
         k_align=conf["align"].as<std::double_t>();
     }
     
      if (conf["renorm"]) {
         renorm_rate=conf["renorm"].as<std::double_t>();
+    }
+    
+     if (conf["verbose"]) {
+        verbose=conf["verbose"].as<std::double_t>();
     }
     
      if (conf["visco"]) {

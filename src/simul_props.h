@@ -61,10 +61,10 @@ public:
     // Confinement
     
      // Confinement forces
-    std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
-    std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
-    std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
-    std::function<void(vdouble3& ,const vdouble3)> add_confinement_force;
+    //std::function<void(vdouble3& ,const vdouble3)> add_x_conf;
+    //std::function<void(vdouble3& ,const vdouble3)> add_y_conf;
+    //std::function<void(vdouble3& ,const vdouble3)> add_z_conf;
+    std::function<void(vdouble3& ,const vdouble3, const double)> add_confinement_force;
     //double conf_xmax,conf_xmin,conf_ymax,conf_ymin , conf_zmax,conf_zmin;
     //double x_conf,y_conf,z_conf;
     bool is_confinement;

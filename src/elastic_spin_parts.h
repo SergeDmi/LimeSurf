@@ -47,6 +47,12 @@ public:
     // Compute forces
     void ComputeForces(const Simul_props &);
     
+    // Compute area associated to two points (i.e. linker extremities)
+    double Compute_local_linker_area(int, int);
+    
+    double ComputeAreaRatio();
+    
+    
 protected:
     // Springs between particles
     spring_set springs;
@@ -60,14 +66,12 @@ protected:
     // fraction of area per link ; matters for elasticity
     double area_ratio;
     
-    // Update area measurements
-    void UpdateAreas();
-    
     //  mean fraction of area per link  ; matters for pressure
     double mean_area_ratio;
     
     // this computes the module of the force on a linker
-    std::function<double(const double,const double,const double)> compute_force;
+    std::function<double(const double,const double)> compute_force;
+    
 };
 #endif
 

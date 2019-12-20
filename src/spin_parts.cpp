@@ -15,11 +15,8 @@ using namespace std;
 #include "yaml-cpp/yaml.h" 
 
 /*
- A class storing a set of particles ; basis for all wall representations
+ A class storing a set of particles ; basis for all shell representations
 */
-
-// Not even sure we need this here
-const double PI = boost::math::constants::pi<double>();
 
 // Dummy constructor
 Part_set::Part_set() {
@@ -34,14 +31,24 @@ Part_set::Part_set(Part_set_props * p) {
     diverging=false;
 }
 
+// Print a comment if verbose
+//void Part_set::PrintIfVerbose(const auto & message) {
+void Part_set::PrintIfVerbose(const std::string & message) {
+    if (prop->verbose) {
+        std::cout << "# " << message << std::endl;
+    }
+}
+
+
 // If particles need to be created from properties
 void Part_set::create() {
-    // std::cout << "# starting particle creation ; load " << prop->fname_in << std::endl;
-    // std::string test=prop->fname_in;
-    // std::cout << "# ... Trying to load " << test << std::endl;
+    
+    PrintIfVerbose("Starting particle creation, trying to load"+prop->fname_in);
+    
     number=load_from_text();
-    std::cout << "# created " << number << "particles" << std::endl;
-     
+    
+    PrintIfVerbose("Succesfully created "  + std::to_string(number) + " particles");
+    
 }
 
 
@@ -71,8 +78,10 @@ void Part_set::FindBounds() {
 
 // Loading from ply file
 // @TODO : make sure that memcpy is cosher
-int Part_set::load_from_text(){
-    std::cout << "# ... acquiring file " << prop->fname_in << std::endl;
+int Part_set::load_from_text() {
+    
+    PrintIfVerbose("acquiring file " + prop->fname_in );
+    
     // Readint the desired file
     std::ifstream ss(prop->fname_in, std::ios::binary);
     if (ss.fail())
@@ -106,7 +115,8 @@ int Part_set::load_from_text(){
     int nt;
     if (is_tetra) {
         nt=tetra->count;
-        std::cout << "# \tRead " << tetra->count << " total tetrahedrons "<< std::endl;
+        
+        PrintIfVerbose("Read " + std::to_string(tetra->count) + " total tetrahedrons ");
     }
     else {nt=0;}
     
@@ -115,7 +125,7 @@ int Part_set::load_from_text(){
     }
     else
     {
-            std::cout << "# \tRead " << vertices->count << " total vertices "<< std::endl;
+        PrintIfVerbose("Read " + std::to_string(vertices->count) + " total vertices ");
     }
 
     // Let us not create zero too often
@@ -166,7 +176,7 @@ int Part_set::load_from_text(){
         // now we add it to our vector of particles
         particles.push_back(p);
         
-        // Let's keep this here, you know, just in cae
+        // Let's keep this here, you know, just in case
         /* 
         if (i==0) {
             std::cout << "Position     :  " << pos[0] << " , " << pos[1] << " , " << pos[2] << std::endl;
@@ -242,19 +252,21 @@ void Part_set::ClearForces() {
     vdouble3 zero(0,0,0);
     for (auto part : particles) {
         get<force> (part)=zero;
-        get<torque>(part)=zero;
+        //get<torque>(part)=zero;
+        //get<orientation>(part)=zero;
+        get<area>(part)=0.0;
     }   
 }
 
 // Adding forces to particles
 void Part_set::IntegrateForces(const Simul_props & simul_prop){
     double dt_trans=simul_prop.dt/prop->visco;
-    double dt_rot=simul_prop.dt/prop->Rvisc;
+    //double dt_rot=simul_prop.dt/prop->Rvisc;
 
     for (auto part : particles) {        
         // Applying force & torque
         get<position>(part)   +=(get<force>(part)*(dt_trans));
-        get<orientation>(part)+=cross(get<orientation>(part),get<torque>(part))*(dt_rot);
+        //get<orientation>(part)+=cross(get<orientation>(part),get<torque>(part))*(dt_rot);
     }
 }
 
@@ -262,23 +274,27 @@ void Part_set::IntegrateForces(const Simul_props & simul_prop){
 void Part_set::RenormNorms(){
     for (auto part : particles) {  
         if ((get<state>(part)>0)) {
-            get<orientation>(part)/=sqrt(get<orientation>(part).squaredNorm());            
+            get<orientation>(part)/=get<orientation>(part).norm();            
         }
     }
 }
 
 // Confinement forces
+// @TODO : should we apply confinement to only surface edges ? then should be outer surface, shouldn't it ?
 void Part_set::AddConfinementForces(const Simul_props & simul_prop){
     vdouble3 posi;
     vdouble3 forcei;
     vdouble3 zero(0,0,0);
+    double local_area;
     
     if ( simul_prop.is_confinement ) {        
         // There is actually confinement
         for (auto part : particles) {
             forcei=zero;
             posi=get<position>(part);
-            simul_prop.add_confinement_force(forcei,posi);
+            local_area=get<area>(part);
+            
+            simul_prop.add_confinement_force(forcei,posi,local_area);
             
             get<force>(part)+=forcei;
           
@@ -288,6 +304,46 @@ void Part_set::AddConfinementForces(const Simul_props & simul_prop){
 }
 
 
+// Pressure forces
+void Part_set::AddPressureForces(const Simul_props & simul_prop){
+    // We loop on all faces and add 1/3 of the pressure force
+    // of each face to each vertex belonging to the face
+    
+    double press=simul_prop.pressure ;
+    double part_area;
+
+    vdouble3 dir,mir,are;
+    vdouble3 posi;
+    vdouble3 posj;
+    vdouble3 posk;
+      
+      
+    // We go through all the faces to compute pressure
+    for (auto const & triangle: triangles) {
+        posi=get<position>(particles[triangle.x]);
+        posj=get<position>(particles[triangle.y]);
+        posk=get<position>(particles[triangle.z]);
+        dir=posj-posi;
+        mir=posk-posi;
+        
+        
+        are=cross(mir,dir)/6.0;
+        part_area=are.norm();
+        are*=press;
+        
+        get<area>(particles[triangle.x])+=part_area;
+        get<area>(particles[triangle.y])+=part_area;
+        get<area>(particles[triangle.z])+=part_area;
+        
+        get<force>(particles[triangle.x])+=are;
+        get<force>(particles[triangle.y])+=are;
+        get<force>(particles[triangle.z])+=are;
+        
+    }
+    
+
+    
+}
 
 // Dirty exporting to a file
 // Kept for safety
@@ -352,6 +408,8 @@ void Part_set::Export_bly(int n_frame,const Simul_props & simul_prop, double t){
                             Type::FLOAT32, verts.size(), reinterpret_cast<uint8_t*>(norms.data()), Type::INVALID, 0);
     exampleOutFile.add_properties_to_element("face", { "vertex_index" },
                             Type::UINT32,  triangles.size(), reinterpret_cast<uint8_t*>(triangles.data()), Type::UINT8, 3);
+                            // Trying a fix !!!
+                            //Type::UINT32,  triangles.size(), reinterpret_cast<uint8_t*>(triangles.data()), Type::UINT8, 3);
                             
     exampleOutFile.get_comments().push_back("generated by tinyply");
     exampleOutFile.get_comments().push_back("time "+std::to_string(t));

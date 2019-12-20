@@ -35,15 +35,23 @@ protected:
     ABORIA_VARIABLE(state,double,"state");
     ABORIA_VARIABLE(nface ,int,"face number");
     ABORIA_VARIABLE(in_triangles,in_faces,"in_triangles");
+    ABORIA_VARIABLE(area,double,"area");
     
     // The particle set
     //typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state>,3> particle_type;
-    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state,in_triangles>,3> particle_type;
+    typedef Particles<std::tuple<orientation,neighbours,force,torque,nn,nface,state,in_triangles,area>,3> particle_type;
     typedef typename particle_type::position position;
     
     // This is convenient if we read faces from a ply file
+    // careful ! int might depend on compiler !
+    //typedef struct  {int x,y,z ;} face;
+    //typedef std::vector<face> face_list;
+    
+    // This is convenient if we read faces from a ply file
+    // careful ! int might depend on compiler !
     typedef struct  {int x,y,z ;} face;
     typedef std::vector<face> face_list;
+    
     
      // This is convenient if we read tetrahedra from a ply file
     typedef struct  {int x,y,z,k;} tetr;
@@ -80,6 +88,9 @@ public:
     // Confining potential
     virtual void AddConfinementForces(const Simul_props &);
     
+    // Pressure forces
+    virtual void AddPressureForces(const Simul_props &);
+    
     // Find the neighbours of every particle
     virtual void GetNeighbours() {};
     
@@ -93,7 +104,7 @@ public:
     virtual void GetStarted();
     
     // Making sure the Particle set loaded is correct
-    void CheckPartSet();
+    virtual void CheckPartSet();
     
     // Set forces & torques to 0
     void ClearForces();
@@ -109,6 +120,10 @@ public:
     
      // Find furthest points in any direction
     void FindBounds();
+    
+    // Print only if verbose
+    //void PrintIfVerbose(const auto& );
+    void PrintIfVerbose(const std::string & );
     
 protected:
     // List of faces

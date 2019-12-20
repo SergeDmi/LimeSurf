@@ -30,6 +30,8 @@ Elastic_set_props::Elastic_set_props(const YAML::const_iterator config) : Part_s
 void Elastic_set_props::init() {
     prestrain=1.0;
     power_law=2;
+    young_modulus=-1;
+    thickness=0.0;
 }
 
 
@@ -41,11 +43,15 @@ void Elastic_set_props::Read_config(const YAML::const_iterator config) {
     }
     
     if (conf["power_law"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
-        //power_law=conf["power_law"].as<std::int8_t>();
         power_law=conf["power_law"].as<std::double_t>();
-        //power_law=2;
     }
-    std::cout << "power law : " << power_law << std::endl;
     
+    if (conf["young_modulus"]) {
+        young_modulus=conf["young_modulus"].as<std::double_t>();
+    }
+    
+    if (conf["thickness"]) {
+        thickness=conf["thickness"].as<std::double_t>();
+    }
+        
 }

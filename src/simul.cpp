@@ -28,7 +28,7 @@ void const make_props(properties & props, const YAML::Node & yaconf) {
 }
 
 // Builds the vector of meshes from the config file
-void const make_meshes(meshes & meshugas, const YAML::Node & yaconf) {
+void const make_meshes(meshes & meshuggas, const YAML::Node & yaconf) {
     YAML::Node all_meshes = yaconf["meshes"];
     Part_set_props prop;
     for(YAML::const_iterator it=all_meshes.begin();it!=all_meshes.end();++it) {
@@ -40,8 +40,8 @@ void const make_meshes(meshes & meshugas, const YAML::Node & yaconf) {
         Mesh mesh(it,prop);
         // Mesh initiation 
         mesh.Initiate();
-        // Push back into meshugas. Djent. 
-        meshugas.push_back(mesh);
+        // Push back into meshuggas. Djent. 
+        meshuggas.push_back(mesh);
     }
 }
 
@@ -49,12 +49,13 @@ void const make_meshes(meshes & meshugas, const YAML::Node & yaconf) {
  Part where we actually run the simulations
 */
 
-// Make_run runs a simulation of properties prop for all meshes in meshugas. 
-int make_run(const Simul_props & prop, meshes & meshugas) {
+// Make_run runs a simulation of properties prop for all meshes in meshuggas. 
+int make_run(const Simul_props & prop, meshes & meshuggas) {
     // Program state
     int dvg=0;
+    //std::cout << "Current pressure " << prop.pressure << std::endl;
     // Running all the meshes
-    for (auto mesh: meshugas) {
+    for (auto mesh: meshuggas) {
         // Preparing times
         double t_save=0;
         int n_save=0;
@@ -71,7 +72,7 @@ int make_run(const Simul_props & prop, meshes & meshugas) {
             if (t_save>prop.dt_frames ) {
                 t_save=0;
                 mesh.cell_wall->Export_bly(n_save,prop,t);
-                n_save++;
+                 n_save++;
             }
         }
         // implicit bool to int conversion for the win (and less branching)

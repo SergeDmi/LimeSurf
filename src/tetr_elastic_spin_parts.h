@@ -32,7 +32,10 @@ public:
     
     // Prepares the simulation
     void GetStarted();
-
+    
+    double ComputeVolumeRatio();
+    
+    void UpdateLinkerStiffness();
     
 };
 

@@ -39,6 +39,8 @@ class Elastic_set_props : public Part_set_props
         // prestrain : how much the imported link is stretched
         double prestrain;
         int power_law;
+        double young_modulus ;      // young modulus of surface
+        double thickness ;          // thickness of surface
 
 };
 

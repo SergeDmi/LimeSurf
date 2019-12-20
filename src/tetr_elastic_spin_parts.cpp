@@ -31,7 +31,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
     int power_law=prop->power_law;
-    std::cout << "# power law : " << power_law << std::endl;
+    Part_set::PrintIfVerbose("power law : " + std::to_string(power_law) );
     double k0;
     // Here the status is 0 : not an internal surface
     double status=0.0;
@@ -40,15 +40,6 @@ void Tetr_elastic_part_set::GetNeighbours() {
     neigh_pairs pairs_j;
     int si,sj;
     double k_elast=prop->k_elast;
-    
-    std::cout << "by now we have  " << n_springs << "springs" << std::endl;
-    int count=0;
-    for(auto const& linker: springs) {
-        if (get<4>(linker) ==1.0 ) {
-            count++;
-        }
-    }
-    std::cout << "counted linkers in subset " << count << std::endl;
     
     // We go through all the faces and populate interactions
     for (int i = 0; i < n_tetras; ++i) {
@@ -99,6 +90,13 @@ void Tetr_elastic_part_set::GetNeighbours() {
                 get<nn>(particles[ix])=si;
                 get<nn>(particles[jx])=sj;
                 
+                k0=k_elast;
+                n_springs++;
+                //std::cout << "push back linker with ixes " << ix << "," << jx << "    k0=" << k0 << "  dist=" << dist << std::endl;
+                link linker{ix,jx,k0,dist,status};
+                springs.push_back(linker);
+                /*
+                
                 switch(power_law) {
                     case 1 : k0=k_elast*dist;           // k_elast is Y :  N/m^2
                         break;
@@ -117,7 +115,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
                     springs.push_back(linker);
                 }
                 
-                
+                */
                 
             }
             
@@ -125,9 +123,64 @@ void Tetr_elastic_part_set::GetNeighbours() {
         
     }
     
-    std::cout << "# by now we have  " << n_springs << "springs" << std::endl;
+   Part_set::PrintIfVerbose("by now we have  " + std::to_string(n_springs) );
+       
+}
+
+
+double Tetr_elastic_part_set::ComputeVolumeRatio() {
     
-   
+    double tot_volume;
+    vdouble3 are;
+    vdouble3 posi;
+    vdouble3 posj;
+    vdouble3 posk;
+    vdouble3 posz;
+      
+      
+    // We go through all the faces to compute area
+    for (auto const & tetr: tetrahedra) {
+        posi=get<position>(particles[tetr.x]);
+        posj=get<position>(particles[tetr.y])-posi;
+        posk=get<position>(particles[tetr.k])-posi;
+        posz=get<position>(particles[tetr.z])-posi;
+       
+        
+        tot_volume+=abs( posj.dot(cross(posk,posz)) );
+    }
+    tot_volume/=6.0;
+
+    int i,j;
+    double sum_l02;
+    // We loop over all springs
+    // Man C++11 is nice
+    // This is the code bottleneck
+    for(auto const& linker: springs) {
+        sum_l02+=pow(get<3>(linker),2.0);
+    }
+    
+    return tot_volume/sum_l02;
+}
+
+void Tetr_elastic_part_set::UpdateLinkerStiffness() {
+    
+    if (prop->young_modulus>0) {
+        double k0=(prop->young_modulus)*(prop->thickness)*(Elastic_part_set::ComputeAreaRatio());
+
+        //std::cout << "computed k_elast = " << k_elast << std::endl;
+        switch(prop->power_law) {
+            case 1 : k0*=2.0;
+                break;
+            case 3 : k0*=(6.0/9.0);
+                break;
+        } 
+        for(auto & linker: springs) {
+            get<2>(linker)=k0;
+        }   
+        Part_set::PrintIfVerbose("Changed all links to stiffness " + std::to_string(k0) );
+    
+    }
+    
 }
 
 
@@ -137,7 +190,7 @@ void Tetr_elastic_part_set::GetStarted(){
     particles.init_id_search();
     Part_set::FindBounds();
     GetNeighbours();
-    
+    UpdateLinkerStiffness();
     Part_set::CheckPartSet();
     
 }
