@@ -105,7 +105,7 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
     else {
         dt_frames=Tend;
     }
-    n_frames++;
+    //n_frames++;
    
     Make_confinement();
 }

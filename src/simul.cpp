@@ -55,7 +55,7 @@ int make_run(const Simul_props & prop, meshes & meshuggas) {
     int dvg=0;
     //std::cout << "Current pressure " << prop.pressure << std::endl;
     // Running all the meshes
-    for (auto mesh: meshuggas) {
+    for (auto &mesh: meshuggas) {
         // Preparing times
         double t_save=0;
         int n_save=0;
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     //all_meshes[0].cell_wall->Export(-1,-1);
    
     // For all simulation runs (i.e. all sets of properties) we simulate
-    for (auto run: runs) {
+    for (const auto &run: runs) {
         dvg+=make_run(run,all_meshes);
      }
      

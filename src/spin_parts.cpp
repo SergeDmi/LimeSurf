@@ -374,7 +374,7 @@ void Part_set::Export_bly(int n_frame,const Simul_props & simul_prop, double t){
     std::string filename;
     std::filebuf fb;
     std::string numero(std::to_string(n_frame));
-    std::string uno(std::to_string(simul_prop.n_frames));
+    std::string uno(std::to_string(simul_prop.n_frames+1));
     while (numero.length()<uno.length()) {
         numero="0"+numero;
     }
