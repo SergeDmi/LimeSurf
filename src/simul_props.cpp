@@ -100,7 +100,7 @@ void Simul_props::Read_config(const YAML::const_iterator config) {
     
     
     if (n_frames) {
-        dt_frames=Tend/(n_frames);
+        dt_frames=Tend/(n_frames+1.0);
     }
     else {
         dt_frames=Tend;
