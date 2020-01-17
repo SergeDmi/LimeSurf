@@ -26,11 +26,12 @@ class Triangle_part_set : public Elastic_part_set
 {
     //friend class Tetr_elastic_part_set;
 protected:
-    // Link between two points (int,int) with a stiffness and resting length (double double) and status (double)
-    // additionally : +2 triangle vertices (int, int) and a spontaneous curvature (double)
-    typedef std::tuple <int,int,double,double,double,int,int,double> link3;
+    // A pair of triangles described by 4 point indices (int int int int) as A B C D
+    // With A B the shared edge, C D the opposite vertices
+    // also a double (the signed angle) and a double (the rigidity)
+    typedef std::tuple <int,int,int,int,double,double> face_pair;
     // Set of all springs
-    typedef std::vector<link3> spring_set;
+    typedef std::vector<face_pair> pairs_set;
     
 public:
     // Dummy creator

@@ -148,9 +148,9 @@ void Triangle_part_set::GetNeighbours() {
                 // Now the easiest part : we create the link
                 //double k0=k_elast/(4.0*dist*dist);
                 double k0=k_elast/(dist*dist);
-                link3 linker{ix,jx,k0,dist,status,kx,kkx,spont};
+                //link3 linker{ix,jx,k0,dist,status,kx,kkx,spont};
                 l2tot+=dist*dist;
-                springs.push_back(linker);
+                //springs.push_back(linker);
             }
             
         }
