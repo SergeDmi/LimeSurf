@@ -14,7 +14,7 @@
 #include "Aboria.h"
 using namespace Aboria;
 //#include "elastic_parts_props.h"
-#include "spin_parts.h"
+#include "elastic_spin_parts.h"
 
 
 #ifndef TRIANGLE_SPIN_PARTS_H
@@ -22,7 +22,7 @@ using namespace Aboria;
 
 class Triangle_set_props;
 
-class Triangle_part_set : public Part_set
+class Triangle_part_set : public Elastic_part_set
 {
     //friend class Tetr_elastic_part_set;
 protected:

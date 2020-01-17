@@ -19,13 +19,14 @@ using namespace tinyply;
 const double PI = boost::math::constants::pi<double>();
 
 // Dummy constructor
-Triangle_part_set::Triangle_part_set(Triangle_set_props * p) : Part_set(p), prop(p)
+Triangle_part_set::Triangle_part_set(Triangle_set_props * p) : Elastic_part_set(p), prop(p)
 {
     prop=p;
 };
 
 // Here we populate the spring set from the face list
 void Triangle_part_set::GetNeighbours() {
+    Elastic_part_set::GetNeighbours();
     int ix,jx,kx,kkx;
     double spont;
     vdouble3 dir,mir,are;
@@ -189,17 +190,22 @@ void Triangle_part_set::GetNeighbours() {
 void Triangle_part_set::NextStep(const Simul_props & simul_prop){
     //std::cout << "#" ;
     // Set all forces & torques to 0
+    
+    // Set all forces & torques to 0
     Part_set::ClearForces();
+    
+    // Add pressure forces
+    // Add pressure forces before confinement to update surface areas !
+    Part_set::AddPressureForces(simul_prop);
+
     // Computing forces and torques
+     Elastic_part_set::ComputeForces(simul_prop);
     ComputeForces(simul_prop);
+    // Add confinement forces;
     Part_set::AddConfinementForces(simul_prop);
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
-    //From time to time we should check that the normals are normalized
-    if (rand()<prop->renorm_rate) {
-        RenormNorms();
-    }
-    
+
 }
 
 // The physics part : computing interaction between vertices
@@ -262,15 +268,10 @@ void Triangle_part_set::ComputeForces(const Simul_props & simul_prop){
     }
 }
 
-// Makes sure everything is in place
+
 void Triangle_part_set::GetStarted(){
-    
-    particles.init_id_search();
-    Part_set::FindBounds();
+    Elastic_part_set::GetStarted();
     GetNeighbours();
     
-    Part_set::CheckPartSet();
-    
 }
-
 

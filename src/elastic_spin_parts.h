@@ -36,16 +36,16 @@ public:
     Elastic_part_set(Elastic_set_props *);
     
     // Time step for the particle set
-    void NextStep(const Simul_props &);
+    virtual  void NextStep(const Simul_props &);
     
     // Read from the list of faces to create links and find neighbours
-    void GetNeighbours();
+    virtual void GetNeighbours();
     
     // Prepares the simulation
-    void GetStarted();
+    virtual  void GetStarted();
     
     // Compute forces
-    void ComputeForces(const Simul_props &);
+    virtual  void ComputeForces(const Simul_props &);
     
     // Compute area associated to two points (i.e. linker extremities)
     double Compute_local_linker_area(int, int);
