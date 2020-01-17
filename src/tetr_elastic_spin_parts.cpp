@@ -103,7 +103,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
         
     }
     
-   Part_set::PrintIfVerbose("by now we have  " + std::to_string(n_springs) );
+   Part_set::PrintIfVerbose("by now we have  " + std::to_string(n_springs) + "springs");
        
 }
 
