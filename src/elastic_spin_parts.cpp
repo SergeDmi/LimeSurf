@@ -201,7 +201,8 @@ void Elastic_part_set::GetNeighbours() {
         }
         
     }
-    
+    Part_set::PrintIfVerbose("Created  : "+std::to_string(n_springs)+" springs");
+
     // Here we define particle state as the number of neighbour. 
     // Important to know wether a particle is on the surface or not
      for (int i = 0; i < number; ++i) {
