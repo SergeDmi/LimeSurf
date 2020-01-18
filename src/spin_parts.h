@@ -121,6 +121,12 @@ public:
      // Find furthest points in any direction
     void FindBounds();
     
+    // Find furthest points in any direction
+    vdouble3 GetNormal(const face &);
+    
+    // Find furthest points in any direction
+    vdouble3 GetNormal(const int, const int, const int);
+    
     // Print only if verbose
     //void PrintIfVerbose(const auto& );
     void PrintIfVerbose(const std::string & );

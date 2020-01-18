@@ -34,10 +34,9 @@ public:
     
     
 protected:
-    // prestrain : how much the imported link is stretched
-    // double prestrain;
-    double rigidity;
-    double p_bend;
+    
+    double k_bending;
+    
 };
 
 

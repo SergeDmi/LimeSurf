@@ -223,8 +223,6 @@ void Elastic_part_set::GetNeighbours() {
 
 // Here we do the actual time step : compute and apply forces
 void Elastic_part_set::NextStep(const Simul_props & simul_prop){
-    double rand_val;
-    
     // Set all forces & torques to 0
     Part_set::ClearForces();
     
@@ -239,16 +237,6 @@ void Elastic_part_set::NextStep(const Simul_props & simul_prop){
     Part_set::AddConfinementForces(simul_prop);
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
-
-    // Kept for reference : now we don't care about normals
-    // From time to time we should check that the normals are normalized
-    /*
-    rand_val=(double) rand()/RAND_MAX;
-    if (rand_val < prop->renorm_rate) {
-        RenormNorms();
-        
-    }
-    */
        
 }
 

@@ -312,22 +312,14 @@ void Part_set::AddPressureForces(const Simul_props & simul_prop){
     double press=simul_prop.pressure ;
     double part_area;
 
-    vdouble3 dir,mir,are;
-    vdouble3 posi;
-    vdouble3 posj;
-    vdouble3 posk;
+    vdouble3 are;
+
       
       
     // We go through all the faces to compute pressure
     for (auto const & triangle: triangles) {
-        posi=get<position>(particles[triangle.x]);
-        posj=get<position>(particles[triangle.y]);
-        posk=get<position>(particles[triangle.z]);
-        dir=posj-posi;
-        mir=posk-posi;
         
-        
-        are=cross(mir,dir)/6.0;
+        are=GetNormal(triangle)/6.0;
         part_area=are.norm();
         are*=press;
         
@@ -343,6 +335,25 @@ void Part_set::AddPressureForces(const Simul_props & simul_prop){
     
 
     
+}
+
+vdouble3 Part_set::GetNormal(const int x, const int y, const int z) {
+
+    vdouble3 posi;
+    vdouble3 posj;
+    vdouble3 posk;
+    
+    posi=get<position>(particles[x]);
+    posj=get<position>(particles[y]);
+    posk=get<position>(particles[z]);
+    
+    return cross(posk-posi,posj-posi);
+    
+}
+
+// Computes normal to a triangle
+vdouble3 Part_set::GetNormal(const face & triangle) {
+    return GetNormal(triangle.x,triangle.y,triangle.z);
 }
 
 // Dirty exporting to a file

@@ -27,18 +27,18 @@ Triangle_set_props::Triangle_set_props(const Glossary opt) : Elastic_set_props(o
 
 Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elastic_set_props(config) {
     
-   prestrain=1.0;
-   rigidity=1.0;
+   k_bending=1.0;
    
     auto conf=config->second;
     
-    if (conf["prestrain"]) {
-        prestrain=conf["prestrain"].as<std::double_t>();
+    if (conf["bending"]) {
+        //pressure=conf["pressure"].as<std::double_t>();
+        k_bending=conf["bending"].as<std::int8_t>();
     }
     
-    if (conf["flexural"]) {
+    if (conf["k_bending"]) {
         //pressure=conf["pressure"].as<std::double_t>();
-        rigidity=conf["flexural"].as<std::int8_t>();
+        k_bending=conf["k_bending"].as<std::int8_t>();
     }
     //std::cout << "power law : " << power_law << std::endl;
     

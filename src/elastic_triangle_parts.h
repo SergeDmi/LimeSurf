@@ -37,6 +37,8 @@ public:
     // Dummy creator
     Triangle_part_set(Triangle_set_props *);
     
+    double sgn(double val) { return (0.0 < val) - (val < 0.0); }
+    
     // Time step for the particle set
     void NextStep(const Simul_props &);
     
@@ -49,18 +51,23 @@ public:
     // Compute forces
     void ComputeForces(const Simul_props &);
     
-protected:
-    // Springs between particles
-    spring_set springs;
+    // Compute forces
+    void ComputeBendingForces(const Simul_props &);
     
-    // number of springs
-    int n_springs;
+    // Computes angle between two faces
+    double ComputeAngle(const face_pair &);
+    
+    // Computes angle between two faces
+    double ComputeAngle(const vdouble3 &, const vdouble3 &, const vdouble3 &);
+    
+protected:
     
     // Particles set properties
     Triangle_set_props *prop;
     
-    // fraction of area per link
-    double area_ratio;
+    pairs_set pairs;
+    
+    int n_pairs;
     
 };
 #endif

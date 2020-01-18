@@ -24,6 +24,7 @@ class Elastic_set_props;
 class Elastic_part_set : public Part_set
 {
     friend class Tetr_elastic_part_set;
+    friend class Triangle_part_set;
     
 protected:
     // Link between two points (int,int) with a stiffness and resting length (double double) and status (double)
@@ -71,6 +72,9 @@ protected:
     
     // this computes the module of the force on a linker
     std::function<double(const double,const double)> compute_force;
+    
+    // Number of pairs of faces to compute angles for rigidity
+    int n_pairs;
     
 };
 #endif
