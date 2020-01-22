@@ -147,11 +147,22 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
     
      if (conf["visco"]) {
         visco=conf["visco"].as<std::double_t>();
-        std::cout << " set visco to " << visco << std::endl;
+        //std::cout << " set visco to " << visco << std::endl;
+    }
+    
+    if (visco<0) {
+        std::cerr << "Setting viscosity to infinity" << std::endl;
+        visco=INFINITY;
     }
     
      if (conf["Rvisc"]) {
         Rvisc=conf["Rvisc"].as<std::double_t>();
+    }
+    
+    
+    if (Rvisc<0) {
+        std::cerr << "Setting rot. viscosity to infinity" << std::endl;
+        Rvisc=INFINITY;
     }
     
     if (conf["type"]) {

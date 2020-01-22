@@ -262,12 +262,22 @@ void Part_set::ClearForces() {
 void Part_set::IntegrateForces(const Simul_props & simul_prop){
     double dt_trans=simul_prop.dt/prop->visco;
     //double dt_rot=simul_prop.dt/prop->Rvisc;
-
+    //double tot_force=0;
+    //vdouble3 pos;
+    
     for (auto part : particles) {        
+        
+        //pos=get<position>(part);
+        //tot_force+=pos.dot(get<force>(part));
+        
         // Applying force & torque
-        get<position>(part)   +=(get<force>(part)*(dt_trans));
+        get<position>(part)   +=get<force>(part)*(dt_trans);
         //get<orientation>(part)+=cross(get<orientation>(part),get<torque>(part))*(dt_rot);
+        
+        
+        
     }
+    //std::cout << " Total projected force : " << tot_force << std::endl;
 }
 
 // Renormalizing the normals

@@ -39,6 +39,8 @@ public:
     
     double sgn(double val) { return (0.0 < val) - (val < 0.0); }
     
+    double safer_acos(double );
+    
     // Time step for the particle set
     void NextStep(const Simul_props &);
     

@@ -27,20 +27,27 @@ Triangle_set_props::Triangle_set_props(const Glossary opt) : Elastic_set_props(o
 
 Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elastic_set_props(config) {
     
-   k_bending=1.0;
-   
     auto conf=config->second;
+    
+    k_bending=-1;
+    
+    imposed_angle=-1;
     
     if (conf["bending"]) {
         //pressure=conf["pressure"].as<std::double_t>();
-        k_bending=conf["bending"].as<std::int8_t>();
+        k_bending=conf["bending"].as<std::double_t>();
     }
     
     if (conf["k_bending"]) {
         //pressure=conf["pressure"].as<std::double_t>();
-        k_bending=conf["k_bending"].as<std::int8_t>();
+        k_bending=conf["k_bending"].as<std::double_t>();
     }
-    //std::cout << "power law : " << power_law << std::endl;
+    
+    if (conf["imposed_angle"]) {
+        //pressure=conf["pressure"].as<std::double_t>();
+        imposed_angle=conf["imposed_angle"].as<std::double_t>();
+    }
+    std::cout << "bending : " << k_bending << std::endl;
     
 }
 

@@ -37,6 +37,8 @@ protected:
     
     double k_bending;
     
+    double imposed_angle;
+    
 };
 
 
