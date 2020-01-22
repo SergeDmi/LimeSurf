@@ -1,0 +1,18 @@
+meshes:
+    whatever:
+        source: ../sphere.ply
+        type: 3
+        # 1: elastic ; 2: ? ; 3: ? ; 4: ?
+        power_law: 2
+        bending: 1.0
+        young_modulus: 1.0
+        thickness: 1.0
+        visco: 1.0
+
+runs:
+    1:
+        pressure: 0.01
+        duration: 200
+        dt: 0.002
+        n_frames: 10
+
