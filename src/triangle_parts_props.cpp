@@ -33,6 +33,8 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
     
     imposed_angle=-1;
     
+    curvature_correction=std::sqrt(2.0);
+    
     if (conf["bending"]) {
         //pressure=conf["pressure"].as<std::double_t>();
         k_bending=conf["bending"].as<std::double_t>();
@@ -47,7 +49,11 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
         //pressure=conf["pressure"].as<std::double_t>();
         imposed_angle=conf["imposed_angle"].as<std::double_t>();
     }
-    std::cout << "bending : " << k_bending << std::endl;
-    
+
+    if (conf["curvature_correction"]) {
+        //pressure=conf["pressure"].as<std::double_t>();
+        curvature_correction=conf["curvature_correction"].as<std::double_t>();
+    }
+
 }
 

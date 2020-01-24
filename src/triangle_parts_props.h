@@ -39,6 +39,8 @@ protected:
     
     double imposed_angle;
     
+    double curvature_correction;
+    
 };
 
 

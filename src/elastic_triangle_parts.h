@@ -26,10 +26,10 @@ class Triangle_part_set : public Elastic_part_set
 {
     //friend class Tetr_elastic_part_set;
 protected:
-    // A pair of triangles described by 4 point indices (int int int int) as A B C D
-    // With A B the shared edge, C D the opposite vertices
-    // also a double (the signed angle) and a double (the rigidity)
-    typedef std::tuple <int,int,int,int,double,double> face_pair;
+    // A pair of triangles described by 4 point indices (int int int int) as A B C D    
+    // And a double (the signed angle) 
+    // (With A B the shared edge, C D the opposite vertices)
+    typedef std::tuple <int,int,int,int,double> face_pair;
     // Set of all springs
     typedef std::vector<face_pair> pairs_set;
     
@@ -70,6 +70,7 @@ protected:
     pairs_set pairs;
     
     int n_pairs;
+    
     
 };
 #endif

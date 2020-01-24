@@ -26,12 +26,13 @@ Triangle_part_set::Triangle_part_set(Triangle_set_props * p) : Elastic_part_set(
 
 // Here we populate the spring set from the face list
 void Triangle_part_set::GetNeighbours() {
-    double resting_angle;
+    double angle,resting_angle;
     int a,b,c,d;
     int ix,iy,iz;
     int j;
     double mean_angle{0};
     double mean_h{0};
+    double sum_nrj{0};
     for (auto const & triangle: triangles) {
         a=triangle.x;
         b=triangle.y;
@@ -42,7 +43,7 @@ void Triangle_part_set::GetNeighbours() {
         vdouble3 ac=get<position>(particles[c])-get<position>(particles[a]);
         
         vdouble3 abXac=cross(ab,ac);
-        mean_h+=2.0*abXac.norm()/ab.norm();
+        
         
         for (auto const & other: triangles) {
             
@@ -56,38 +57,47 @@ void Triangle_part_set::GetNeighbours() {
                 if ((ix==b) and (iy==a)) {
                
                     d=iz;
-                    if (d==c) {
-                        std::cerr << "Unexpected behaviour" << std::endl;
+                
+                    face_pair faces{a,b,c,d,0.0};
+                    angle=ComputeAngle(faces);  
+                    mean_angle+=angle;
+                    
+                    if (prop->imposed_angle>=0) {
+                        resting_angle=prop->imposed_angle;
                     } else {
-                        face_pair faces{a,b,c,d,0.0,0.0};
-                        resting_angle=ComputeAngle(faces);  
-                        mean_angle+=resting_angle; 
-                        if (prop->imposed_angle>=0) {
-                            resting_angle=prop->imposed_angle;
-
-                        }
-                        //std::cout << "resting angle :" << resting_angle << std::endl;
-                        get<4>(faces)=resting_angle;
-                        pairs.push_back(faces);
-                        n_pairs++;
-                        
+                        resting_angle=angle;
                     }
+                    //std::cout << "resting angle :" << resting_angle << std::endl;
+                    get<4>(faces)=resting_angle;
+                    pairs.push_back(faces);
+                    n_pairs++;
+                    
+                    
+                    // Computing total energy
+                    
+                    
+                    vdouble3 ab=get<position>(particles[b])-get<position>(particles[a]);
+                    vdouble3 norm1=Part_set::GetNormal(a,b,c);
+                    vdouble3 norm2=Part_set::GetNormal(a,d,b);
+                    double abn=ab.norm();
+                    double n1n=norm1.norm(); // twice the surface area
+                    double n2n=norm2.norm(); // twice the surface area
+                    double hm=(n1n+n2n)/(2.0*abn);
+                    mean_h+=hm; 
+                    sum_nrj+=(2.0/3.0)*((n1n+n2n)/4.0)*prop->k_bending*(1.0/2.0)*pow((angle-resting_angle)/hm,2.0);
+                    //              surf            curv2 corrections                 curvature squared               
+                    
                 }
-                
-                
             }
-            
-            
-           
         }
         
-       
-        
     }
+    std::cout << "acos(0.5)" << acos(0.5) << "safer : " << safer_acos(0.5) << std::endl;
      std::cout << "mean resting angle :" << mean_angle/n_pairs << std::endl;
      std::cout << "mean h :" << mean_h/n_pairs << std::endl;
-     std::cout << "estimated curv : " << mean_angle/mean_h << std::endl;
-     std::cout << "estimated radius : " << mean_h/mean_angle << std::endl;
+     std::cout << "estimated curv : " << pow(prop->curvature_correction,1.0)*mean_angle/mean_h << std::endl;
+     std::cout << "estimated radius : " << mean_h/(mean_angle*pow(prop->curvature_correction,1.0)) << std::endl;
+     std::cout << "bending nrj : " << pow(prop->curvature_correction,2.0)*sum_nrj << std::endl;
 }
 
 
@@ -106,29 +116,44 @@ double Triangle_part_set::ComputeAngle(const face_pair & faces) {
 }
 
 double Triangle_part_set::ComputeAngle(const vdouble3 & n1, const vdouble3 & n2, const vdouble3 & ab) {    
-    
-    /*
-    if (n1.dot(n2)<0.0) {
-        std::cout << "weird " << std::endl;
-    }
-    */
-    
-    
-    
-    /*
-    if (angle!=angle) {
-        std::cout << "n1.n2 : " << n1.dot(n2) << " n1 : " << n1 << " n2 : " << n2 << std::endl;
-        std::cout << "n1.dot(n2)/(n1.norm()*n2.norm()) : " << n1.dot(n2)/(n1.norm()*n2.norm()) << std::endl;
-        std::cout << "sign() : " << sgn(ab.dot(cross(n1,n2))) << std::endl;
-    }
-    */
+
     return safer_acos(n1.dot(n2)/(n1.norm()*n2.norm()))*sgn(ab.dot(cross(n1,n2)));;
 }
 
 double Triangle_part_set::safer_acos(double x) {
+  // Safe acos : slow because of branching 
+  /*
   if (x < -1.0) x = -1.0 ;
   else if (x > 1.0) x = 1.0 ;
   return acos(x) ;
+    */
+  
+  // Nvidia's : fast (no branching)
+  
+  double negate = double(x < 0);
+  x = abs(x);
+  // My own modification !
+  // equivalent to min(1.0,x)
+  x -= double(x>1.0)*(x-1.0);  
+  //x=std::min(x,1.0); <- slower
+  //if (x>1.0) {
+  //    x=1.0;         <- slower
+  //}
+
+  // we let the compiler optimize the algebra
+  double ret = -0.0187293;
+  ret = ret * x;
+  ret = ret + 0.0742610;
+  ret = ret * x;
+  ret = ret - 0.2121144;
+  ret = ret * x;
+  ret = ret + 1.5707288;
+  ret = ret * std::sqrt(1.0-x);
+  ret = ret - 2.0 * negate * ret;
+  return negate * 3.14159265358979 + ret;
+ 
+ // Not faster, definitely uglier
+ //return negate * 3.14159265358979 + (((((-0.0187293*x)+ 0.0742610)*x - 0.2121144)*x + 1.5707288)* sqrt(1.0-x))*(1.0-2.0*negate);
 }
 
 // The physics part : computing interaction between vertices
@@ -137,11 +162,15 @@ void Triangle_part_set::ComputeForces(const Simul_props & simul_prop){
     ComputeBendingForces(simul_prop);
 }
 
+// Bending is super costly !
 void Triangle_part_set::ComputeBendingForces(const Simul_props & simul_prop) {
-    double angle,resting_angle,abn,h1,h2,n1n,n2n;
+    double angle,resting_angle,abn,n1n,n2n,hm3,pref; //h1,h2,
     int a,b,c,d;
-    vdouble3 force1,force2,norm1,norm2,ab;
-    double stiff=prop->k_bending;
+    vdouble3 force1,force2,norm1,norm2,ab,posA,posB;
+    // Corrected stiffness
+    double stiff=(2.0/3.0)*pow(prop->curvature_correction,2.0)*prop->k_bending;
+    // (2.0/3.0) : correction for surface area (one edge has 2/3 the surface area of a face, because triangles)
+    // 2.0 : manual correction for curvature. This is more tricky. 
     //std::cout << "-" << stiff << std::flush;
     for (auto const & opair: pairs) {
         a=get<0>(opair);
@@ -149,22 +178,39 @@ void Triangle_part_set::ComputeBendingForces(const Simul_props & simul_prop) {
         c=get<2>(opair);
         d=get<3>(opair);
         resting_angle=get<4>(opair);
-        ab=get<position>(particles[b])-get<position>(particles[a]);
-        norm1=Part_set::GetNormal(a,b,c);
-        norm2=Part_set::GetNormal(a,d,b);
-        abn=ab.norm();
-        n1n=norm1.norm();
-        n2n=norm2.norm();
-        //angle=ComputeAngle(norm1,norm2,ab);
-        angle=safer_acos(norm1.dot(norm2)/(n1n*n2n))*sgn(ab.dot(cross(norm1,norm2)));;
-        //if (angle!=resting_angle) {
-        //    std::cout << "resting : " << resting_angle << " and angle : " << angle << std::endl;
-        //}
+        // Slight optimization, significant gains
+        posA=get<position>(particles[a]);
+        posB=get<position>(particles[b]);
+        ab=posB-posA;
+        norm1=cross(get<position>(particles[c])-posA,ab);
+        norm2=cross(ab,get<position>(particles[d])-posA);
+        // Older, cleaner, slower code
+        //ab=get<position>(particles[b])-get<position>(particles[a]);
+        //norm1=Part_set::GetNormal(a,b,c);
+        //norm2=Part_set::GetNormal(a,d,b);
         
-        h1=2.0*n1n/abn;
-        h2=2.0*n2n/abn;
-        force1=(stiff*(resting_angle-angle)/(2.0*h1*h1*h1))*norm1;
-        force2=(stiff*(resting_angle-angle)/(2.0*h2*h2*h2))*norm2;
+        
+        abn=ab.norm();
+        n1n=norm1.norm(); // twice the surface area
+        n2n=norm2.norm(); // twice the surface area
+        //angle=ComputeAngle(norm1,norm2,ab);
+        // faster version
+        angle=safer_acos(norm1.dot(norm2)/(n1n*n2n))*sgn(ab.dot(cross(norm1,norm2)));;
+        
+        //h1=2.0*n1n/abn;
+        //h2=2.0*n2n/abn;
+        
+        hm3=pow( (n1n+n2n)/(2.0*abn)  ,3.0);
+        pref=(stiff*(resting_angle-angle)/(2.0*hm3));
+        force1=pref*norm1;
+        force2=pref*norm2;
+        
+        get<force>(particles[c])+=force1;
+        get<force>(particles[d])+=force2;
+        
+        force1=-0.5*(force1+force2);
+        get<force>(particles[a])+=force1;
+        get<force>(particles[b])+=force1;
         
         /*
         if (angle!=angle) {
@@ -200,11 +246,6 @@ void Triangle_part_set::ComputeBendingForces(const Simul_props & simul_prop) {
         }
         */
         
-        
-        get<force>(particles[c])+=force1;
-        get<force>(particles[d])+=force2;
-        get<force>(particles[a])-=0.5*(force1+force2);
-        get<force>(particles[b])-=0.5*(force1+force2);
     }
 }
 
