@@ -23,6 +23,8 @@ Tetr_elastic_part_set::Tetr_elastic_part_set(Elastic_set_props * p) : Elastic_pa
 
 // Here we populate the spring set from the face list
 void Tetr_elastic_part_set::GetNeighbours() {
+    // First we get all the triangles
+    Elastic_part_set::GetNeighbours();
     // Now comes the heavy lifting : trying to get the tetrahedrons
     int ix,jx,kx,mx;
     vdouble3 dir,mir,are;
@@ -163,11 +165,13 @@ void Tetr_elastic_part_set::UpdateLinkerStiffness() {
 
 
 // Makes sure everything is in place
-void Tetr_elastic_part_set::GetStarted(const Simul_props & simul_prop){
-    Elastic_part_set::GetStarted(simul_prop);
+void Tetr_elastic_part_set::GetStarted(){
+    Part_set::GetStarted();
+    particles.init_id_search();
+    Part_set::FindBounds();
     GetNeighbours();
     UpdateLinkerStiffness();
-    //Part_set::CheckPartSet();
+    Part_set::CheckPartSet();
     
 }
 

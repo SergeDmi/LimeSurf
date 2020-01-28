@@ -250,13 +250,13 @@ void Triangle_part_set::ComputeBendingForces(const Simul_props & simul_prop) {
 }
 
 
-void Triangle_part_set::GetStarted(const Simul_props & simul_prop){
-    Elastic_part_set::GetStarted(const Simul_props & simul_prop);
-    //particles.init_id_search();
-    //Part_set::FindBounds();
-    //Elastic_part_set::GetNeighbours();
+void Triangle_part_set::GetStarted(){
+    Part_set::GetStarted();
+    particles.init_id_search();
+    Part_set::FindBounds();
+    Elastic_part_set::GetNeighbours();
     GetNeighbours();
-    //Part_set::CheckPartSet();
+    Part_set::CheckPartSet();
     
 }
 

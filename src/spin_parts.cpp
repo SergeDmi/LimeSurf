@@ -196,8 +196,7 @@ int Part_set::load_from_text() {
 
 // Makes sure everything is in place
 // @TODO : make it actually do something
-void Part_set::GetStarted(const Simul_props & simul_prop){
-    visco_pref_dt=1.0*simul_prop->dt;
+void Part_set::GetStarted(){
     // We shoudl do an init_neighbour search if we plan to neighbour search.
     // Removed because there are problems with checkboxsize
     //CheckBoxSize();

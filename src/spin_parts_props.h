@@ -37,6 +37,14 @@ public:
     // Type of simulation
     int mechanics;    
     
+    enum MechType
+    {
+        VISCOUS  = 0,           // Purely viscous simulation <- NOT IMPLEMENTED
+        ELASTIC  = 1,           // Purely elastic simulation
+        SIMPLE_VISCOELASTIC = 2,     // Simple visco-elastic implementation <- NOT IMPLEMENTED
+        TETRA_ELASTIC  = 4,     // Purely elastic tetrahedron simulation
+    };
+
     std::string fname_in;   // contains file to be loaded
     std::string fname_out;
     std::string name;
@@ -45,13 +53,8 @@ public:
     double k_elast ;            // Spring constant
     double k_align ;            // normal alignment constant
     double renorm_rate;         // Rate at which we renormalize vectors (higher is better but slower)
-    
-    // Deprecated !
     double visco ;              // translational viscosity
-    
-    // This is proper !
-    // viscosity in physical units
-    double viscosity;
+    double Rvisc ;              // rotational viscosity of normals
     
     // Do we talk about it ?
     bool verbose;

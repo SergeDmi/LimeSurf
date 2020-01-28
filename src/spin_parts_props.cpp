@@ -71,7 +71,7 @@ Part_set_props::Part_set_props(const Part_set_props & props) {
     k_align=props.k_align;
     k_elast=props.k_elast;
     visco=props.visco;
-    viscosity=props.viscosity;
+    Rvisc=props.Rvisc;
     renorm_rate=props.renorm_rate;
     verbose=props.verbose;
     
@@ -90,10 +90,8 @@ void Part_set_props::init() {
     // For any set :
     k_align=1.0;
     k_elast=1.0;
-    // Deprecated !
-    visco=0.0;
-    // water viscosity
-    viscosity=0.000000001;
+    visco=1.0;
+    Rvisc=1.0;
     //pressure=0;
     //relax=0;
     
@@ -112,7 +110,6 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
     fname_out=name;
     
     auto conf=config->second;
-    
     
     if (conf["source"]) {
         std::string str;
@@ -148,20 +145,25 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         verbose=conf["verbose"].as<std::double_t>();
     }
     
-     if (conf["viscosity"]) {
-        viscosity=conf["viscosity"].as<std::double_t>();
-    }
-    
      if (conf["visco"]) {
         visco=conf["visco"].as<std::double_t>();
-        std::cout << "WARNING : using visco is depreacted !!!  " << visco << std::endl;
+        //std::cout << " set visco to " << visco << std::endl;
     }
     
-    if (viscosity<0) {
+    if (visco<0) {
         std::cerr << "Setting viscosity to infinity" << std::endl;
-        viscosity=INFINITY;
+        visco=INFINITY;
     }
     
+     if (conf["Rvisc"]) {
+        Rvisc=conf["Rvisc"].as<std::double_t>();
+    }
+    
+    
+    if (Rvisc<0) {
+        std::cerr << "Setting rot. viscosity to infinity" << std::endl;
+        Rvisc=INFINITY;
+    }
     
     if (conf["type"]) {
         //pressure=conf["pressure"].as<std::double_t>();
