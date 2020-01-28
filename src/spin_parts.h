@@ -104,7 +104,7 @@ public:
     virtual void GetStarted();
     
     // Making sure the Particle set loaded is correct
-    virtual void CheckPartSet();
+    virtual void CheckPartSet(const Simul_props & );
     
     // Set forces & torques to 0
     void ClearForces();
@@ -155,6 +155,9 @@ protected:
 
     // Furthest points (xmin xmax ymin ymax zmin zmax)
     double bounds[6];
+    
+    // prefactor for displacement(force)
+    double visco_pref_dt;
     
 };
 

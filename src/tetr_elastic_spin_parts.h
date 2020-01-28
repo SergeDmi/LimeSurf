@@ -31,7 +31,7 @@ public:
     void GetNeighbours();
     
     // Prepares the simulation
-    void GetStarted();
+    void GetStarted(const Simul_props &);
     
     double ComputeVolumeRatio();
     

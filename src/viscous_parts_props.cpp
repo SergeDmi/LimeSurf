@@ -145,8 +145,8 @@ void Viscous_set_props::init() {
     // For any set :
     k_align=1.0;
     k_bend=1.0;
-    visco=1.0;
-    Rvisc=1.0;
+    visco=0.0;
+    viscosity=1.0
    
     //pressure=0;
     relax=0;

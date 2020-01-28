@@ -46,7 +46,7 @@ class Viscous_set_props : public Part_set_props
         double k_att,p_att;     // attractive potential and power law
         double k_bend,p_bend;   // bending potential and power law
         double p_align; // alignment potential and power law
-        double visco,Rvisc;     // viscosity (translational & rotational)
+        double viscosity;
         double L;               // box size
         
         double renorm_rate;     // rate at which normals are normalized can be quite low

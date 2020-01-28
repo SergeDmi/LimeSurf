@@ -48,7 +48,7 @@ public:
     void GetNeighbours();
     
     // Prepares the simulation
-    void GetStarted();
+    void GetStarted(const Simul_props &);
     
     // Compute forces
     void ComputeForces(const Simul_props &);
