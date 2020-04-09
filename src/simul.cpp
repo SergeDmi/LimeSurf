@@ -50,11 +50,11 @@ void const make_meshes(meshes & meshuggas, const YAML::Node & yaconf) {
 */
 
 // Make_run runs a simulation of properties prop for all meshes in meshuggas. 
-int make_run(const Simul_props & prop, meshes & meshuggas) {
+int make_run(const Simul_props & prop, meshes & meshuggas, double t0) {
     // Program state
     int dvg=0;
     //std::cout << "Current pressure " << prop.pressure << std::endl;
-    // Running all the meshes
+    // Running all the meshes	
     for (auto &mesh: meshuggas) {
         // Preparing times
         double t_save=0;
@@ -71,7 +71,7 @@ int make_run(const Simul_props & prop, meshes & meshuggas) {
             t_save+=prop.dt;
             if (t_save>prop.dt_frames ) {
                 t_save=0;
-                mesh.cell_wall->Export_bly(n_save,prop,t);
+                mesh.cell_wall->Export_bly(n_save,prop,t+t0);
                  n_save++;
             }
         }
@@ -102,10 +102,12 @@ int main(int argc, char* argv[])
     //all_meshes[0].cell_wall->Export(-1,-1);
    
     // For all simulation runs (i.e. all sets of properties) we simulate
+	double time=0.0;
     for (const auto &run: runs) {
-        dvg+=make_run(run,all_meshes);
+        dvg=make_run(run,all_meshes,time);
+		time+=run.Tend;
      }
-     
+	 
     // Returning program state
     return dvg;
 }
