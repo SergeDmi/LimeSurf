@@ -131,7 +131,7 @@ double Triangle_part_set::safer_acos(double x) {
   // Nvidia's : fast (no branching)
   
   double negate = double(x < 0);
-  x = abs(x);
+  x = std::abs(x);
   // My own modification !
   // equivalent to min(1.0,x)
   x -= double(x>1.0)*(x-1.0);  

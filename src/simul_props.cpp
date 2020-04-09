@@ -117,7 +117,7 @@ void Simul_props::Make_confinement() {
     std::vector <int>is_confined;
     int any_conf=0;
     for (int i=0;i<3;++i) {
-        if (abs(confine_pot[i])>0) {
+        if (std::abs(confine_pot[i])>0) {
             any_conf++;
             is_confined.push_back(i);
         }

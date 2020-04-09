@@ -126,7 +126,7 @@ double Tetr_elastic_part_set::ComputeVolumeRatio() {
         posz=get<position>(particles[tetr.z])-posi;
        
         
-        tot_volume+=abs( posj.dot(cross(posk,posz)) );
+        tot_volume+=std::abs( posj.dot(cross(posk,posz)) );
     }
     tot_volume/=6.0;
 
