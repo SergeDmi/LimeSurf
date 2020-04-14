@@ -50,9 +50,9 @@ public:
     int n_frames;
     
     // Time sequence
-    typedef std::vector<double> double_list;
-    double_list change_times;
-    double_list change_press;
+    //typedef std::vector<double> double_list;
+    //double_list change_times;
+    //double_list change_press;
     int nb_times;
     
     // Pressure
@@ -69,8 +69,6 @@ public:
     //double x_conf,y_conf,z_conf;
     bool is_confinement;
     
-    
-private:
     vdouble3 confine_pot;
     vdouble3 confine_max;
     vdouble3 confine_min;
