@@ -92,6 +92,7 @@ void Part_set_props::init() {
     k_elast=1.0;
     visco=1.0;
     Rvisc=1.0;
+	mobility=0.0;
     //pressure=0;
     //relax=0;
     
@@ -145,8 +146,18 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
         verbose=conf["verbose"].as<std::double_t>();
     }
     
-     if (conf["visco"]) {
+	if (conf["visco"]) {
         visco=conf["visco"].as<std::double_t>();
+        //std::cout << " set visco to " << visco << std::endl;
+    }
+	
+	if (conf["viscosity"]) {
+        visco=conf["viscosity"].as<std::double_t>();
+        //std::cout << " set visco to " << visco << std::endl;
+    }
+	
+	if (conf["mobility"]) {
+        mobility=conf["mobility"].as<std::double_t>();
         //std::cout << " set visco to " << visco << std::endl;
     }
     

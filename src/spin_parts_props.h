@@ -54,6 +54,7 @@ public:
     double k_align ;            // normal alignment constant
     double renorm_rate;         // Rate at which we renormalize vectors (higher is better but slower)
     double visco ;              // translational viscosity
+	double mobility;			// Translational mobility
     double Rvisc ;              // rotational viscosity of normals
     
     // Do we talk about it ?
