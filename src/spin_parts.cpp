@@ -14,6 +14,8 @@ using namespace tinyply;
 using namespace std;
 #include "yaml-cpp/yaml.h" 
 
+const double PI = boost::math::constants::pi<double>();
+
 /*
  A class storing a set of particles ; basis for all shell representations
 */
@@ -197,6 +199,26 @@ int Part_set::load_from_text() {
 // Makes sure everything is in place
 // @TODO : make it actually do something
 void Part_set::GetStarted(){
+	
+	// Here we compute mobility from areas.
+	if (prop->mobility <= 0.0) {
+		// computing total area
+		vdouble3 are;
+		double total_area=0;
+		for (auto const & triangle: triangles) {
+			are=GetNormal(triangle);
+			total_area+=are.norm();
+		}
+		total_area/=6.0;
+		
+		// Mobility from viscosity and size
+		prop->mobility=1.0/(6.0*prop->visco*sqrt(PI*total_area/number));
+		
+		// Reporting
+		std::cout << "Warning : mobility not defined or <= 0 ; computed " 
+			<<  prop->mobility << " from viscosity and size" << std::endl;
+		
+	}
     // We shoudl do an init_neighbour search if we plan to neighbour search.
     // Removed because there are problems with checkboxsize
     //CheckBoxSize();
@@ -260,7 +282,7 @@ void Part_set::ClearForces() {
 
 // Adding forces to particles
 void Part_set::IntegrateForces(const Simul_props & simul_prop){
-    double dt_trans=simul_prop.dt/prop->visco;
+    double dt_trans=simul_prop.dt*prop->mobility;
     //double dt_rot=simul_prop.dt/prop->Rvisc;
     //double tot_force=0;
     //vdouble3 pos;
