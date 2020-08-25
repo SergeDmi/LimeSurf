@@ -37,7 +37,7 @@ protected:
     
     double k_bending;
     
-    double imposed_angle;
+    double imposed_curvature;
     
     double curvature_correction;
     

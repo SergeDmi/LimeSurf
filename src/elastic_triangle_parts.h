@@ -37,9 +37,11 @@ public:
     // Dummy creator
     Triangle_part_set(Triangle_set_props *);
     
-    double sgn(double val) { return (0.0 < val) - (val < 0.0); }
+    // A branchless sign function
+    double sgn(double const val) const { return (0.0 < val) - (val < 0.0); }
     
-    double safer_acos(double );
+    // A branchless approximated acos function that doesn't crash. Better, faster, stronger.
+    double safer_acos(double ) const;
     
     // Time step for the particle set
     void NextStep(const Simul_props &);
@@ -53,14 +55,20 @@ public:
     // Compute forces
     void ComputeForces(const Simul_props &);
     
-    // Compute forces
-    void ComputeBendingForces(const Simul_props &);
+    // Compute bending forces
+    void ComputeBendingForces();
+    
+    // Compute bending energy
+    double ComputeBendingEnergy() const;
     
     // Computes angle between two faces
     double ComputeAngle(const face_pair &);
     
     // Computes angle between two faces
     double ComputeAngle(const vdouble3 &, const vdouble3 &, const vdouble3 &);
+    
+    // Summary of current situation
+    virtual void Summary() const { Elastic_part_set::Summary() ; ComputeBendingEnergy(); } ;
     
 protected:
     

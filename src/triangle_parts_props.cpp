@@ -31,27 +31,27 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
     
     k_bending=-1;
     
-    imposed_angle=-1;
+    imposed_curvature=-1;
     
-    curvature_correction=std::sqrt(2.0);
+    curvature_correction=3.0;
     
     if (conf["bending"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
         k_bending=conf["bending"].as<std::double_t>();
     }
     
     if (conf["k_bending"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
         k_bending=conf["k_bending"].as<std::double_t>();
     }
     
     if (conf["imposed_angle"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
-        imposed_angle=conf["imposed_angle"].as<std::double_t>();
+        imposed_curvature=conf["imposed_angle"].as<std::double_t>();
+    }
+    
+    if (conf["imposed_curvature"]) {
+        imposed_curvature=conf["imposed_curvature"].as<std::double_t>();
     }
 
     if (conf["curvature_correction"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
         curvature_correction=conf["curvature_correction"].as<std::double_t>();
     }
 
