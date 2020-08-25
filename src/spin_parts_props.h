@@ -60,6 +60,8 @@ public:
     // Do we talk about it ?
     bool verbose;
     
+    // print if verbose
+    void PrintIfVerbose(const std::string & ) const;
 };
 
 #endif

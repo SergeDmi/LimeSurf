@@ -28,12 +28,15 @@ Elastic_part_set::Elastic_part_set(Elastic_set_props * p) : Part_set(p), prop(p)
          case 3 :  compute_force= [] (const double l0, const double norm, const double norm2 ) { return (norm2*norm2-norm*l0*l0*l0); };
              break;
         */
-        case 1 :  compute_force= [] (const double l0, const double norm2 ) { return (1.0-l0/sqrt(norm2)); };
-             break;
-        case 2 :  compute_force= [] (const double l0, const double norm2 ) { return (norm2/(l0*l0)-1.0)  ; };
-             break;
-        case 3 :  compute_force= [] (const double l0, const double norm2 ) { return ( norm2*norm2/(l0*l0*l0*l0)-sqrt(norm2)/l0 ); };
-             break;
+        case 1 :    compute_force= [] (const double l0, const double norm2 ) { return (1.0-l0/sqrt(norm2)); };
+                    compute_energy= [] (const double l0, const double norm2 ) { return pow(l0-sqrt(norm2),2.0); };
+            break;
+        case 2 :    compute_force= [] (const double l0, const double norm2 ) { return (norm2/(l0*l0)-1.0)  ; };
+                    compute_energy= [] (const double l0, const double norm2 ) { return pow(l0*l0-norm2,2.0); };
+            break;
+        case 3 :    compute_force= [] (const double l0, const double norm2 ) { return ( norm2*norm2/(l0*l0*l0*l0)-sqrt(norm2)/l0 ); };
+                    compute_energy= [] (const double l0, const double norm2 ) { return pow(l0*l0*l0-norm2*sqrt(norm2),2.0); };
+            break;
      }
 };
 
@@ -81,6 +84,7 @@ double Elastic_part_set::Compute_local_linker_area(int ix, int jx) {
 }
 
 // Here we populate the spring set from the face list
+// Not performance critical (called in just once per mesh)
 void Elastic_part_set::GetNeighbours() {
     // quite a few variables
     int ix,jx,kx;                   // Indices
@@ -161,7 +165,6 @@ void Elastic_part_set::GetNeighbours() {
                 get<nn>(particles[jx])=sj;
                 
                 // Now the easiest part : we create the link
-                //double k0=k_elast/(4.0*dist*dist);
                 if (prop->young_modulus > 0 && prop->thickness > 0) {
                     
                     k_elast=(2.0/3.0)*(prop->young_modulus)*(prop->thickness)*Compute_local_linker_area(ix,jx)/norm2;
@@ -177,18 +180,7 @@ void Elastic_part_set::GetNeighbours() {
                 }
                 else
                 {
-                    
                     k0=k_elast;
-                    /*
-                    switch(power_law) {
-                        case 1 : k0=k_elast/norm;           // k_elast is Y :  N/m^2
-                            break;
-                        case 2 : k0=k_elast/norm2;    // k_elast is Y h : N/m
-                            break;
-                        case 3 : k0=k_elast/(norm2*dist);  // k_elast is Y : N/m^2 
-                            break;
-                    }
-                    */
                 }
                 
                 link linker{ix,jx,k0,dist,status};
@@ -201,7 +193,7 @@ void Elastic_part_set::GetNeighbours() {
         }
         
     }
-    Part_set::PrintIfVerbose("Created  : "+std::to_string(n_springs)+" springs");
+    prop->PrintIfVerbose("Created  : "+std::to_string(n_springs)+" springs");
 
     // Here we define particle state as the number of neighbour. 
     // Important to know wether a particle is on the surface or not
@@ -215,7 +207,7 @@ void Elastic_part_set::GetNeighbours() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     mean_area_ratio=Atot/l2mean;
-    Part_set::PrintIfVerbose("Found area ratio : "+std::to_string(area_ratio));
+    prop->PrintIfVerbose("Found area ratio : "+std::to_string(area_ratio));
 }
 
 
@@ -226,7 +218,6 @@ void Elastic_part_set::NextStep(const Simul_props & simul_prop){
     // Set all forces & torques to 0
     Part_set::ClearForces();
     
-    // Add pressure forces
     // Add pressure forces before confinement to update surface areas !
     Part_set::AddPressureForces(simul_prop);
 
@@ -235,6 +226,7 @@ void Elastic_part_set::NextStep(const Simul_props & simul_prop){
     
     // Add confinement forces;
     Part_set::AddConfinementForces(simul_prop);
+    
     // Applying the forces
     Part_set::IntegrateForces(simul_prop);
        
@@ -264,7 +256,6 @@ double Elastic_part_set::ComputeAreaRatio() {
     double sum_l02;
     // We loop over all springs
     // Man C++11 is nice
-    // This is the code bottleneck
     for(auto const& linker: springs) {
         if (get<4>(linker)>0) {
             sum_l02+=pow(get<3>(linker),2.0);
@@ -275,7 +266,6 @@ double Elastic_part_set::ComputeAreaRatio() {
 }
 
 // The physics part : computing interaction between vertices
-// @TODO : marginal gains in letting compiler to decide memory ?
 void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
     vdouble3 posi,posj;
     vdouble3 orsi,orsj;
@@ -286,10 +276,11 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
 
     int i,j;
     double k0,l0,norm;
+    //double sum_nrj;
    
     // We loop over all springs
     // Man C++11 is nice
-    // This is the code bottleneck
+    // This is the code bottleneck for spring networks
     for(auto const& linker: springs) {
         i=get<0>(linker);   // first vertex
         j=get<1>(linker);   // second vertex
@@ -309,6 +300,7 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
         felast=k0*dxij*compute_force(l0,norm2); 
         get<force>(particles[i])+=felast;
         get<force>(particles[j])-=felast;
+        //sum_nrj+=compute_energy(l0,norm2);
         
     }
      
@@ -321,6 +313,47 @@ void Elastic_part_set::ComputeForces(const Simul_props & simul_prop){
     
 }
 
+// Computes bending energy
+double Elastic_part_set::ComputeStretchingEnergy() const {
+    vdouble3 posi,posj;
+    vdouble3 orsi,orsj;
+    vdouble3 dxij;
+    double norm2;
+
+    vdouble3 dir;
+
+    int i,j;
+    double k0,l0;
+    double sum_nrj;
+   
+    // We loop over all springs
+    // Man C++11 is nice
+    // This is the code bottleneck
+    for(auto const& linker: springs) {
+        i=get<0>(linker);   // first vertex
+        j=get<1>(linker);   // second vertex
+        k0=get<2>(linker);  // stiffness
+        l0=get<3>(linker);  // resting length
+        //status=get<4>(linker);  // status : surface link or not
+         
+        posi=get<position>(particles[i]);
+        posj=get<position>(particles[j]);
+
+        // Vector & norm of edge
+        dxij=posj-posi;
+        norm2=dxij.squaredNorm();
+     
+        sum_nrj+=k0*compute_energy(l0,norm2);
+    }
+     
+    double power_law=static_cast<double>( prop->power_law );
+    sum_nrj/=pow(2.0,power_law) ;
+    prop->PrintIfVerbose("Stretching nrj : "+std::to_string(sum_nrj) );
+    
+    return sum_nrj;
+}
+
+
 // Makes sure everything is in place
 void Elastic_part_set::GetStarted(){
     Part_set::GetStarted();
@@ -328,7 +361,6 @@ void Elastic_part_set::GetStarted(){
     Part_set::FindBounds();
     GetNeighbours();
     Part_set::CheckPartSet();
-    
 }
 
             

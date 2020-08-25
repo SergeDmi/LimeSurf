@@ -35,21 +35,22 @@ Part_set::Part_set(Part_set_props * p) {
 
 // Print a comment if verbose
 //void Part_set::PrintIfVerbose(const auto & message) {
+    /*
 void Part_set::PrintIfVerbose(const std::string & message) {
     if (prop->verbose) {
-        std::cout << "# " << message << std::endl;
+        std::cout << "[ " << prop-> name << " ] : " << message << std::endl;
     }
 }
-
+*/ 
 
 // If particles need to be created from properties
 void Part_set::create() {
     
-    PrintIfVerbose("Starting particle creation, trying to load"+prop->fname_in);
+    prop->PrintIfVerbose("Starting particle creation, trying to load"+prop->fname_in);
     
     number=load_from_text();
     
-    PrintIfVerbose("Succesfully created "  + std::to_string(number) + " particles");
+    prop->PrintIfVerbose("Succesfully created "  + std::to_string(number) + " particles");
     
 }
 
@@ -82,7 +83,7 @@ void Part_set::FindBounds() {
 // @TODO : make sure that memcpy is cosher
 int Part_set::load_from_text() {
     
-    PrintIfVerbose("acquiring file " + prop->fname_in );
+    prop->PrintIfVerbose("acquiring file " + prop->fname_in );
     
     // Readint the desired file
     std::ifstream ss(prop->fname_in, std::ios::binary);
@@ -118,7 +119,7 @@ int Part_set::load_from_text() {
     if (is_tetra) {
         nt=tetra->count;
         
-        PrintIfVerbose("Read " + std::to_string(tetra->count) + " total tetrahedrons ");
+        prop->PrintIfVerbose("Read " + std::to_string(tetra->count) + " total tetrahedrons ");
     }
     else {nt=0;}
     
@@ -127,7 +128,7 @@ int Part_set::load_from_text() {
     }
     else
     {
-        PrintIfVerbose("Read " + std::to_string(vertices->count) + " total vertices ");
+        prop->PrintIfVerbose("Read " + std::to_string(vertices->count) + " total vertices ");
     }
 
     // Let us not create zero too often
@@ -212,11 +213,11 @@ void Part_set::GetStarted(){
 		total_area/=6.0;
 		
 		// Mobility from viscosity and size
-		prop->mobility=1.0/(6.0*prop->visco*sqrt(PI*total_area/number));
-		
+		//prop->mobility=1.0/(6.0*prop->visco*sqrt(PI*total_area/number));
+        prop->mobility=1.0/(6.0*prop->visco*sqrt(total_area/(number*PI)));
+        
 		// Reporting
-		std::cout << "Warning : mobility not defined or <= 0 ; computed " 
-			<<  prop->mobility << " from viscosity and size" << std::endl;
+		prop->PrintIfVerbose("Warning : mobility not defined or <= 0 ; computed "+std::to_string(prop->mobility)+" from viscosity and size");
 		
 	}
     // We shoudl do an init_neighbour search if we plan to neighbour search.
@@ -253,8 +254,8 @@ void Part_set::CheckPartSet() {
             tnuoc=n;
         }
     }
-    std::cout << "# Maximum neighbours number : " << count << std::endl;
-    std::cout << "# Minimum neighbours number : " << tnuoc << std::endl;
+    prop->PrintIfVerbose("Maximum neighbours number : "+std::to_string(count));
+    prop->PrintIfVerbose("Minimum neighbours number : "+std::to_string(tnuoc));
 }
 
 

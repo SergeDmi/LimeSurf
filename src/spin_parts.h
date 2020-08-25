@@ -127,9 +127,8 @@ public:
     // Find furthest points in any direction
     vdouble3 GetNormal(const int, const int, const int);
     
-    // Print only if verbose
-    //void PrintIfVerbose(const auto& );
-    void PrintIfVerbose(const std::string & );
+    // Abstract of current situation
+    virtual void Summary() const {};
     
 protected:
     // List of faces

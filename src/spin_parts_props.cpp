@@ -182,3 +182,9 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
     }
  
 }
+
+void Part_set_props::PrintIfVerbose(const std::string & message) const {
+    if (verbose) {
+        std::cout << "[ " << name << " ] : " << message << std::endl;
+    }
+}

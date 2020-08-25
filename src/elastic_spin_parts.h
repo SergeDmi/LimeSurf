@@ -51,8 +51,14 @@ public:
     // Compute area associated to two points (i.e. linker extremities)
     double Compute_local_linker_area(int, int);
     
+    // Computes something
     double ComputeAreaRatio();
     
+    // Computes stretching energy
+    double ComputeStretchingEnergy() const;
+    
+    // Summary of current situation
+    virtual void Summary() const { Part_set::Summary() ;  ComputeStretchingEnergy(); } ;
     
 protected:
     // Springs between particles
@@ -72,6 +78,9 @@ protected:
     
     // this computes the module of the force on a linker
     std::function<double(const double,const double)> compute_force;
+    
+    // this computes the deformation energy of a linker
+    std::function<double(const double,const double)> compute_energy;
     
     // Number of pairs of faces to compute angles for rigidity
     int n_pairs;
