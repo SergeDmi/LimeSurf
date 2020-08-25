@@ -61,6 +61,7 @@ int make_run(const Simul_props & prop, meshes & meshuggas, double t0) {
         int n_save=0;
         double t=0;
         bool is_diverging=0;
+        mesh.cell_wall->Summary();
         // Runnning until Tend, or divergence
         while (t<prop.Tend && !is_diverging) {
             t+=prop.dt;
@@ -72,10 +73,12 @@ int make_run(const Simul_props & prop, meshes & meshuggas, double t0) {
             if (t_save>prop.dt_frames ) {
                 t_save=0;
                 mesh.cell_wall->Export_bly(n_save,prop,t+t0);
-                 n_save++;
+                n_save++;
+                mesh.cell_wall->Summary();
             }
         }
         // implicit bool to int conversion for the win (and less branching)
+        mesh.cell_wall->Summary();
         dvg+=is_diverging;
     }
     

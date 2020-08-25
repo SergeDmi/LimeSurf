@@ -31,7 +31,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
     vdouble3 posi(0,0,0);
     vdouble3 posj(0,0,0);
     int power_law=prop->power_law;
-    Part_set::PrintIfVerbose("power law : " + std::to_string(power_law) );
+    prop->PrintIfVerbose("power law : " + std::to_string(power_law) );
     double k0;
     // Here the status is 0 : not an internal surface
     double status=0.0;
@@ -103,7 +103,7 @@ void Tetr_elastic_part_set::GetNeighbours() {
         
     }
     
-   Part_set::PrintIfVerbose("by now we have  " + std::to_string(n_springs) + "springs");
+   prop->PrintIfVerbose("by now we have  " + std::to_string(n_springs) + "springs");
        
 }
 
@@ -157,7 +157,7 @@ void Tetr_elastic_part_set::UpdateLinkerStiffness() {
         for(auto & linker: springs) {
             get<2>(linker)=k0;
         }   
-        Part_set::PrintIfVerbose("Changed all links to stiffness " + std::to_string(k0) );
+        prop->PrintIfVerbose("Changed all links to stiffness " + std::to_string(k0) );
     
     }
     
