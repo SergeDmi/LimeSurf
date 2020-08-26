@@ -9,29 +9,39 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 In which [config.yaml](config.yaml) is an appropriate config file.
 
 ## Installation
+First intall the required packages (see below).
 
-Clone/download code in directory `<DIR>` :
-
- ```shell
+Open a terminal, then clone/download code in directory `<DIR>` :  
+```shell
     $ git checkout https://github.com/SergeDmi/LimeSurf.git <DIR>
     $ cd <DIR>
-    $ git submodule update --init --recursive
 ```
 
-Then compile in `<DIR>` :
+Then run the compilation script :  
 ```shell
-    $ cd <DIR>
-    $ cmake .
-    $ make
+    $ ./install.sh
 ```
 
-For this you might need to install make, cmake, gcc and the boost libraries. To do so on Ubuntu, use :
+If any error happens at compile time, this is probably a compilation error and you should check if required packages are indeed installed, then check the options in the CMakeLists.txt.
+
+## Requirements :
+For this you might need to install make, cmake, gcc and the boost libraries. To do so on Ubuntu, write in a terminal :  
 ```shell
     $ sudo apt-get install make cmake g++
     $ sudo apt-get install libboost-all-dev
+```  
+On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh) as your package manager. In a terminal, write :  
+ ```shell 
+    $ brew install boost
+    $ brew install cmake
 ```
-On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh) as your package manager.
-On Windows, you can install Ubuntu on a virtual machine, see this [tutorial](https://brb.nci.nih.gov/seqtools/installUbuntu.html) for instance.
+I would recommend using clang as a C++ compiler.   
+ ```shell 
+    $ brew install llvm
+```
+You may find online resources on how to set up compiler variables for cmake to use clang, for example [here](https://embeddedartistry.com/blog/2017/02/24/installing-llvm-clang-on-osx/).  
+
+On Windows, you can install Ubuntu on a virtual machine, see this [tutorial](https://brb.nci.nih.gov/seqtools/installUbuntu.html) for instance. You can also directly compile and run on windows if you like to make your life difficult.
 
 ## Config file
 
