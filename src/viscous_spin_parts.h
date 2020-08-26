@@ -1,3 +1,10 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
 #include "Aboria.h"
 using namespace Aboria;
@@ -8,6 +15,10 @@ using namespace Aboria;
 
 #ifndef VISCOUS_SPIN_PARTS_H
 #define VISCOUS_SPIN_PARTS_H
+
+/*
+ Old deprecated class : never mind the junk
+*/
 
 class Viscous_set_props;
 

@@ -1,18 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   simple_viscoel_parts_props.h
- * Author: dmitrief
- *
- * Created on July 9, 2018, 3:01 PM
- */
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <math.h>
 #include <sstream>
-//#include "glossary.h"
 #include "Aboria.h"
 #include "elastic_parts_props.h"
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep

@@ -1,18 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   elastic_parts_prop.h
- * Author: dmitrief
- *
- * Created on July 9, 2018, 11:16 AM
- */
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <math.h>
 #include <sstream>
-//#include "glossary.h"
 #include "Aboria.h"
 #include "spin_parts_props.h"
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
@@ -29,7 +23,6 @@ class Viscous_set_props : public Part_set_props
     public:
         /// constructor
         Viscous_set_props();
-        //Viscous_set_props(const Glossary );
         Viscous_set_props(const YAML::const_iterator );
         void init();
         void Read_config(const YAML::const_iterator );

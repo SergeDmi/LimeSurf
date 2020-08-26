@@ -44,11 +44,6 @@ protected:
     
     // This is convenient if we read faces from a ply file
     // careful ! int might depend on compiler !
-    //typedef struct  {int x,y,z ;} face;
-    //typedef std::vector<face> face_list;
-    
-    // This is convenient if we read faces from a ply file
-    // careful ! int might depend on compiler !
     typedef struct  {int x,y,z ;} face;
     typedef std::vector<face> face_list;
     

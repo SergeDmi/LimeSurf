@@ -1,3 +1,10 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
 #include "Aboria.h"
 using namespace Aboria;
@@ -6,13 +13,16 @@ using namespace Aboria;
 #include "viscous_spin_parts.h"
 #include <iostream>
 #include <fstream>
-//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "viscous_parts_props.h"
 using namespace tinyply;
 using namespace std;
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+
+/*
+ Old deprecated class : never mind the junk
+*/
 
 
 const double PI = boost::math::constants::pi<double>();

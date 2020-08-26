@@ -1,35 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
-//#include "glossary.h"
-//#include "Aboria.h"
-//using namespace Aboria;
 #include <sstream>
 #include "triangle_parts_props.h"
-
-/*
-Triangle_set_props::Triangle_set_props(const Glossary opt) : Elastic_set_props(opt) {
-    
-    prestrain=1.0;
-    
-    opt.set(prestrain, "prestrain");
-    
-    rigidity=0.0;
-    
-    opt.set(rigidity, "flexural");
-}
-*/
-
-
 
 Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elastic_set_props(config) {
     
     auto conf=config->second;
     
-    k_bending=-1;
+    k_bending=0;
     
     imposed_curvature=-1;
     

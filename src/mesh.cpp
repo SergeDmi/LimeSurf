@@ -1,15 +1,26 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
 #include "Aboria.h"
-using namespace Aboria;
 #include <boost/math/constants/constants.hpp>
 #include <math.h>
 #include "spin_parts.h"
 #include <iostream>
 #include <fstream>
-//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "mesh.h"
+using namespace Aboria;
+
+
+/*
+ Mesh is a wrapper class containing both a (pointer to) wall (*cell_wall) and its (pointer to) properties (*wall_props)
+*/
 
 Mesh::Mesh(const YAML::const_iterator config )  {
     // wall & props are null pointers to start with

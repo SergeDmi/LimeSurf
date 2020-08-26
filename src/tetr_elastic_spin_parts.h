@@ -1,21 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   elastic_spin_parts.h
- * Author: dmitrief
- *
- * Created on May 17, 2018, 11:23 AM
- */
-//#include <random>
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include "Aboria.h"
 using namespace Aboria;
-//#include "elastic_parts_props.h"
 #include "elastic_spin_parts.h"
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+
+/*
+ A class implementing a set of particles connected by springs
+Some are on the surface, some are not...
+ */
 
 class Elastic_set_props;
 

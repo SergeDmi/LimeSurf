@@ -1,7 +1,18 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <sstream>
 #include "simul_props.h"
 #include "Aboria.h"
 using namespace Aboria;
+
+/*
+ Simul_props is a class containing simulation properties : pressure, number of time frames, duration, etc.
+ */
 
 Simul_props::Simul_props() {
     init();

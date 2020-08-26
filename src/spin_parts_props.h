@@ -1,6 +1,12 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <math.h>
 #include <sstream>
-//#include "glossary.h"
 #include "Aboria.h"
 #include "yaml-cpp/yaml.h"  // IWYU pragma: keep
 
@@ -8,9 +14,6 @@ using namespace Aboria;
 
 #ifndef SPIN_PARTS_PROPS_H
 #define SPIN_PARTS_PROPS_H
-
-// @TODO :
-// implement copy constructor ?
 
 class Part_set_props {
 

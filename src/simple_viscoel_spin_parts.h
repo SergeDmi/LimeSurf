@@ -1,21 +1,14 @@
-// -*- C++ -*-
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   simple_viscoel_spin_parts.h
- * Author: dmitrief
- *
- * Created on June 22, 2018, 11:32 AM
- */
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 
 #include "Aboria.h"
 using namespace Aboria;
 #include "elastic_spin_parts.h"
-//#include "spin_parts.h"
 
 class Simple_viscoel_set_props;
 

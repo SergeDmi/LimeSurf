@@ -1,7 +1,11 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
-//#include "glossary.h"
-//#include "Aboria.h"
-//using namespace Aboria;
 #include <sstream>
 #include "spin_parts_props.h"
 using namespace std;
@@ -11,60 +15,15 @@ Part_set_props::Part_set_props() {
     init();
 };
 
-
-/*
-Part_set_props::Part_set_props(const Glossary opt) {
-    // @TODO : replace all glos - YAML
-    init();
-    
-    opt.set(renorm_rate, "renorm_rate");
- 
-    
-    // Confinement 
-    //x_conf=0;y_conf=0;z_conf=0;
-    //x_max=0 ;y_max=0 ;z_max=0 ;
-    
-    // reading these parameters from the config file !
-    /*
-    std::string str;
-    str.reserve(10000);
-    fname_in.reserve(1000);
-    //load_from_file=opt.set(str,"load_from");
-    fname_in.append(str);
-        //std::cout << "fname_in : " << fname_in << std::endl;
-    
-    if (load_from_file>0) {
-        fname_in.append(str);
-        std::cout << "fname_in : " << fname_in << std::endl;
-    }
-    
-    opt.set(z_max, "z_conf",0);
-    opt.set(z_conf, "z_conf",1);
-    
-    opt.set(y_max, "y_conf",0);
-    opt.set(y_conf, "y_conf",1);
-    
-    opt.set(x_max, "x_conf",0);
-    opt.set(x_conf, "x_conf",1);
-   
-    
-    opt.set(mechanics, "mechanics");
-    
-    opt.set(k_elast, "k_elast");
-    
-}
-
-*/
-
 Part_set_props::Part_set_props(const YAML::const_iterator config) {
-    init();
     
+    init();
     Read_config(config);
 }
 
 Part_set_props::Part_set_props(const Part_set_props & props) {
-    init();
     
+    init();
     fname_out=props.fname_out;
     fname_in=props.fname_in;
     mechanics=props.mechanics;
@@ -74,7 +33,6 @@ Part_set_props::Part_set_props(const Part_set_props & props) {
     Rvisc=props.Rvisc;
     renorm_rate=props.renorm_rate;
     verbose=props.verbose;
-    
 }
 
 void Part_set_props::init() {

@@ -1,3 +1,10 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
 #include "Aboria.h"
 using namespace Aboria;
@@ -6,7 +13,6 @@ using namespace Aboria;
 #include "spin_parts.h"
 #include <iostream>
 #include <fstream>
-//#include "assert_macro.h"
 #include <limits>
 #include "tinyply.h"
 #include "spin_parts_props.h"
@@ -33,16 +39,6 @@ Part_set::Part_set(Part_set_props * p) {
     diverging=false;
 }
 
-// Print a comment if verbose
-//void Part_set::PrintIfVerbose(const auto & message) {
-    /*
-void Part_set::PrintIfVerbose(const std::string & message) {
-    if (prop->verbose) {
-        std::cout << "[ " << prop-> name << " ] : " << message << std::endl;
-    }
-}
-*/ 
-
 // If particles need to be created from properties
 void Part_set::create() {
     
@@ -53,7 +49,6 @@ void Part_set::create() {
     prop->PrintIfVerbose("Succesfully created "  + std::to_string(number) + " particles");
     
 }
-
 
 // Finds the furthest points in x,x, y,y, z,z
 // @TODO : needs to be fixed
@@ -270,13 +265,11 @@ void Part_set::NextStep(const Simul_props & simul_prop){
 }
 
 
-// Setting forces & torques to 0
+// Setting forces & particle areas to 0
 void Part_set::ClearForces() {
     vdouble3 zero(0,0,0);
     for (auto part : particles) {
         get<force> (part)=zero;
-        //get<torque>(part)=zero;
-        //get<orientation>(part)=zero;
         get<area>(part)=0.0;
     }   
 }
@@ -284,23 +277,13 @@ void Part_set::ClearForces() {
 // Adding forces to particles
 void Part_set::IntegrateForces(const Simul_props & simul_prop){
     double dt_trans=simul_prop.dt*prop->mobility;
-    //double dt_rot=simul_prop.dt/prop->Rvisc;
-    //double tot_force=0;
-    //vdouble3 pos;
-    
+    // using aboria magic
     for (auto part : particles) {        
-        
-        //pos=get<position>(part);
-        //tot_force+=pos.dot(get<force>(part));
         
         // Applying force & torque
         get<position>(part)   +=get<force>(part)*(dt_trans);
-        //get<orientation>(part)+=cross(get<orientation>(part),get<torque>(part))*(dt_rot);
-        
-        
         
     }
-    //std::cout << " Total projected force : " << tot_force << std::endl;
 }
 
 // Renormalizing the normals
@@ -347,8 +330,6 @@ void Part_set::AddPressureForces(const Simul_props & simul_prop){
 
     vdouble3 are;
 
-      
-      
     // We go through all the faces to compute pressure
     for (auto const & triangle: triangles) {
         
@@ -365,8 +346,6 @@ void Part_set::AddPressureForces(const Simul_props & simul_prop){
         get<force>(particles[triangle.z])+=are;
         
     }
-    
-
     
 }
 

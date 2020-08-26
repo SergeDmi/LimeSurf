@@ -1,15 +1,14 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
-//#include "glossary.h"
-//#include "Aboria.h"
-//using namespace Aboria;
 #include <sstream>
 #include "elastic_parts_props.h"
-//#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+
 
 
 

@@ -1,7 +1,11 @@
+/*
+  This is part of Limesurf
+    A program meant to integrated the shape of triangulated surface under constraints.
+    
+    Copyright 2017-2020 Serge Dmitrieff, Institut Jacques Monod, CNRS
+    www.biophysics.fr
+*/
 #include <random>
-//#include "glossary.h"
-//#include "Aboria.h"
-//using namespace Aboria;
 #include <sstream>
 #include "viscous_parts_props.h"
 using namespace std;
@@ -165,10 +169,6 @@ void Viscous_set_props::init() {
     // Misc parameters
     renorm_rate=0.001;
 }
-
-
-//void Part_set_props::Read_config(const YAML::const_iterator config) {
-    
     
 void Viscous_set_props::Read_config(const YAML::const_iterator config) {
     Part_set_props::Read_config(config);
