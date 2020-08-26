@@ -8,7 +8,6 @@ meshes:
         power_law: 2
         prestrain: 1.0
         k_elast: 1.0
-        align: 1.0
 
 runs:
     1:
