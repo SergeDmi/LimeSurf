@@ -88,7 +88,7 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 #### Meshes
 
 `MESH.source` : source file (ex : *demo.ply*, or *bla/bli/blo.ply*)  
-`MESH.type` : type of meshwork (*1*: 2D, *2*: viscous, *3*: 2D+bending, *4*: Tetrahedral 3D mesh)  
+`MESH.type` : type of meshwork (`1`: 2D, `3`: 2D+bending, `4`: Tetrahedral 3D mesh)  
 `MESH.power_law` : power law of spring elasticity (*1*, *2* or *3*)  
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : *1.0* for no prestrain, *1.5* for *50%* prestrain)  
 `MESH.k_elast` : sping constant  
