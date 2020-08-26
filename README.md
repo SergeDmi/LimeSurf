@@ -89,14 +89,14 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 
 `MESH.source` : source file (ex : *demo.ply*, or *bla/bli/blo.ply*)  
 `MESH.type` : type of meshwork (`1`: 2D, `3`: 2D+bending, `4`: Tetrahedral 3D mesh)  
-`MESH.power_law` : power law of spring elasticity (*1*, *2* or *3*)  
-`MESH.prestrain` : prestrain of the springs in the ply file (ex : *1.0* for no prestrain, *1.5* for *50%* prestrain)  
+`MESH.power_law` : power law of spring elasticity (`1`, `2` or `3`)  
+`MESH.prestrain` : prestrain of the springs in the ply file (ex : `1.0` for no prestrain, `1.5` for *50%* prestrain)  
 `MESH.k_elast` : sping constant  
-`MESH.young_modulus` : Young modulus of the mesh. Overides *k_elast* and requires *thickness*.  
-`MESH.thickness` : Virtual thickness of the mesh - used to compute *k_elast* from *young_modulus*.  
-`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for *type=3*.  
+`MESH.young_modulus` : Young modulus of the mesh. Overides `k_elast` and requires `thickness`.  
+`MESH.thickness` : Virtual thickness of the mesh - used to compute `k_elast` from `young_modulus`.  
+`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for `type`*=3*.  
 `MESH.out` : base name for exported ply files.  
-`MESH.verbose` : toggles extra reports on the mesh (0 or 1).
+`MESH.verbose` : toggles extra reports on the mesh (`0` or `1`).
 
 #### Runs
 
