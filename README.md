@@ -104,7 +104,7 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `RUN.n_frames` : number of exported time frames  
 `RUN.dt` : simulation timestep  
 `RUN.pressure` : pressure in the cell  
-`RUN.confinement.AXIS` : Confinement on axis `AXIS=x,y,z`  
+`RUN.confinement.AXIS` : Confinement on axis `AXIS`=`x`,`y`,`z`  
 `RUN.confinement.AXIS.min` : lower confinement bound  
 `RUN.confinement.AXIS.max` : higher confinement bound  
 `RUN.confinement.AXIS.stiffness` : confinement stiffness
