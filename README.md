@@ -93,9 +93,9 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : *1.0* for no prestrain, *1.5* for *50%* prestrain)  
 `MESH.k_elast` : sping constant  
 `MESH.young_modulus` : Young modulus of the mesh. Overides *k_elast* and requires *thickness*.  
-`MESH.thickness` : Virtual thickness of the mesh - used to compute *k_elast* from *young_modulus*.
-`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for *type=3*.
-`MESH.out` : base name for exported ply files.
+`MESH.thickness` : Virtual thickness of the mesh - used to compute *k_elast* from *young_modulus*.  
+`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for *type=3*.  
+`MESH.out` : base name for exported ply files.  
 `MESH.verbose` : toggles extra reports on the mesh (0 or 1).
 
 #### Runs
