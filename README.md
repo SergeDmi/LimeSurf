@@ -59,7 +59,6 @@ meshes:
        power_law: 2
        prestrain: 1.0
        k_elast: 1.0
-       align: 1.0
 
    another:
        source: demo.ply
@@ -93,8 +92,11 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.power_law` : power law of spring elasticity (*1*, *2* or *3*)  
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : *1.0* for no prestrain, *1.5* for *50%* prestrain)  
 `MESH.k_elast` : sping constant  
-`MESH.align` : normal alignment constant  
-`MESH.out` : export name
+`MESH.young_modulus` : Young modulus of the mesh. Overides *k_elast* and requires *thickness*.  
+`MESH.thickness` : Virtual thickness of the mesh - used to compute *k_elast* from *young_modulus*.
+`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for *type=3*.
+`MESH.out` : base name for exported ply files.
+`MESH.verbose` : toggles extra reports on the mesh (0 or 1).
 
 #### Runs
 
@@ -119,6 +121,6 @@ The program outputs ply files of the format NAME_RUN_TIME.ply, in which *NAME* i
 
 ### Compiling LimeSurf
 
-LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc. Thanks gcc devs for the amazing work !
+LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc, untill clang caught up. So use your favorite (icc seems really slow though). Thanks gcc & llvm devs for the amazing work !
 
 # Serge Dmitrieff -- http://biophysics.fr
