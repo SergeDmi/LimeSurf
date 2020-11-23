@@ -19,13 +19,13 @@ Open a terminal, then clone/download code in directory `<DIR>` :
 
 Then run the compilation script :  
 ```shell
-    $ ./install.sh
+    $ ./setup
 ```
 
 If any error happens at compile time, this is probably a compilation error and you should check if required packages are indeed installed, then check the options in the CMakeLists.txt.
 
 ## Requirements :
-For this you might need to install make, cmake, gcc and the boost libraries. To do so on Ubuntu, write in a terminal :  
+For this you might need to install make, cmake, gcc and the openmp and boost libraries. To do so on Ubuntu, write in a terminal :  
 ```shell
     $ sudo apt-get install make cmake g++
     $ sudo apt-get install libboost-all-dev
@@ -34,6 +34,7 @@ On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh
  ```shell 
     $ brew install boost
     $ brew install cmake
+    $ brew install libomp
 ```
 I would recommend using clang as a C++ compiler.   
  ```shell 
