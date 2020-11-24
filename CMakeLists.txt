@@ -46,6 +46,6 @@ file(GLOB all_SRC
 
 set(SOURCE ${all_SRC})
 
-add_executable(meshless ${SOURCE})
+add_executable(plyssim ${SOURCE})
 
-target_link_libraries(meshless ${LIBRARIES})
+target_link_libraries(plyssim ${LIBRARIES})

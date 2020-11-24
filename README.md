@@ -4,7 +4,7 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 ## Usage
 
 ```shell
-    $ ./meshless config.yaml
+    $ ./plyssim config.yaml
 ```
 In which [config.yaml](config.yaml) is an appropriate config file.
 
