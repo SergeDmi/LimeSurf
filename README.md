@@ -1,4 +1,4 @@
-# Limesurf
+# Plyssim
 A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic springs.
 
 ## Usage
@@ -13,7 +13,7 @@ First intall the required packages (see below).
 
 Open a terminal, then clone/download code in directory `<DIR>` :  
 ```shell
-    $ git checkout https://github.com/SergeDmi/LimeSurf.git <DIR>
+    $ git checkout https://github.com/SergeDmi/Plyssim.git <DIR>
     $ cd <DIR>
 ```
 
@@ -92,23 +92,24 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.type` : type of meshwork (`1`: 2D, `3`: 2D+bending, `4`: Tetrahedral 3D mesh)  
 `MESH.power_law` : power law of spring elasticity (`1`, `2` or `3`)  
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : `1.0` for no prestrain, `1.5` for *50%* prestrain)  
-`MESH.k_elast` : sping constant  
+`MESH.k_elast` : sping constant (not required if `young_modulus` and `thickness` are given). 
 `MESH.young_modulus` : Young modulus of the mesh. Overides `k_elast` and requires `thickness`.  
 `MESH.thickness` : Virtual thickness of the mesh - used to compute `k_elast` from `young_modulus`.  
-`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for `type`*=3*.  
+`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for `type`*=3*.  Default value computed from `young_modulus`, `thickness`, and `poisson`.  
+`MESH.poisson` : Poisson ratio of the surface, used to compute `k_bending` from `young_modulus` and `thickness`, only for `type`*=3*.  
 `MESH.out` : base name for exported ply files.  
 `MESH.verbose` : toggles extra reports on the mesh (`0` or `1`).
 
 #### Runs
 
-`RUN.duration` : duration of run (in physical time)  
+`RUN.duration` : duration of run (in physical time, e.g. seconds)  
 `RUN.n_frames` : number of exported time frames  
-`RUN.dt` : simulation timestep  
-`RUN.pressure` : pressure in the cell  
+`RUN.dt` : simulation timestep (in physical time)  
+`RUN.pressure` : pressure in the cell  (in physical units, e.g. MPa)  
 `RUN.confinement.AXIS` : Confinement on axis `AXIS`=`x`,`y`,`z`  
-`RUN.confinement.AXIS.min` : lower confinement bound  
+`RUN.confinement.AXIS.min` : lower confinement bound  (in physical distance)  
 `RUN.confinement.AXIS.max` : higher confinement bound  
-`RUN.confinement.AXIS.stiffness` : confinement stiffness
+`RUN.confinement.AXIS.stiffness` : confinement stiffness (in physical units, e.g. MPa)
 
 ## Mesh format
 
@@ -120,8 +121,8 @@ The program outputs ply files of the format NAME_RUN_TIME.ply, in which *NAME* i
 
 ## Misc
 
-### Compiling LimeSurf
+### Compiling Plyssim
 
-LimeSurf compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc, untill clang caught up. So use your favorite (icc seems really slow though). Thanks gcc & llvm devs for the amazing work !
+Plyssim compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc, until clang caught up. So use your favorite (icc seems really slow though). Thanks gcc & llvm devs for the amazing work !
 
 # Serge Dmitrieff -- http://biophysics.fr
