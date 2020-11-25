@@ -3,13 +3,14 @@ A simulation of the mechanics of a surface as a 2D or 3D set of (visco-) elastic
 
 ## Usage
 
+In a terminal, run :  
 ```shell
     $ ./plyssim config.yaml
 ```
 In which [config.yaml](config.yaml) is an appropriate config file.
 
 ## Installation
-First intall the required packages (see below).
+First install the [required libraries/packages](##Requirements).
 
 Open a terminal, then clone/download code in directory `<DIR>` :  
 ```shell
@@ -24,7 +25,7 @@ Then run the compilation script :
 
 If any error happens at compile time, this is probably a compilation error and you should check if required packages are indeed installed, then check the options in the CMakeLists.txt.
 
-## Requirements :
+## Requirements
 For this you might need to install make, cmake, gcc and the openmp and boost libraries. To do so on Ubuntu, write in a terminal :  
 ```shell
     $ sudo apt-get install make cmake g++
@@ -37,7 +38,7 @@ On a Mac, you can use *brew install* if you are using [Homebrew](https://brew.sh
     $ brew install libomp
 ```
 I would recommend using clang as a C++ compiler.   
- ```shell 
+```shell 
     $ brew install llvm
 ```
 You may find online resources on how to set up compiler variables for cmake to use clang, for example [here](https://embeddedartistry.com/blog/2017/02/24/installing-llvm-clang-on-osx/).  
@@ -113,7 +114,12 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 
 ## Mesh format
 
-Format should be plain text or binary ply files. See [demo.ply](demo.ply) for an example.
+Format should be plain text or binary ply files. See [demo.ply](demo.ply) for an example. To quickly alter ply files (i.e. scale, rotate, center...), you can use the python-based tool ply_convert. Assuming you have Python3 with easy-install, just type : 
+
+```shell
+    $ pip3 install ply_convert
+```
+See [ply_convert on PyPI](https://pypi.org/project/ply-convert/) for more information.
 
 ## Ouput
 
