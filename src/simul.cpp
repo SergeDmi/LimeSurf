@@ -68,24 +68,24 @@ int make_run(const Simul_props & prop, meshes & meshuggas, double t0) {
         int n_save=0;
         double t=0;
         bool is_diverging=0;
-        mesh.cell_wall->Summary();
+        mesh.mesh_parts->Summary();
         // Runnning until Tend, or divergence
         while (t<prop.Tend && !is_diverging) {
             t+=prop.dt;
             // the mesh performs its next stp
-            mesh.cell_wall->NextStep(prop);
-            is_diverging=mesh.cell_wall->is_diverging();
+            mesh.mesh_parts->NextStep(prop);
+            is_diverging=mesh.mesh_parts->is_diverging();
             // Saving if needed
             t_save+=prop.dt;
             if (t_save>prop.dt_frames ) {
                 t_save=0;
-                mesh.cell_wall->Export_bly(n_save,prop,t+t0);
+                mesh.mesh_parts->Export_bly(n_save,prop,t+t0);
                 n_save++;
-                mesh.cell_wall->Summary();
+                mesh.mesh_parts->Summary();
             }
         }
         // implicit bool to int conversion for the win (and less branching)
-        mesh.cell_wall->Summary();
+        mesh.mesh_parts->Summary();
         dvg+=is_diverging;
     }
     

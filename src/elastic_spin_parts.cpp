@@ -214,7 +214,7 @@ void Elastic_part_set::GetNeighbours() {
     Atot/=2.0;
     area_ratio=Atot/l2tot;
     mean_area_ratio=Atot/l2mean;
-    prop->PrintIfVerbose("Found area ratio : "+std::to_string(area_ratio));
+    
 }
 
 

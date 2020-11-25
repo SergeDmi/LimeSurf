@@ -208,7 +208,6 @@ void Part_set::GetStarted(){
 		total_area/=6.0;
 		
 		// Mobility from viscosity and size
-		//prop->mobility=1.0/(6.0*prop->visco*sqrt(PI*total_area/number));
         prop->mobility=1.0/(6.0*prop->visco*sqrt(total_area/(number*PI)));
         
 		// Reporting

@@ -43,8 +43,8 @@ public:
     void Create_mesh(const YAML::const_iterator , Part_set_props &);
     
     // Empty creation of particle set and properties pointers
-    Part_set * cell_wall;
-    Part_set_props * wall_props;
+    Part_set       * mesh_parts;
+    Part_set_props * mesh_props;
     
     // Initiation
     void Initiate();

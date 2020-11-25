@@ -41,7 +41,7 @@ Viscous_set_props::Viscous_set_props(const Glossary opt) : Part_set_props(opt) {
         std::cout << "fname_in : " << fname_in << std::endl;
     }
      
-    
+    /Users/dmitrief/code/Limesurf/src/viscous_parts_props.cpp
     opt.set(init_shape, "shape", KeyList<int>("sphere", 0, "sheet", 1, "pombe", 2));
     opt.set(init_number, "number");
     opt.set(init_radius, "radius");
@@ -63,7 +63,7 @@ Viscous_set_props::Viscous_set_props(const Glossary opt) : Part_set_props(opt) {
     
     opt.set(k_align, "align",0);
     
-    /*
+ 
     opt.set(z_max, "z_conf",0);
     opt.set(z_conf, "z_conf",1);
     
