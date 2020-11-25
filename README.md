@@ -125,4 +125,7 @@ The program outputs ply files of the format NAME_RUN_TIME.ply, in which *NAME* i
 
 Plyssim compiled succesfully with gcc, clang and icc (see [CMakeLists.txt](CMakeLists.txt)). Fastest executable was found to be with gcc, until clang caught up. So use your favorite (icc seems really slow though). Thanks gcc & llvm devs for the amazing work !
 
+## Licence 
+Plyssim is distributed under GNU GLP V3.0, see [LICENCE](LICENSE). Plyssim links to Aboria, Tinyply, Yaml-cpp, that are public domain open source software.
+
 # Serge Dmitrieff -- http://biophysics.fr
