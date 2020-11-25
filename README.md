@@ -85,7 +85,7 @@ Here, *first*,*another* are two meshes we want to simulate. Each mesh will be si
 
 ### Options
 
-Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `another` is the name of the second mesh, while `deflated` is the name of the first run, in the example above.
+Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `another` is the name of the second mesh, while `deflated` is the name of the first run, in the example above. Plyssim does not have an imposed unit system, so Make sure you are using consistent units throughout.
 
 #### Meshes
 
@@ -93,11 +93,12 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.type` : type of meshwork (`1`: 2D, `3`: 2D+bending, `4`: Tetrahedral 3D mesh)  
 `MESH.power_law` : power law of spring elasticity (`1`, `2` or `3`)  
 `MESH.prestrain` : prestrain of the springs in the ply file (ex : `1.0` for no prestrain, `1.5` for *50%* prestrain)  
-`MESH.k_elast` : sping constant (not required if `young_modulus` and `thickness` are given).  
+`MESH.k_elast` : sping constant (not required if `young_modulus` and `thickness` are given, in physical units).  
 `MESH.young_modulus` : Young modulus of the mesh. Overides `k_elast` and requires `thickness`.  
 `MESH.thickness` : Virtual thickness of the mesh - used to compute `k_elast` from `young_modulus`.  
-`MESH.k_bending` : Bending rigidity of the mesh (in units of energy). Only for `type`*=3*.  Default value computed from `young_modulus`, `thickness`, and `poisson`.  
+`MESH.k_bending` : Bending rigidity of the mesh (in units of energy, e.g. MPa x µm^3). Only for `type`*=3*.  Default value computed from `young_modulus`, `thickness`, and `poisson`.  
 `MESH.poisson` : Poisson ratio of the surface, used to compute `k_bending` from `young_modulus` and `thickness`, only for `type`*=3*.  
+`MESH.viscosity` : Viscosity of the medium around the mesh (in physical units, e.g. MPa x seconds).
 `MESH.out` : base name for exported ply files.  
 `MESH.verbose` : toggles extra reports on the mesh (`0` or `1`).
 
@@ -108,9 +109,9 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `RUN.dt` : simulation timestep (in physical time)  
 `RUN.pressure` : pressure in the cell  (in physical units, e.g. MPa)  
 `RUN.confinement.AXIS` : Confinement on axis `AXIS`=`x`,`y`,`z`  
-`RUN.confinement.AXIS.min` : lower confinement bound  (in physical distance)  
+`RUN.confinement.AXIS.min` : lower confinement bound  (in physical distance e.g. µm)  
 `RUN.confinement.AXIS.max` : higher confinement bound  
-`RUN.confinement.AXIS.stiffness` : confinement stiffness (in physical units, e.g. MPa)
+`RUN.confinement.AXIS.stiffness` : confinement stiffness (in physical units, e.g. MPa/µm)
 
 ## Mesh format
 
