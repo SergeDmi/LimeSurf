@@ -98,7 +98,7 @@ Here `MESH` and `RUN` are the name specified for a given mesh and run, e.g. `ano
 `MESH.thickness` : Virtual thickness of the mesh - used to compute `k_elast` from `young_modulus`.  
 `MESH.k_bending` : Bending rigidity of the mesh (in units of energy, e.g. MPa x µm^3). Only for `type`*=3*.  Default value computed from `young_modulus`, `thickness`, and `poisson`.  
 `MESH.poisson` : Poisson ratio of the surface, used to compute `k_bending` from `young_modulus` and `thickness`, only for `type`*=3*.  
-`MESH.viscosity` : Viscosity of the medium around the mesh (in physical units, e.g. MPa x seconds).
+`MESH.viscosity` : Viscosity of the medium around the mesh (in physical units, e.g. MPa x seconds).  
 `MESH.out` : base name for exported ply files.  
 `MESH.verbose` : toggles extra reports on the mesh (`0` or `1`).
 
