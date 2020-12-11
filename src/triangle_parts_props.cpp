@@ -13,7 +13,9 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
     
     auto conf=config->second;
     
-    k_bending=0;
+    k_bending=-1;
+    
+    poisson=0.0;
     
     imposed_curvature=-1;
     
@@ -22,9 +24,13 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
     if (conf["bending"]) {
         k_bending=conf["bending"].as<std::double_t>();
     }
-    
+
     if (conf["k_bending"]) {
         k_bending=conf["k_bending"].as<std::double_t>();
+    }
+    
+    if (conf["poisson"]) {
+        poisson=conf["poisson"].as<std::double_t>();
     }
     
     if (conf["imposed_angle"]) {
@@ -41,3 +47,17 @@ Triangle_set_props::Triangle_set_props(const YAML::const_iterator config) : Elas
 
 }
 
+bool Triangle_set_props::Check_props() {
+    bool error_t{false},error_e{false};
+    error_e=Elastic_set_props::Check_props();
+    if (k_bending<0) {
+        std::cerr << "Error : k_bending must be >= 0" << std::endl;
+        error_t=true;
+    }
+    if (error_e or error_t) {
+        return true;
+    } else
+    { 
+        return false;
+    }
+}

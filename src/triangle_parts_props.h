@@ -24,10 +24,16 @@ public:
     /// constructor
     Triangle_set_props(const YAML::const_iterator );
     
+    // Checking sanity of property values
+    virtual bool Check_props();
+    
 protected:
 
     // Bending rigidity (in unit of energy)
     double k_bending;
+    
+    // Poisson number (used to compute the bending rigidity)
+    double poisson;
     
     // A curvature imposed. Warning : complicated for triangulated surface
     // Only validated use is imposed_curvature=0

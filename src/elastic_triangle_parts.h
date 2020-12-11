@@ -61,6 +61,9 @@ public:
     
     // Summary of current situation
     virtual void Summary() const { Elastic_part_set::Summary() ; ComputeBendingEnergy(); } ;
+        
+     // Complete properties
+    virtual void CompleteProperties();
     
 protected:
     

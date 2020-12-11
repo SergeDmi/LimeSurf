@@ -125,6 +125,9 @@ public:
     // Abstract of current situation
     virtual void Summary() const {};
     
+    // Computes derived properties
+    virtual void CompleteProperties();
+    
 protected:
     // List of faces
     face_list triangles;

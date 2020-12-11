@@ -191,11 +191,7 @@ int Part_set::load_from_text() {
     return nv;
 }
     
-
-// Makes sure everything is in place
-// @TODO : make it actually do something
-void Part_set::GetStarted(){
-	
+void Part_set::CompleteProperties() {
 	// Here we compute mobility from areas.
 	if (prop->mobility <= 0.0) {
 		// computing total area
@@ -208,12 +204,17 @@ void Part_set::GetStarted(){
 		total_area/=6.0;
 		
 		// Mobility from viscosity and size
-        prop->mobility=1.0/(6.0*prop->visco*sqrt(total_area/(number*PI)));
+        	prop->mobility=1.0/(6.0*prop->visco*sqrt(total_area/(number*PI)));
         
 		// Reporting
 		prop->PrintIfVerbose("Warning : mobility not defined or <= 0 ; computed "+std::to_string(prop->mobility)+" from viscosity and size");
 		
 	}
+}
+
+// Getting started before simulation starts
+void Part_set::GetStarted(){
+	Part_set::CompleteProperties();
     // We shoudl do an init_neighbour search if we plan to neighbour search.
     // Removed because there are problems with checkboxsize
     //CheckBoxSize();
@@ -250,6 +251,9 @@ void Part_set::CheckPartSet() {
     }
     prop->PrintIfVerbose("Maximum neighbours number : "+std::to_string(count));
     prop->PrintIfVerbose("Minimum neighbours number : "+std::to_string(tnuoc));
+    
+    // We check if there is anything weird in the props
+    diverging=prop->Check_props();
 }
 
 

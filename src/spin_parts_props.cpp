@@ -50,7 +50,7 @@ void Part_set_props::init() {
     k_elast=1.0;
     visco=1.0;
     Rvisc=1.0;
-	mobility=0.0;
+    mobility=-1.0;
     //pressure=0;
     //relax=0;
     
@@ -135,10 +135,24 @@ void Part_set_props::Read_config(const YAML::const_iterator config) {
     }
     
     if (conf["type"]) {
-        //pressure=conf["pressure"].as<std::double_t>();
         mechanics=conf["type"].as<std::double_t>();
     }
  
+}
+
+bool Part_set_props::Check_props() {
+    bool error=0;
+    if (mobility<=0) {
+        std::cerr << "Error : mobility must be > 0" << std::endl;
+        error=1;
+    }
+    
+    if (k_elast<=0) {
+        std::cerr << "Error : elasticity must be > 0" << std::endl;
+        error=1;
+    }
+    
+    return error;
 }
 
 void Part_set_props::PrintIfVerbose(const std::string & message) const {

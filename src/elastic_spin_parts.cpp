@@ -341,7 +341,6 @@ double Elastic_part_set::ComputeStretchingEnergy() const {
         j=get<1>(linker);   // second vertex
         k0=get<2>(linker);  // stiffness
         l0=get<3>(linker);  // resting length
-        //status=get<4>(linker);  // status : surface link or not
          
         posi=get<position>(particles[i]);
         posj=get<position>(particles[j]);
@@ -361,8 +360,18 @@ double Elastic_part_set::ComputeStretchingEnergy() const {
 }
 
 
-// Makes sure everything is in place
+// Completes properties with derived values if need be
+void Elastic_part_set::CompleteProperties() {
+    Part_set::CompleteProperties();
+    if (prop->young_modulus>0 && prop->thickness>0) {
+        prop->k_elast=prop->young_modulus * prop->thickness;
+        prop->PrintIfVerbose("Warning : Computed k_elast from surface modulus Y h = "+std::to_string(prop->k_elast));
+    }
+}
+
+// Getting started before simulation starts
 void Elastic_part_set::GetStarted(){
+    Elastic_part_set::CompleteProperties();
     Part_set::GetStarted();
     particles.init_id_search();
     Part_set::FindBounds();

@@ -53,6 +53,9 @@ public:
     // Summary of current situation
     virtual void Summary() const { Part_set::Summary() ;  ComputeStretchingEnergy(); } ;
     
+     // Complete properties
+    virtual void CompleteProperties();
+    
 protected:
     // Springs between particles
     spring_set springs;

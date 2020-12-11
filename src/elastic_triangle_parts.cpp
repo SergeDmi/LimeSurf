@@ -259,8 +259,19 @@ double Triangle_part_set::ComputeBendingEnergy() const {
     return sum_nrj;
 }
 
+// Completes properties with derived values if need be
+void Triangle_part_set::CompleteProperties() {
+    Elastic_part_set::CompleteProperties();
+    if (prop->k_bending<0) {
+        // Computing rigidity from young modulus
+        prop->k_bending=prop->young_modulus*pow(prop->thickness,3.0)/(12.0*(1.0-pow(prop->poisson,2.0)));
+        prop->PrintIfVerbose("Warning : Computed k_bending as K = Y h^3 / 12 (1-poisson^2) = "+std::to_string(prop->k_bending));
+    }
+}
 
+// Getting started before simulation starts
 void Triangle_part_set::GetStarted(){
+    Triangle_part_set::CompleteProperties();
     Part_set::GetStarted();
     particles.init_id_search();
     Part_set::FindBounds();

@@ -34,6 +34,9 @@ public:
     // Initialization
     void init();
     
+    // Checking sanity of property values
+    virtual bool Check_props();
+    
     // Actual reading from file
     void Read_config(const YAML::const_iterator);
     

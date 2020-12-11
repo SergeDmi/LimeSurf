@@ -29,13 +29,19 @@ class Elastic_set_props : public Part_set_props
         
         void init();
         void Read_config(const YAML::const_iterator);
+        
+        // Checking sanity of property values
+        virtual bool Check_props();
     
     protected:
         // prestrain : how much the imported link is stretched
         double prestrain;
-        int power_law;
-        double young_modulus ;      // young modulus of surface
-        double thickness ;          // thickness of surface
+        // power law of elasticity (1: hookean , 2: surface modulus)
+        int power_law;              
+        // young modulus of surface
+        double young_modulus ;      
+        // thickness of surface
+        double thickness ;          
 
 };
 

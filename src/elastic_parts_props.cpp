@@ -54,3 +54,8 @@ void Elastic_set_props::Read_config(const YAML::const_iterator config) {
     }
         
 }
+
+
+bool Elastic_set_props::Check_props() {
+    return Part_set_props::Check_props();
+}

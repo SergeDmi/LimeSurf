@@ -84,6 +84,7 @@ int make_run(const Simul_props & prop, meshes & meshuggas, double t0) {
                 mesh.mesh_parts->Summary();
             }
         }
+
         // implicit bool to int conversion for the win (and less branching)
         mesh.mesh_parts->Summary();
         dvg+=is_diverging;
