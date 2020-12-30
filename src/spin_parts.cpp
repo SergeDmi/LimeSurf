@@ -51,7 +51,6 @@ void Part_set::create() {
 }
 
 // Finds the furthest points in x,x, y,y, z,z
-// @TODO : needs to be fixed
 void Part_set::FindBounds() {
     vdouble3 bottomleft(INFINITY,INFINITY,INFINITY);
     vdouble3 topeuright(-INFINITY,-INFINITY,-INFINITY);
